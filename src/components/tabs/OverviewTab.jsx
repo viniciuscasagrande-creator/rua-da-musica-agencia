@@ -1,17 +1,13 @@
 import React from 'react';
-import { NationalExecutiveDashboard } from '../NationalExecutiveDashboard';
 import { KPIStats } from '../KPIStats';
 import { Charts } from '../Charts';
 import { SidePriceCard } from '../SidePriceCard';
 import { AgencyTable } from '../AgencyTable';
 
-export const OverviewTab = ({ kpis, agencies, onSelectAgency, onOpenPortalLink, onNavigateTab }) => {
+export const OverviewTab = ({ kpis, agencies, onSelectAgency, onOpenPortalLink }) => {
   return (
     <div className="space-y-6">
-      {/* 1. National Executive Dashboard (384 Agências, R$ 428k Vendas, Ranking Estados) */}
-      <NationalExecutiveDashboard onNavigateTab={onNavigateTab} />
-
-      {/* 2. Operational KPI Cards */}
+      {/* 1. Six Top Operational KPI Cards (Light Theme Standard) */}
       <KPIStats kpis={kpis} />
 
       {/* 2. Middle Grid: Charts (col-8) + Side Price Composition (col-4) */}
