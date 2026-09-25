@@ -1,29 +1,60 @@
-# DiskIngressos — Módulo Distribuição Turística B2B & Equipe de Vendas
+# DiskIngressos — Plataforma B2B de Distribuição Turística 2.0
 
-## Parque Jaime Lerner (Rua da Música • Curitiba - PR)
+## Parque Jaime Lerner (Rua da Música • Curitiba - PR) & Multi-Atrativo
 
-Aplicação desenvolvida para modernização comercial do PDT DiskIngressos, integrando as duas frentes de venda e distribuição:
+Plataforma de alta escala desenvolvida para transformar a venda de ingressos do PDT DiskIngressos em um ecossistema completo de **Distribuição Turística B2B**, mantendo a DiskIngressos como **Core Transacional**.
 
-1. **Distribuição Turística B2B (Operador & Agências)**
-2. **Central de Equipe de Vendas (Promoters & Divulgadores)**
+Projetada inicialmente para o **Parque Jaime Lerner**, mas com **arquitetura multi-atrativo reutilizável** para futuros parques, museus e experiências turísticas (ex: MON, Serra Verde Express).
 
 ---
 
-## 🏗️ Visão Geral da Arquitetura
+## 🏗️ Pilares da Arquitetura B2B 2.0
 
-Conforme especificado no documento de escopo e no diagrama arquitetural:
+```text
+                    PARQUE JAIME LERNER (ou Atrativo)
+                                  │
+                                  ▼
+                       ┌─────────────────────┐
+                       │    DISKINGRESSOS    │
+                       │   CORE TRANSACIONAL │
+                       └──────────┬──────────┘
+                                  │
+                          API B2B TURISMO
+                                  │
+       ┌──────────────────────────┼──────────────────────────┐
+       │                          │                          │
+       ▼                          ▼                          ▼
+ Portal da Agência          Integração API             Link/QR Agência
+       │                          │                          │
+       └──────────────────────────┼──────────────────────────┘
+                                  ▼
+                         MOTOR COMERCIAL B2B
+                                  │
+       ┌──────────────────────────┼──────────────────────────┐
+       ▼                          ▼                          ▼
+   Contratos               Tarifas/Regras               Comissões
+       │                          │                          │
+       ▼                          ▼                          ▼
+   Reservas                    Pedidos                    Repasse
+                                  │
+                                  ▼
+                         Ingresso / QR Master
+```
 
-- **Superfícies de Frontend (Design System Unificado):**
-  - **Painel do Operador:** Gestão de canais credenciados, cotas de inventário por dia, tarifário parametrizável (taxa padrão de 6%), relatórios geográficos por estado e conciliação do Ledger.
-  - **Portal da Agência de Turismo:** Wizard simplificado de 5 passos para reservas de grupos e excursões com emissão de vouchers e QR Codes em lote.
-  - **Painel do Produtor (Equipe de Vendas):** Gestão de promoters, divulgadores, links rastreáveis, cupons de desconto, metas e motor de comissões.
+### Funcionalidades Integradas:
 
-- **Backend & Banco de Dados:**
-  - **API:** Node.js com TypeScript / Express / NestJS, reaproveitando RBAC e autenticação existente do PDT.
-  - **Banco:** PostgreSQL com transações ACID (`SELECT ... FOR UPDATE` para cota de inventário e evitar overselling).
-  - **Financeiro / Auditoria:** Estrutura *append-only* (sem `UPDATE`/`DELETE` em lançamentos de comissão), garantindo reversão segura de estornos sem perda de histórico.
-  - **Cache & Filas:** Redis + BullMQ para cálculo de comissões assíncronas, geração de vouchers em lote e webhooks.
-  - **Validação de Ingressos:** QR Code assinado criptograficamente via HMAC-SHA256 (`src/server/services/voucherSigner.js`).
+1. **Motor Comercial por Agência:** Contratos comerciais versionados (taxa Disk padrão de 6%, comissão da agência, preço líquido, vigência, limites de crédito, prazos de faturamento 15/30 dias e bloqueio automático).
+2. **Tarifário B2B Separado:** Tarifa Pública vs Tarifa Agência B2B vs Grupo 15+ vs Excursão Escolar vs Promocional.
+3. **Reserva de Estoque Temporária (Holding com TTL):** Bloqueio temporário de vagas com contagem regressiva e liberação automática anti-overselling.
+4. **Grupos & Manifesto Nominal de Passageiros:** `Grupo → Reserva → Passageiros → Ingressos`, com importador de planilhas Excel/CSV e validação.
+5. **Voucher Master de Grupo:** Emissão de 1 único QR Code seguro (HMAC-SHA256) para liberação em lote de caravanas na catraca, ou bilhetes individuais nominais.
+6. **Portal de Autoatendimento da Agência:** Painel com limite de crédito faturado, cota mensal, manifesto de caravanas, extrato e suporte.
+7. **Central de Divulgação (Mídia Kit):** Fotos oficiais 4K, vídeos para redes, copies prontas para WhatsApp/Instagram e gerador de links com UTM.
+8. **Atribuição Transparente:** Diferenciação entre Afiliado Divulgador (gerou lead no site B2C) e Agência B2B Direta (reserva de lote).
+9. **API B2B Comercial & Webhooks:** Catálogo, cotação, holding, emissão e webhooks em tempo real com simulador interativo.
+10. **Sandbox para Homologação:** Chaves de teste (`dk_test_...`) e de produção (`dk_live_...`).
+11. **Dashboard Executivo Nacional:** 384 agências ativas, R$ 428 mil vendas B2B, 87 reservas, R$ 512 mil receita, ranking estadual (PR, SP, SC, RS, MG...) e top agências.
+12. **Multi-Atrativo Reutilizável:** Chaveamento arquitetural pronto no topo do sistema.
 
 ---
 

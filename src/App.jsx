@@ -11,6 +11,10 @@ import { SettingsTab } from './components/tabs/SettingsTab';
 import { VouchersTab } from './components/tabs/VouchersTab';
 import { InventoryTab } from './components/tabs/InventoryTab';
 import { BoxOfficeTab } from './components/tabs/BoxOfficeTab';
+import { ContractsTab } from './components/tabs/ContractsTab';
+import { GroupsManifestTab } from './components/tabs/GroupsManifestTab';
+import { MarketingHubTab } from './components/tabs/MarketingHubTab';
+import { IntegrationsTab } from './components/tabs/IntegrationsTab';
 import { AgencyTable } from './components/AgencyTable';
 import { AgencyPortal } from './components/agency_portal/AgencyPortal';
 import { PromoterModule } from './components/promoters/PromoterModule';
@@ -99,11 +103,14 @@ export function App() {
   const operatorTabs = [
     { id: 'visao-geral', label: 'Visão Geral' },
     { id: 'ingressos', label: 'Ingressos & Estoque' },
-    { id: 'bilheteria', label: 'Bilheteria Local' },
-    { id: 'agencias', label: 'Agências' },
+    { id: 'contratos', label: 'Contratos & Crédito' },
     { id: 'tarifario', label: 'Tarifário B2B' },
+    { id: 'grupos', label: 'Grupos & Excursões' },
+    { id: 'agencias', label: 'Agências' },
     { id: 'reservas', label: 'Reservas' },
     { id: 'vouchers', label: 'Vouchers & Catraca' },
+    { id: 'divulgacao', label: 'Central de Divulgação' },
+    { id: 'integracoes', label: 'Integrações API' },
     { id: 'comissoes', label: 'Comissões' },
     { id: 'financeiro', label: 'Financeiro' },
     { id: 'relatorios', label: 'Relatórios' },
@@ -254,7 +261,16 @@ export function App() {
                   setCurrentView('agency');
                   showToast(`Conectado como "${agency.name}" no Portal B2B.`);
                 }}
+                onNavigateTab={setOperatorSubTab}
               />
+            )}
+
+            {operatorSubTab === 'contratos' && (
+              <ContractsTab />
+            )}
+
+            {operatorSubTab === 'grupos' && (
+              <GroupsManifestTab />
             )}
 
             {operatorSubTab === 'agencias' && (
@@ -290,6 +306,14 @@ export function App() {
               <VouchersTab
                 onOpenVoucher={(booking) => setSelectedBookingForVoucher(booking)}
               />
+            )}
+
+            {operatorSubTab === 'divulgacao' && (
+              <MarketingHubTab />
+            )}
+
+            {operatorSubTab === 'integracoes' && (
+              <IntegrationsTab />
             )}
 
             {operatorSubTab === 'comissoes' && (

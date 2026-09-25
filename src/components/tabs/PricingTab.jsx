@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Tag, Percent, Calculator, Check, Edit2, Plus, Sparkles, AlertCircle } from 'lucide-react';
-import { TICKET_CATALOG } from '../../data/mockData';
+import { Tag, Percent, Calculator, Check, Edit2, Plus, Sparkles, AlertCircle, Layers } from 'lucide-react';
+import { TICKET_CATALOG, TIERED_PRICING_CATALOG } from '../../data/mockData';
 
 export const PricingTab = () => {
   const [feePercent, setFeePercent] = useState(6.0);
@@ -231,6 +231,70 @@ export const PricingTab = () => {
           </div>
         </div>
 
+      </div>
+
+      {/* Multi-Tier Pricing Table: Public vs Agency B2B vs Group vs Excursion */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/60">
+          <div>
+            <div className="flex items-center gap-2">
+              <Layers className="w-4 h-4 text-blue-600" />
+              <h4 className="font-bold text-sm text-slate-800">
+                Tarifário Multi-Tier B2B (Separado do Preço Público de Balcão)
+              </h4>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Grade de preços diferenciada por canal de distribuição. As agências e excursões possuem margem comercial competitiva sem canibalizar o preço público.
+            </p>
+          </div>
+          <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            Regra Contratual Ativa
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-400 uppercase text-[10px] font-bold">
+              <tr>
+                <th className="py-3 px-5">Produto / Categoria</th>
+                <th className="py-3 px-4 text-right">Preço Público (Site/Balcão)</th>
+                <th className="py-3 px-4 text-right font-bold text-blue-700">Tarifa Agência B2B</th>
+                <th className="py-3 px-4 text-right">Grupo 15+</th>
+                <th className="py-3 px-4 text-right">Excursão Escolar</th>
+                <th className="py-3 px-4 text-right">Tarifa Promo</th>
+                <th className="py-3 px-5 text-right font-bold text-emerald-700">Retenção Líquida Parque</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-medium">
+              {TIERED_PRICING_CATALOG.map((tier) => (
+                <tr key={tier.id} className="hover:bg-slate-50/70 transition-colors">
+                  <td className="py-3.5 px-5">
+                    <span className="font-bold text-slate-900 block">{tier.name}</span>
+                    <span className="text-[10px] text-slate-400">{tier.description}</span>
+                  </td>
+                  <td className="py-3.5 px-4 text-right text-slate-400 line-through font-mono">
+                    R$ {tier.publicPrice.toFixed(2)}
+                  </td>
+                  <td className="py-3.5 px-4 text-right font-bold text-blue-700 font-mono text-sm">
+                    R$ {tier.agencyB2BPrice.toFixed(2)}
+                  </td>
+                  <td className="py-3.5 px-4 text-right font-semibold text-slate-700 font-mono">
+                    R$ {tier.groupPrice15Plus.toFixed(2)}
+                  </td>
+                  <td className="py-3.5 px-4 text-right font-semibold text-slate-700 font-mono">
+                    R$ {tier.schoolExcursionPrice.toFixed(2)}
+                  </td>
+                  <td className="py-3.5 px-4 text-right font-semibold text-amber-700 font-mono">
+                    R$ {tier.promoPrice.toFixed(2)}
+                  </td>
+                  <td className="py-3.5 px-5 text-right font-black text-emerald-700 font-mono text-sm">
+                    R$ {tier.netRetentionPark.toFixed(2)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>

@@ -1,5 +1,5 @@
-// Schema incremental DiskIngressos - Equipe de Vendas & Distribuição B2B
-// Baseado na arquitetura unificada Node.js/TypeScript + PostgreSQL + Redis/BullMQ
+// Schema Incremental DiskIngressos - Plataforma de Distribuição Turística B2B 2.0
+// Baseado na arquitetura unificada Node.js + PostgreSQL + Redis/BullMQ
 
 datasource db {
   provider = "postgresql"
@@ -20,6 +20,14 @@ enum AgencyStatus {
   PENDING
   ACTIVE
   SUSPENDED
+  BLOCKED_CREDIT
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  TERMINATED
 }
 
 enum ReservationStatus {
@@ -27,6 +35,14 @@ enum ReservationStatus {
   CONFIRMED
   EXPIRED
   CANCELLED
+}
+
+enum PricingTierType {
+  PUBLIC
+  AGENCY_B2B
+  GROUP_15_PLUS
+  EXCURSION_SCHOOL
+  PROMOTIONAL
 }
 
 enum CommissionEntryKind {
@@ -40,10 +56,183 @@ enum CommissionRecipientKind {
   AGENCY
 }
 
+enum ApiKeyEnvironment {
+  SANDBOX
+  PRODUCTION
+}
+
+// 1. Atrativo / Parque / Experiência Turística (Multi-Atrativo Reutilizável)
+model Attraction {
+  id              String               @id @default(cuid())
+  producerId      String
+  name            String               // Ex: "Parque Jaime Lerner"
+  slug            String               @unique
+  city            String               @default("Curitiba")
+  state           String               @default("PR")
+  address         String               @default("Rua da Música")
+  generalCapacity Int                  @default(3000)
+  defaultFeeBps   Int                  @default(600) // 6.0% padrão DiskIngressos
+  active          Boolean              @default(true)
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  contracts       CommercialContract[]
+  pricingTiers    PricingTier[]
+  inventoryHolds  InventoryHold[]
+  reservations    GroupReservation[]
+
+  @@index([producerId, active])
+}
+
+// 2. Agência de Turismo Credenciada
+model Agency {
+  id              String               @id @default(cuid())
+  producerId      String
+  legalName       String
+  tradeName       String?
+  document        String               // CNPJ normalizado
+  cadastur        String?              // Registro oficial Cadastur do Min. Turismo
+  contactName     String?
+  email           String?
+  phone           String?
+  city            String?
+  state           String?
+  status          AgencyStatus         @default(PENDING)
+  creditLimitCents Int                 @default(0) // Limite de faturamento concedido
+  creditUsedCents  Int                 @default(0) // Crédito em aberto não liquidado
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  contracts       CommercialContract[]
+  links           SalesLink[]
+  reservations    GroupReservation[]
+  inventoryHolds  InventoryHold[]
+  rules           CommissionRule[]
+  apiKeys         ApiKey[]
+  webhooks        WebhookEndpoint[]
+
+  @@unique([producerId, document])
+  @@index([producerId, status])
+}
+
+// 3. Contrato Comercial Versionado por Agência (Motor Comercial 2.0)
+model CommercialContract {
+  id                    String         @id @default(cuid())
+  agencyId              String
+  attractionId          String
+  version               Int            @default(1)
+  diskFeeBps            Int            @default(600) // Taxa Disk: 600 bps = 6.0%
+  agencyCommissionBps   Int            @default(1000) // Comissão repassada à agência: 10.0%
+  netPriceCents         Int?           // Preço líquido acordado se aplicável
+  minTicketsPerBooking  Int            @default(1)
+  paymentTermsDays      Int            @default(0) // 0 = À vista / Pré-pago, 15 = Faturado 15D, 30 = Faturado 30D
+  cancellationWindowHours Int          @default(48) // Limite para cancelamento sem multa
+  status                ContractStatus @default(ACTIVE)
+  startsAt              DateTime       @default(now())
+  endsAt                DateTime?
+  notes                 String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  agency                Agency         @relation(fields: [agencyId], references: [id])
+  attraction            Attraction     @relation(fields: [attractionId], references: [id])
+
+  @@unique([agencyId, attractionId, version])
+  @@index([agencyId, status])
+}
+
+// 4. Tarifário B2B Separado do Preço Público
+model PricingTier {
+  id              String          @id @default(cuid())
+  attractionId    String
+  name            String          // Inteira, Meia, Excursão Escolar, etc.
+  tierType        PricingTierType @default(AGENCY_B2B)
+  basePriceCents  Int             // Preço base em centavos
+  diskFeeBps      Int             @default(600) // Taxa DiskIngressos
+  minQty          Int             @default(1)
+  active          Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  attraction      Attraction      @relation(fields: [attractionId], references: [id])
+
+  @@index([attractionId, tierType, active])
+}
+
+// 5. Reserva de Estoque Temporária com TTL / Auto-Release
+model InventoryHold {
+  id              String            @id @default(cuid())
+  attractionId    String
+  agencyId        String
+  visitDate       DateTime
+  quantity        Int
+  status          ReservationStatus @default(HELD)
+  expiresAt       DateTime          // Data/Hora limite de confirmação antes de liberar
+  idempotencyKey  String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  attraction      Attraction        @relation(fields: [attractionId], references: [id])
+  agency          Agency            @relation(fields: [agencyId], references: [id])
+
+  @@index([attractionId, visitDate, status, expiresAt])
+}
+
+// 6. Reserva de Grupo & Excursão
+model GroupReservation {
+  id              String            @id @default(cuid())
+  attractionId    String
+  agencyId        String
+  groupName       String            // Ex: "Excursão Colégio Positivo 3º Ano"
+  ticketTypeId    String
+  quantity        Int
+  totalAmountCents Int
+  diskFeeAmountCents Int
+  commissionAmountCents Int
+  status          ReservationStatus @default(HELD)
+  expiresAt       DateTime
+  orderId         String?           @unique
+  paymentMethod   String?           // PIX, CARTAO, FATURADO_30D
+  idempotencyKey  String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  attraction      Attraction        @relation(fields: [attractionId], references: [id])
+  agency          Agency            @relation(fields: [agencyId], references: [id])
+  passengers      Passenger[]
+  masterVoucher   GroupVoucher?
+
+  @@index([attractionId, status, expiresAt])
+}
+
+// 7. Passageiros da Excursão (Rooming / Manifest Nominal)
+model Passenger {
+  id              String           @id @default(cuid())
+  reservationId   String
+  fullName        String
+  documentNumber  String
+  documentType    String           @default("CPF") // CPF, RG, PASSAPORTE, CERTIDAO
+  category        String           @default("ADULTO") // ADULTO, ESTUDANTE, CRIANCA, IDOSO
+  seatOrTag       String?
+  checkedIn       Boolean          @default(false)
+  checkedInAt     DateTime?
+  checkedInGate   String?
+  createdAt       DateTime         @default(now())
+  reservation     GroupReservation @relation(fields: [reservationId], references: [id])
+
+  @@index([reservationId, checkedIn])
+}
+
+// 8. Voucher de Grupo (Master Voucher QR + Ingressos Individuais)
+model GroupVoucher {
+  id              String           @id @default(cuid())
+  reservationId   String           @unique
+  masterQrCode    String           // Criptografado HMAC-SHA256 para entrada em bloco do grupo
+  signature       String
+  isMasterOnly    Boolean          @default(true) // true = 1 QR para o ônibus todo; false = ingressos individuais
+  issuedAt        DateTime         @default(now())
+  reservation     GroupReservation @relation(fields: [reservationId], references: [id])
+}
+
+// 9. Links e Afiliados / Promoters
 model SalesAgent {
   id         String           @id @default(cuid())
   producerId String
-  userId     String?          // Vincular ao usuário existente, quando houver acesso ao portal
+  userId     String?
   name       String
   email      String?
   phone      String?
@@ -57,93 +246,47 @@ model SalesAgent {
   @@unique([producerId, userId])
 }
 
-model Agency {
-  id          String       @id @default(cuid())
-  producerId  String
-  legalName   String
-  document    String       // CNPJ normalizado; aplicar validação e proteção no serviço
-  contactName String?
-  email       String?
-  status      AgencyStatus @default(PENDING)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  events      AgencyEvent[]
-  links       SalesLink[]
-  reservations GroupReservation[]
-  rules       CommissionRule[]
-
-  @@unique([producerId, document])
-  @@index([producerId, status])
-}
-
-model AgencyEvent {
-  id          String   @id @default(cuid())
-  agencyId    String
-  eventId     String
-  active      Boolean  @default(true)
-  feeBps      Int      @default(600) // Taxa administrativa contratada: 6% inicial (600 bps)
-  createdAt   DateTime @default(now())
-  agency      Agency   @relation(fields: [agencyId], references: [id])
-  reservations GroupReservation[]
-
-  @@unique([agencyId, eventId])
-  @@index([eventId, active])
-}
-
 model SalesLink {
-  id          String      @id @default(cuid())
+  id          String            @id @default(cuid())
   eventId     String
-  code        String      @unique
+  code        String            @unique
+  utmSource   String?           @default("affiliate")
+  utmMedium   String?           @default("b2b_link")
+  utmCampaign String?
   agentId     String?
   agencyId    String?
-  active      Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  agent       SalesAgent? @relation(fields: [agentId], references: [id])
-  agency      Agency?     @relation(fields: [agencyId], references: [id])
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  agent       SalesAgent?       @relation(fields: [agentId], references: [id])
+  agency      Agency?           @relation(fields: [agencyId], references: [id])
   attributions SaleAttribution[]
 
   @@index([eventId, active])
 }
 
-model GroupReservation {
-  id              String            @id @default(cuid())
-  agencyEventId   String
-  agencyId        String
-  ticketTypeId    String            // Mapear lote/tipo de ingresso existente
-  quantity        Int
-  status          ReservationStatus @default(HELD)
-  expiresAt       DateTime
-  orderId         String?           @unique
-  idempotencyKey  String            @unique
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-  agencyEvent     AgencyEvent       @relation(fields: [agencyEventId], references: [id])
-  agency          Agency            @relation(fields: [agencyId], references: [id])
-
-  @@index([agencyEventId, status, expiresAt])
-}
-
 model SaleAttribution {
-  id          String    @id @default(cuid())
-  orderId     String    @unique
+  id          String            @id @default(cuid())
+  orderId     String            @unique
   eventId     String
   salesLinkId String?
   agentId     String?
   agencyId    String?
-  createdAt   DateTime  @default(now())
-  salesLink   SalesLink? @relation(fields: [salesLinkId], references: [id])
+  isAffiliateLead Boolean       @default(false) // Indica se foi divulgação de afiliado com compra no site
+  createdAt   DateTime          @default(now())
+  salesLink   SalesLink?        @relation(fields: [salesLinkId], references: [id])
   entries     CommissionEntry[]
 
   @@index([eventId, createdAt])
 }
 
+// 10. Regras e Lançamentos Contábeis (Append-only Ledger)
 model CommissionRule {
   id            String                  @id @default(cuid())
   eventId       String
   recipientKind CommissionRecipientKind
   agentId       String?
   agencyId      String?
-  rateBps       Int?                    // 1000 = 10%; preencher rateBps OU fixedCents
+  rateBps       Int?                    // 1000 = 10%
   fixedCents    Int?
   startsAt      DateTime                @default(now())
   endsAt        DateTime?
@@ -160,15 +303,59 @@ model CommissionEntry {
   attributionId   String
   ruleId          String
   kind            CommissionEntryKind
-  amountCents     Int                 // Reversão e liquidação como valores negativos
+  amountCents     Int
   currency        String              @default("BRL")
-  sourceEventId   String              @unique // ID único do evento de pagamento/estorno/repasse
-  ledgerEntryId   String?             @unique // Referência ao Ledger existente
+  sourceEventId   String              @unique
+  ledgerEntryId   String?             @unique
   reversesEntryId String?
   createdAt       DateTime            @default(now())
   attribution     SaleAttribution     @relation(fields: [attributionId], references: [id])
   rule            CommissionRule      @relation(fields: [ruleId], references: [id])
 
   @@index([attributionId, createdAt])
-  // Append-only: proibido atualizar ou excluir lançamentos financeiros.
+}
+
+// 11. Chaves de API para Integrações B2B (Sandbox & Produção)
+model ApiKey {
+  id          String            @id @default(cuid())
+  agencyId    String
+  name        String            // Ex: "Integração CVC Intranet Produção"
+  environment ApiKeyEnvironment @default(SANDBOX)
+  keyPrefix   String            // Ex: "dk_live_..." ou "dk_test_..."
+  keyHash     String            @unique
+  active      Boolean           @default(true)
+  lastUsedAt  DateTime?
+  createdAt   DateTime          @default(now())
+  agency      Agency            @relation(fields: [agencyId], references: [id])
+
+  @@index([agencyId, active])
+}
+
+// 12. Webhooks B2B
+model WebhookEndpoint {
+  id          String            @id @default(cuid())
+  agencyId    String
+  url         String
+  secret      String
+  events      String[]          // ["reserva.confirmada", "pedido.pago", "ingresso.emitido", "reserva.expirada"]
+  active      Boolean           @default(true)
+  createdAt   DateTime          @default(now())
+  agency      Agency            @relation(fields: [agencyId], references: [id])
+  deliveries  WebhookDelivery[]
+
+  @@index([agencyId, active])
+}
+
+model WebhookDelivery {
+  id          String            @id @default(cuid())
+  endpointId  String
+  event       String
+  payload     String            // JSON serializado
+  statusCode  Int?
+  success     Boolean           @default(false)
+  error       String?
+  deliveredAt DateTime          @default(now())
+  endpoint    WebhookEndpoint   @relation(fields: [endpointId], references: [id])
+
+  @@index([endpointId, deliveredAt])
 }

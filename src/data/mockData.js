@@ -542,3 +542,445 @@ export const RBAC_OPERATOR_PERMISSIONS = [
   { id: "perm-gate-checkin", name: "Fiscalização e Catraca", desc: "Validar QR Codes e autorizar entradas em lote", defaultActive: true },
   { id: "perm-ledger-audit", name: "Conciliação Financeira / Ledger", desc: "Consultar repasses líquidos e autorizar reversões de estorno", defaultActive: false }
 ];
+
+// =========================================================================
+// B2B 2.0 PLATAFORMA DE DISTRIBUIÇÃO TURÍSTICA - NOVOS MODELOS
+// =========================================================================
+
+// 1. Multi-Atrativo (Arquitetura Reutilizável)
+export const ATTRACTIONS_LIST = [
+  {
+    id: "PRQ-JLERNER-001",
+    name: "Parque Jaime Lerner",
+    slug: "parque-jaime-lerner",
+    city: "Curitiba",
+    state: "PR",
+    address: "Rua da Música, 1000",
+    generalCapacity: 3000,
+    active: true,
+    thumbnail: "/assets/parque-thumb.jpg",
+    banner: "/assets/parque-banner.jpg",
+    sunset: "/assets/parque-sunset.jpg",
+    category: "Parque Cultural & Arquitetura",
+    defaultFeePercent: 6.0
+  },
+  {
+    id: "MON-CWB-002",
+    name: "Museu Oscar Niemeyer (Experiências)",
+    slug: "museu-oscar-niemeyer",
+    city: "Curitiba",
+    state: "PR",
+    address: "Rua Marechal Hermes, 999",
+    generalCapacity: 4500,
+    active: true,
+    thumbnail: "https://images.unsplash.com/photo-1544535830-92fe6060c5a2?auto=format&fit=crop&w=400&q=80",
+    banner: "https://images.unsplash.com/photo-1544535830-92fe6060c5a2?auto=format&fit=crop&w=1200&q=80",
+    category: "Artes Visuais & Design",
+    defaultFeePercent: 6.0
+  },
+  {
+    id: "SERRA-VERDE-003",
+    name: "Trem Serra Verde Express",
+    slug: "serra-verde-express",
+    city: "Morretes / Curitiba",
+    state: "PR",
+    address: "Estação Ferroviária de Curitiba",
+    generalCapacity: 1200,
+    active: true,
+    thumbnail: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=400&q=80",
+    banner: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?auto=format&fit=crop&w=1200&q=80",
+    category: "Turismo Ferroviário & Ecoturismo",
+    defaultFeePercent: 6.0
+  }
+];
+
+// 2. Dashboard Nacional Consolidado (Conforme solicitado)
+export const NATIONAL_DASHBOARD_METRICS = {
+  activeAgencies: 384,
+  b2bSalesAmount: 428150.00,
+  activeReservations: 87,
+  totalRevenue: 512400.00,
+  ticketsSold: 4821,
+  totalCommissions: 31250.00,
+  conversionRate: 68,
+  coveredStates: 19,
+  stateRankings: [
+    { uf: "PR", name: "Paraná", percentage: 42, count: 2025, revenue: 215200 },
+    { uf: "SP", name: "São Paulo", percentage: 28, count: 1350, revenue: 143500 },
+    { uf: "SC", name: "Santa Catarina", percentage: 12, count: 578, revenue: 61480 },
+    { uf: "RS", name: "Rio Grande do Sul", percentage: 9, count: 434, revenue: 46110 },
+    { uf: "MG", name: "Minas Gerais", percentage: 5, count: 241, revenue: 25620 },
+    { uf: "Outros", name: "Demais Estados (14)", percentage: 4, count: 193, revenue: 20490 }
+  ],
+  topAgencies: [
+    { name: "Turismo ABC", salesCount: 487, revenue: 51800, uf: "PR", badge: "Diamante" },
+    { name: "Viagens XYZ", salesCount: 361, revenue: 38400, uf: "SP", badge: "Ouro" },
+    { name: "Operadora 123", salesCount: 298, revenue: 31700, uf: "SC", badge: "Ouro" },
+    { name: "CVC Curitiba", salesCount: 245, revenue: 26100, uf: "PR", badge: "Prata" },
+    { name: "Serra Verde Express", salesCount: 210, revenue: 22350, uf: "PR", badge: "Prata" }
+  ]
+};
+
+// 3. Contratos Comerciais Versionados por Agência (Motor Comercial 2.0)
+export const COMMERCIAL_CONTRACTS = [
+  {
+    id: "CTR-2026-001",
+    agencyId: "ag-01",
+    agencyName: "Mundo Brasil Turismo",
+    version: 2,
+    diskFeePercent: 6.0,
+    agencyCommissionPercent: 12.0,
+    netPriceEnabled: false,
+    minTicketsPerBooking: 10,
+    paymentTerms: "Faturado 15 Dias",
+    paymentTermsDays: 15,
+    creditLimit: 50000.00,
+    creditUsed: 18450.00,
+    creditAvailable: 31550.00,
+    cancellationWindowHours: 48,
+    status: "Vigente",
+    validUntil: "31/12/2026",
+    authorizedProducts: ["Todos os Ingressos", "Pôr do Sol VIP", "Tours Guiados"],
+    specialRule: "Bônus de 2% para grupos acima de 40 passageiros"
+  },
+  {
+    id: "CTR-2026-002",
+    agencyId: "ag-02",
+    agencyName: "Viagens CWB Excursões",
+    version: 1,
+    diskFeePercent: 6.0,
+    agencyCommissionPercent: 10.0,
+    netPriceEnabled: true,
+    netPriceAmount: 24.00,
+    minTicketsPerBooking: 5,
+    paymentTerms: "Faturado 30 Dias",
+    paymentTermsDays: 30,
+    creditLimit: 30000.00,
+    creditUsed: 12600.00,
+    creditAvailable: 17400.00,
+    cancellationWindowHours: 24,
+    status: "Vigente",
+    validUntil: "31/10/2026",
+    authorizedProducts: ["Ingresso Geral", "Excursão Escolar"],
+    specialRule: "Preço líquido direto acordado para dias úteis"
+  },
+  {
+    id: "CTR-2026-003",
+    agencyId: "ag-06",
+    agencyName: "Agência Turismo Brasil",
+    version: 3,
+    diskFeePercent: 6.0,
+    agencyCommissionPercent: 15.0,
+    netPriceEnabled: false,
+    minTicketsPerBooking: 1,
+    paymentTerms: "Faturado 30 Dias",
+    paymentTermsDays: 30,
+    creditLimit: 80000.00,
+    creditUsed: 27800.00,
+    creditAvailable: 52200.00,
+    cancellationWindowHours: 48,
+    status: "Vigente",
+    validUntil: "31/12/2026",
+    authorizedProducts: ["Todos os Ingressos", "Tours Guiados", "Excursões"],
+    specialRule: "Parceiro Estratégico Regional - Emissão imediata via API"
+  },
+  {
+    id: "CTR-2026-004",
+    agencyId: "ag-05",
+    agencyName: "Schultz Operadora",
+    version: 1,
+    diskFeePercent: 6.0,
+    agencyCommissionPercent: 10.0,
+    netPriceEnabled: false,
+    minTicketsPerBooking: 15,
+    paymentTerms: "Pré-pago / PIX Instantâneo",
+    paymentTermsDays: 0,
+    creditLimit: 10000.00,
+    creditUsed: 0.00,
+    creditAvailable: 10000.00,
+    cancellationWindowHours: 72,
+    status: "Em Homologação",
+    validUntil: "15/12/2026",
+    authorizedProducts: ["Ingresso Geral", "Educativo"],
+    specialRule: "Crédito liberado após 3ª compra liquidada"
+  }
+];
+
+// 4. Tarifário B2B Separado do Preço Público
+export const TIERED_PRICING_CATALOG = [
+  {
+    id: "tier-inteira",
+    name: "Ingresso Geral Inteira",
+    publicPrice: 40.00,
+    agencyB2BPrice: 30.00,
+    groupPrice15Plus: 26.00,
+    schoolExcursionPrice: 20.00,
+    promoPrice: 28.00,
+    diskFeePercent: 6.0,
+    netRetentionPark: 28.20,
+    description: "Acesso integral aos circuitos, jardins sonoros e pavilhões arquitetônicos."
+  },
+  {
+    id: "tier-meia",
+    name: "Meia-Entrada Legal",
+    publicPrice: 20.00,
+    agencyB2BPrice: 15.00,
+    groupPrice15Plus: 13.00,
+    schoolExcursionPrice: 10.00,
+    promoPrice: 14.00,
+    diskFeePercent: 6.0,
+    netRetentionPark: 14.10,
+    description: "Estudantes, idosos 60+, PCDs, doadores de sangue e professores do Paraná."
+  },
+  {
+    id: "tier-tour",
+    name: "Tour Arquitetônico Guiado",
+    publicPrice: 35.00,
+    agencyB2BPrice: 25.00,
+    groupPrice15Plus: 22.00,
+    schoolExcursionPrice: 16.00,
+    promoPrice: 24.00,
+    diskFeePercent: 6.0,
+    netRetentionPark: 23.50,
+    description: "Visita com arquiteto curador explicando o legado urbanístico de Jaime Lerner."
+  },
+  {
+    id: "tier-sunset",
+    name: "Sunset Cultural (Experiência VIP)",
+    publicPrice: 60.00,
+    agencyB2BPrice: 48.00,
+    groupPrice15Plus: 42.00,
+    schoolExcursionPrice: 35.00,
+    promoPrice: 45.00,
+    diskFeePercent: 6.0,
+    netRetentionPark: 45.12,
+    description: "Entrada ao entardecer com apresentação musical acústica e kit de boas-vindas."
+  }
+];
+
+// 5. Reserva de Estoque Temporária com TTL (Holding / Auto-Release)
+export const INVENTORY_HOLDS = [
+  {
+    id: "HOLD-781",
+    agencyName: "Mundo Brasil Turismo",
+    groupName: "Excursão Positivo Curitiba (40 pax)",
+    date: "2026-09-28",
+    quantity: 40,
+    heldAt: "25/09/2026 09:30",
+    expiresAt: "25/09/2026 17:30",
+    minutesRemaining: 418,
+    status: "HELD",
+    actionRequired: "Aguardando confirmação de lista de passageiros"
+  },
+  {
+    id: "HOLD-782",
+    agencyName: "Viagens CWB Excursões",
+    groupName: "Grupo Terceira Idade Joinville",
+    date: "2026-09-29",
+    quantity: 28,
+    heldAt: "25/09/2026 08:15",
+    expiresAt: "25/09/2026 14:15",
+    minutesRemaining: 223,
+    status: "HELD",
+    actionRequired: "Aguardando aprovação de crédito faturado"
+  },
+  {
+    id: "HOLD-779",
+    agencyName: "Curitiba Tour",
+    groupName: "Convenção Regional de Corretores",
+    date: "2026-09-27",
+    quantity: 50,
+    heldAt: "24/09/2026 10:00",
+    expiresAt: "24/09/2026 18:00",
+    minutesRemaining: 0,
+    status: "RELEASED",
+    actionRequired: "Expirada por falta de confirmação (lugares liberados)"
+  }
+];
+
+// 6. Grupos, Excursões e Manifesto de Passageiros
+export const GROUP_RESERVATIONS_WITH_MANIFEST = [
+  {
+    id: "GRP-2026-101",
+    bookingCode: "RES-B2B-1089",
+    agencyName: "Agência Turismo Brasil",
+    groupName: "Excursão Colégio Positivo 3º Ano",
+    responsibleName: "Prof. Marcos Andrade",
+    responsiblePhone: "(41) 99871-3320",
+    visitDate: "2026-09-28",
+    visitTime: "09:00",
+    totalPassengers: 45,
+    checkedInCount: 0,
+    voucherMode: "VOUCHER_MASTER", // 1 Voucher Master para o ônibus todo
+    masterQrCode: "DISK.B2B.MASTER.GRP101.99281a",
+    passengers: [
+      { id: "pax-1", name: "Lucas Henrique Ferreira", doc: "098.412.339-11", type: "ESTUDANTE", seat: "Poltrona 01", checkin: false },
+      { id: "pax-2", name: "Beatriz Nogueira Soares", doc: "102.584.992-04", type: "ESTUDANTE", seat: "Poltrona 02", checkin: false },
+      { id: "pax-3", name: "Gabriel Siqueira Ramos", doc: "088.129.404-55", type: "ESTUDANTE", seat: "Poltrona 03", checkin: false },
+      { id: "pax-4", name: "Prof. Marcos Andrade (Guia)", doc: "541.229.809-12", type: "GUIA_CORTESIA", seat: "Poltrona 04", checkin: false },
+      { id: "pax-5", name: "Mariana Alencar Castro", doc: "119.827.441-90", type: "ESTUDANTE", seat: "Poltrona 05", checkin: false },
+      { id: "pax-6", name: "Rodrigo Mendes Cunha", doc: "124.991.023-77", type: "ESTUDANTE", seat: "Poltrona 06", checkin: false }
+    ]
+  },
+  {
+    id: "GRP-2026-102",
+    bookingCode: "RES-B2B-1088",
+    agencyName: "Mundo Brasil Turismo",
+    groupName: "Melhor Idade Excursões São Paulo",
+    responsibleName: "Sra. Dirce Fontes",
+    responsiblePhone: "(11) 98112-9980",
+    visitDate: "2026-09-26",
+    visitTime: "10:00",
+    totalPassengers: 32,
+    checkedInCount: 0,
+    voucherMode: "INDIVIDUAL", // Ingressos nominais individuais
+    masterQrCode: "DISK.B2B.MASTER.GRP102.7711ab",
+    passengers: [
+      { id: "pax-10", name: "Dirce Fontes", doc: "299.110.450-20", type: "IDOSO", seat: "01", checkin: false },
+      { id: "pax-11", name: "Sebastião Fontes", doc: "288.401.320-11", type: "IDOSO", seat: "02", checkin: false },
+      { id: "pax-12", name: "Nair Maria Silva", doc: "331.009.841-76", type: "IDOSO", seat: "03", checkin: false }
+    ]
+  }
+];
+
+// 7. Central de Divulgação (Mídia Kit Oficial & Atribuição de Afiliado)
+export const MARKETING_COLLATERAL_KIT = {
+  photos: [
+    { id: "ph-1", title: "Entrada Principal e Pórtico Musical", size: "8.4 MB (4K)", dimensions: "3840x2160", url: "/assets/parque-banner.jpg", category: "Arquitetura" },
+    { id: "ph-2", title: "Pôr do Sol no Anfiteatro Natural", size: "6.1 MB (4K)", dimensions: "3840x2160", url: "/assets/parque-sunset.jpg", category: "Sunset" },
+    { id: "ph-3", title: "Jardins Sonoros & Paisagismo", size: "5.8 MB (4K)", dimensions: "3840x2160", url: "/assets/parque-thumb.jpg", category: "Natureza" },
+    { id: "ph-4", title: "Totem Promocional & Banner Vertical", size: "4.2 MB", dimensions: "1080x1920", url: "/assets/sidebar-bottom-promo.jpg", category: "Social" }
+  ],
+  videos: [
+    { id: "vd-1", title: "Vídeo Oficial Promocional 60s (Curitiba Encanta)", format: "MP4 4K / 60fps", duration: "01:00", url: "https://assets.diskingressos.com.br/videos/parque-lerner-promo.mp4" },
+    { id: "vd-2", title: "Reels / TikTok Vertical 30s (Experiência Musical)", format: "MP4 1080x1920", duration: "00:30", url: "https://assets.diskingressos.com.br/videos/parque-lerner-reels.mp4" }
+  ],
+  campaignCopies: [
+    {
+      id: "cp-1",
+      target: "WhatsApp para Grupos & Excursões",
+      text: "🚌 Leve seu grupo para conhecer o novo Parque Jaime Lerner na Rua da Música em Curitiba! Uma experiência que une arquitetura inovadora, natureza exuberante e apresentações musicais diárias. Valores especiais para excursões escolares e melhor idade com reserva B2B facilitada e voucher unificado para entrada rápida na catraca. Reserve suas datas antes que as cotas do mês se esgotem!"
+    },
+    {
+      id: "cp-2",
+      target: "Instagram & Redes Sociais",
+      text: "🎶 Curitiba tem um novo cartão postal que você precisa viver! O Parque Jaime Lerner na Rua da Música traz o encontro perfeito entre natureza e arte sonora. Garanta seus ingressos e viva essa experiência única! Link exclusivo na bio."
+    }
+  ]
+};
+
+// 8. Atribuição: Afiliado Divulgador vs Agência Vendedora B2B
+export const ATTRIBUTION_COMPARISON_DATA = [
+  {
+    id: "ATRIB-901",
+    date: "25/09/2026",
+    channelType: "AFILIADO_DIVULGACAO",
+    actorName: "Curitiba Cult Blog (Afiliado)",
+    clientName: "Mariana Costa",
+    action: "Divulgação com Link Rastreado / UTM",
+    transactionChannel: "Site DiskIngressos Público (B2C)",
+    ticketQty: 4,
+    orderTotal: 160.00,
+    commissionPct: 4.0,
+    commissionAmount: 6.40,
+    status: "Atribuído"
+  },
+  {
+    id: "ATRIB-902",
+    date: "25/09/2026",
+    channelType: "AGENCIA_B2B_DIRETA",
+    actorName: "Mundo Brasil Turismo",
+    clientName: "Excursão Colégio Positivo",
+    action: "Reserva de Cota B2B em Lote",
+    transactionChannel: "Portal B2B Agência / API",
+    ticketQty: 45,
+    orderTotal: 1350.00,
+    commissionPct: 12.0,
+    commissionAmount: 162.00,
+    status: "Liquidado em Conta"
+  }
+];
+
+// 9. API B2B Comercial & Webhooks (Documentação Interativa)
+export const B2B_API_ENDPOINTS = [
+  {
+    method: "GET",
+    path: "/api/b2b/catalog",
+    title: "Catálogo de Produtos & Tarifário",
+    desc: "Retorna a grade de ingressos disponíveis com tarifas públicas e tarifas negociadas da agência."
+  },
+  {
+    method: "POST",
+    path: "/api/b2b/quote",
+    title: "Cotação Comercial em Tempo Real",
+    desc: "Calcula preço líquido, taxa Disk (6%), comissão da agência e descontos progressivos por quantidade."
+  },
+  {
+    method: "POST",
+    path: "/api/b2b/holds",
+    title: "Reserva Temporária de Estoque (Hold)",
+    desc: "Segura até N lugares para uma data por um período configurável (TTL) com garantia anti-overselling."
+  },
+  {
+    method: "POST",
+    path: "/api/b2b/reservations/confirm",
+    title: "Confirmação & Emissão de Pedido",
+    desc: "Liquida a reserva (via limite faturado ou PIX instantâneo) e gera os identificadores para vouchers."
+  },
+  {
+    method: "POST",
+    path: "/api/b2b/manifest",
+    title: "Manifesto Nominal de Passageiros",
+    desc: "Envia a relação de passageiros do grupo (Nome, CPF/Documento, Categoria) via JSON ou payload."
+  },
+  {
+    method: "POST",
+    path: "/api/b2b/vouchers/issue-group",
+    title: "Emissão de Voucher Master / Lote",
+    desc: "Gera o Voucher Master unificado com assinatura HMAC-SHA256 ou bilhetes nominais com QR Codes individuais."
+  }
+];
+
+export const WEBHOOKS_LOG_DATA = [
+  {
+    id: "wh-001",
+    event: "reserva.confirmada",
+    timestamp: "25/09/2026 10:14:22",
+    agency: "Agência Turismo Brasil",
+    payload: {
+      reservationId: "RES-B2B-1089",
+      groupName: "Excursão Colégio Positivo 3º Ano",
+      totalTickets: 45,
+      totalAmount: 1431.00,
+      status: "CONFIRMED"
+    },
+    status: 200,
+    response: "OK (Acknowledged)"
+  },
+  {
+    id: "wh-002",
+    event: "ingresso.emitido",
+    timestamp: "25/09/2026 10:14:23",
+    agency: "Agência Turismo Brasil",
+    payload: {
+      voucherId: "VCH-2026-901",
+      voucherMode: "MASTER_QR",
+      qrCodeString: "DISK.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODkiLCJhaWQiOiJhZy0wNiJ9.7f89d1"
+    },
+    status: 200,
+    response: "OK"
+  },
+  {
+    id: "wh-003",
+    event: "reserva.expirada",
+    timestamp: "24/09/2026 18:00:01",
+    agency: "Curitiba Tour",
+    payload: {
+      holdId: "HOLD-779",
+      quantityReleased: 50,
+      reason: "TTL Expirado sem confirmação nominal"
+    },
+    status: 200,
+    response: "OK"
+  }
+];

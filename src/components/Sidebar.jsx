@@ -11,19 +11,26 @@ import {
   Settings,
   Sparkles,
   MapPin,
-  ChevronRight
+  ChevronRight,
+  FileText,
+  Bus,
+  Megaphone,
+  Code
 } from 'lucide-react';
 
 export const Sidebar = ({ activeTab, onTabChange, activeSubTab, onSubTabChange }) => {
   const menuItems = [
     { id: 'visao-geral', label: 'Visão Geral', icon: LayoutDashboard },
     { id: 'ingressos', label: 'Ingressos & Estoque', icon: Ticket },
-    { id: 'bilheteria', label: 'Bilheteria Local', icon: Store },
-    { id: 'b2b', label: 'Distribuição Turística', icon: Briefcase },
+    { id: 'contratos', label: 'Contratos & Crédito', icon: FileText },
+    { id: 'tarifario', label: 'Tarifário B2B', icon: DollarSign },
+    { id: 'grupos', label: 'Grupos & Excursões', icon: Bus },
     { id: 'agencias', label: 'Agências', icon: Users },
     { id: 'reservas', label: 'Reservas', icon: CalendarRange },
     { id: 'vouchers', label: 'Vouchers & Catraca', icon: QrCode },
-    { id: 'financeiro', label: 'Financeiro', icon: DollarSign },
+    { id: 'divulgacao', label: 'Central de Divulgação', icon: Megaphone },
+    { id: 'integracoes', label: 'Integrações API', icon: Code },
+    { id: 'financeiro', label: 'Financeiro & Ledger', icon: DollarSign },
     { id: 'configuracoes', label: 'Configurações', icon: Settings },
   ];
 

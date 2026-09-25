@@ -16,9 +16,15 @@ import {
   MessageCircle,
   Phone,
   Mail,
-  FileText
+  FileText,
+  Code,
+  Key,
+  Copy,
+  Check,
+  Upload,
+  Bus
 } from 'lucide-react';
-import { OPERATOR_INFO, BOOKINGS_LIST } from '../../data/mockData';
+import { OPERATOR_INFO, BOOKINGS_LIST, GROUP_RESERVATIONS_WITH_MANIFEST } from '../../data/mockData';
 
 export const AgencyPortal = ({ onOpenVoucher }) => {
   const [activeTab, setActiveTab] = useState('comprar');
@@ -127,16 +133,151 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
         )}
 
         {activeTab === 'grupos' && (
-          <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-            <h3 className="font-bold text-slate-900">Grupos e Excursões</h3>
-            <p className="text-xs text-slate-500">Acompanhe a data, o tamanho e a situação de cada grupo.</p>
-            {bookings.length === 0 ? <p className="text-sm text-slate-600">Nenhum grupo cadastrado.</p> : bookings.map(b => (
-              <div key={b.id} className="flex flex-wrap justify-between gap-3 border border-slate-200 rounded-xl p-4 text-sm">
-                <div><strong>{b.groupName}</strong><p className="text-xs text-slate-500">{b.id} · {b.visitDate} às {b.visitTime}</p></div>
-                <div className="text-xs text-slate-700">{b.ticketsCount} participantes · {b.status}</div>
+          <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="font-bold text-base text-slate-900">Grupos, Excursões & Manifesto Nominal</h3>
+                <p className="text-xs text-slate-500">Cadastre caravanas e excursões, envie listas de passageiros e emita o Voucher Master unificado para o ônibus inteiro.</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => alert("Simulador: Selecione o arquivo Excel (.xlsx) da lista de passageiros.")}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5"
+                >
+                  <Upload className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Enviar Planilha de Passageiros</span>
+                </button>
+                <button
+                  onClick={() => setActiveTab('comprar')}
+                  className="px-3.5 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"
+                >
+                  + Nova Excursão
+                </button>
+              </div>
+            </div>
+
+            {GROUP_RESERVATIONS_WITH_MANIFEST.map(grp => (
+              <div key={grp.id} className="border border-slate-200 rounded-2xl p-5 space-y-4 bg-slate-50/50">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span className="font-mono text-xs font-bold text-blue-600 bg-blue-100/60 px-2 py-0.5 rounded">
+                      {grp.bookingCode}
+                    </span>
+                    <h4 className="font-bold text-base text-slate-900 mt-1">{grp.groupName}</h4>
+                    <p className="text-xs text-slate-500">
+                      Data: <strong>{grp.visitDate} às {grp.visitTime}</strong> • Responsável: {grp.responsibleName} ({grp.responsiblePhone})
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => alert(`Emitindo Voucher Master unificado para ${grp.totalPassengers} passageiros. Assinatura HMAC-SHA256 gerada!`)}
+                      className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs"
+                    >
+                      <QrCode className="w-3.5 h-3.5" />
+                      <span>Voucher Master ({grp.totalPassengers} Pax)</span>
+                    </button>
+                    <button
+                      onClick={() => alert(`Gerando ${grp.totalPassengers} ingressos nominais individuais em PDF.`)}
+                      className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold"
+                    >
+                      Ingressos Individuais
+                    </button>
+                  </div>
+                </div>
+
+                {/* Passenger list preview */}
+                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                  <div className="px-4 py-2 bg-slate-100/70 border-b border-slate-200 text-[11px] font-bold text-slate-700 flex justify-between">
+                    <span>Manifesto Nominal ({grp.passengers.length} de {grp.totalPassengers} passageiros validados)</span>
+                    <span className="text-emerald-700">✓ Todos aptos para check-in</span>
+                  </div>
+                  <div className="divide-y divide-slate-100 text-xs">
+                    {grp.passengers.map(pax => (
+                      <div key={pax.id} className="p-3 flex items-center justify-between">
+                        <div>
+                          <span className="font-bold text-slate-800">{pax.name}</span>
+                          <span className="text-slate-400 font-mono text-[11px] ml-2">Doc: {pax.doc}</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className="text-slate-500 text-[11px]">{pax.seat}</span>
+                          <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700">
+                            {pax.type}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             ))}
-            <button onClick={() => setActiveTab('comprar')} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold">Nova reserva de grupo</button>
+          </section>
+        )}
+
+        {/* Tab: Minha API & Webhooks */}
+        {activeTab === 'api' && (
+          <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+            <div className="border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <Code className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-base text-slate-900">Integração API B2B & Webhooks (Autoatendimento)</h3>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Conecte seu sistema de vendas ou ERP (Monde, CVC Intranet, Totvs) diretamente com o Core Transacional DiskIngressos.
+              </p>
+            </div>
+
+            {/* Keys */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-amber-700 uppercase">Token Sandbox (Testes)</span>
+                  <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">Homologação</span>
+                </div>
+                <input
+                  type="text"
+                  readOnly
+                  value="dk_test_9921_turismobrasil_sandbox_token_2026"
+                  className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-700"
+                />
+                <span className="text-[10px] text-slate-400 block">Use para simulações e chamadas sem débito financeiro.</span>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-700 uppercase">Chave de Produção (Live)</span>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold">Produção</span>
+                </div>
+                <input
+                  type="text"
+                  readOnly
+                  value="dk_live_8412_turismobrasil_production_key_2026"
+                  className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-700"
+                />
+                <span className="text-[10px] text-slate-400 block">Chave ativa vinculada ao seu limite de crédito faturado.</span>
+              </div>
+            </div>
+
+            {/* Webhook Endpoint Config */}
+            <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+              <span className="text-xs font-bold text-slate-800 block">Configurar URL de Webhook do seu ERP:</span>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  defaultValue="https://erp.agenciaturismo.com.br/webhooks/diskingressos"
+                  className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-700"
+                />
+                <button
+                  onClick={() => alert("URL de Webhook salva no Core DiskIngressos! Eventos serão despachados automaticamente.")}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors"
+                >
+                  Salvar Webhook
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                Eventos recebidos: <code>reserva.confirmada</code>, <code>pedido.pago</code>, <code>ingresso.emitido</code>, <code>reserva.expirada</code>.
+              </p>
+            </div>
           </section>
         )}
 

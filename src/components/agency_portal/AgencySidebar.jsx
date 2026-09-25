@@ -10,7 +10,8 @@ import {
   MessageSquare,
   HelpCircle,
   MapPin,
-  Sparkles
+  Sparkles,
+  Code
 } from 'lucide-react';
 
 export const AgencySidebar = ({ activeTab, onTabChange }) => {
@@ -22,6 +23,7 @@ export const AgencySidebar = ({ activeTab, onTabChange }) => {
     { id: 'financeiro', label: 'Extrato Financeiro', icon: DollarSign },
     { id: 'dados', label: 'Dados da Agência', icon: Building },
     { id: 'materiais', label: 'Materiais de Divulgação', icon: Megaphone },
+    { id: 'api', label: 'Minha API & Webhooks', icon: Code },
     { id: 'contato', label: 'Fale com o Parque', icon: MessageSquare },
     { id: 'ajuda', label: 'Ajuda e Suporte', icon: HelpCircle },
   ];

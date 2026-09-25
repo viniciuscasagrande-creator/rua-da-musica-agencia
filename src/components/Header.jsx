@@ -11,8 +11,11 @@ import {
   AlertCircle,
   Menu,
   ShieldCheck,
-  UserCheck
+  UserCheck,
+  MapPin,
+  Sparkles
 } from 'lucide-react';
+import { ATTRACTIONS_LIST } from '../data/mockData';
 
 export const Header = ({ currentView, onViewChange, operatorInfo }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -43,12 +46,15 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
     }
   ];
 
+  const [activeAttraction, setActiveAttraction] = useState(ATTRACTIONS_LIST[0]);
+  const [showAttractionMenu, setShowAttractionMenu] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-slate-200 shadow-xs">
       <div className="h-16 px-4 md:px-6 flex items-center justify-between gap-4">
         
-        {/* Left: Brand Logo + Sidebar Toggle */}
-        <div className="flex items-center gap-4 min-w-[240px]">
+        {/* Left: Brand Logo + Attraction Switcher */}
+        <div className="flex items-center gap-3">
           <button className="text-slate-500 hover:text-slate-800 p-1.5 rounded-lg hover:bg-slate-100 transition-colors">
             <Menu className="w-5 h-5" />
           </button>
@@ -58,9 +64,62 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
               <span className="text-[#0252b4] font-black italic">Disk</span>
               <span className="text-[#ff5500] font-black italic ml-0.5">Ingressos</span>
             </div>
-            <span className="hidden xl:inline-block text-[10px] font-medium text-slate-400 border-l border-slate-200 pl-2">
-              B2B Turismo
-            </span>
+          </div>
+
+          {/* Multi-Attraction Selector Dropdown */}
+          <div className="relative hidden md:block border-l border-slate-200 pl-3">
+            <button
+              onClick={() => setShowAttractionMenu(!showAttractionMenu)}
+              className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors text-left"
+            >
+              <div className="w-2 h-2 rounded-full bg-emerald-500" />
+              <div>
+                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                  Atração Ativa
+                </span>
+                <span className="text-xs font-black text-slate-800 flex items-center gap-1">
+                  {activeAttraction.name}
+                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                </span>
+              </div>
+            </button>
+
+            {showAttractionMenu && (
+              <div className="absolute left-3 top-full mt-1.5 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 p-2 z-50 animate-in fade-in duration-100">
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 py-1 block">
+                  Alternar Atrativo (Arquitetura Multi-Tenant)
+                </span>
+                <div className="space-y-1">
+                  {ATTRACTIONS_LIST.map((att) => (
+                    <button
+                      key={att.id}
+                      onClick={() => {
+                        setActiveAttraction(att);
+                        setShowAttractionMenu(false);
+                      }}
+                      className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between transition-colors ${
+                        activeAttraction.id === att.id
+                          ? 'bg-blue-50 text-blue-700 font-bold'
+                          : 'hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <div>
+                        <p className="font-bold leading-tight">{att.name}</p>
+                        <span className="text-[10px] text-slate-400">{att.city} - {att.state} • {att.category}</span>
+                      </div>
+                      {activeAttraction.id === att.id && (
+                        <CheckCircle className="w-3.5 h-3.5 text-blue-600" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <div className="pt-2 mt-2 border-t border-slate-100">
+                  <span className="text-[10px] text-slate-400 px-2 block italic">
+                    Tecnologia reutilizável para parques, museus e experiências turísticas.
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

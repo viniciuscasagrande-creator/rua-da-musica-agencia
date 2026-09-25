@@ -93,6 +93,112 @@ export const InventoryTab = () => {
         </div>
       </div>
 
+      {/* Temporary Holds with TTL / Auto-Release Section */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-purple-600" />
+              <h4 className="font-bold text-sm text-slate-800">
+                Reservas Temporárias de Estoque (Holding com TTL & Liberação Automática)
+              </h4>
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Segura temporariamente vagas para agências formatarem excursões. Caso a confirmação não ocorra até o prazo, as vagas retornam automaticamente ao estoque.
+            </p>
+          </div>
+          <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-purple-50 text-purple-700 border border-purple-200">
+            Garantia Anti-Overselling
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-400 uppercase text-[10px] font-bold">
+              <tr>
+                <th className="py-3 px-5">Código & Excursão</th>
+                <th className="py-3 px-4">Agência Solicitante</th>
+                <th className="py-3 px-4">Data do Passeio</th>
+                <th className="py-3 px-4 text-center">Lugares Segurados</th>
+                <th className="py-3 px-4">Expiração (TTL)</th>
+                <th className="py-3 px-4">Status</th>
+                <th className="py-3 px-5 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 font-medium">
+              <tr className="hover:bg-slate-50/70">
+                <td className="py-3 px-5">
+                  <span className="font-bold text-slate-900 block">HOLD-781</span>
+                  <span className="text-[11px] text-slate-500">Excursão Positivo Curitiba (40 pax)</span>
+                </td>
+                <td className="py-3 px-4 font-bold text-slate-800">Mundo Brasil Turismo</td>
+                <td className="py-3 px-4 text-slate-600">28/09/2026</td>
+                <td className="py-3 px-4 text-center font-bold text-purple-700">40 vagas</td>
+                <td className="py-3 px-4 font-mono">
+                  <span className="text-amber-600 font-bold">6h 58m restantes</span>
+                  <span className="text-[10px] text-slate-400 block">Expira às 17:30</span>
+                </td>
+                <td className="py-3 px-4">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    Segurado (Holding)
+                  </span>
+                </td>
+                <td className="py-3 px-5 text-right">
+                  <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors">
+                    Confirmar
+                  </button>
+                </td>
+              </tr>
+              <tr className="hover:bg-slate-50/70">
+                <td className="py-3 px-5">
+                  <span className="font-bold text-slate-900 block">HOLD-782</span>
+                  <span className="text-[11px] text-slate-500">Grupo Terceira Idade Joinville</span>
+                </td>
+                <td className="py-3 px-4 font-bold text-slate-800">Viagens CWB Excursões</td>
+                <td className="py-3 px-4 text-slate-600">29/09/2026</td>
+                <td className="py-3 px-4 text-center font-bold text-purple-700">28 vagas</td>
+                <td className="py-3 px-4 font-mono">
+                  <span className="text-amber-600 font-bold">3h 43m restantes</span>
+                  <span className="text-[10px] text-slate-400 block">Expira às 14:15</span>
+                </td>
+                <td className="py-3 px-4">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                    Segurado (Holding)
+                  </span>
+                </td>
+                <td className="py-3 px-5 text-right">
+                  <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors">
+                    Confirmar
+                  </button>
+                </td>
+              </tr>
+              <tr className="hover:bg-slate-50/70 opacity-70">
+                <td className="py-3 px-5">
+                  <span className="font-bold text-slate-900 block">HOLD-779</span>
+                  <span className="text-[11px] text-slate-500">Convenção Regional de Corretores</span>
+                </td>
+                <td className="py-3 px-4 font-bold text-slate-800">Curitiba Tour</td>
+                <td className="py-3 px-4 text-slate-600">27/09/2026</td>
+                <td className="py-3 px-4 text-center font-bold text-slate-500">50 vagas</td>
+                <td className="py-3 px-4 font-mono text-slate-400">
+                  <span>Expirado</span>
+                  <span className="text-[10px] text-slate-400 block">24/09 às 18:00</span>
+                </td>
+                <td className="py-3 px-4">
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                    Auto-Liberado (Devolvido)
+                  </span>
+                </td>
+                <td className="py-3 px-5 text-right">
+                  <span className="text-slate-400 text-[11px]">Finalizado</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
 };
+
