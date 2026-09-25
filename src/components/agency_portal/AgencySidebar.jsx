@@ -16,7 +16,7 @@ import {
 
 export const AgencySidebar = ({ activeTab, onTabChange }) => {
   const menuItems = [
-    { id: 'comprar', label: 'Comprar Ingressos', icon: Ticket },
+    { id: 'comprar', label: 'Nova Reserva / Ingressos', icon: Ticket },
     { id: 'reservas', label: 'Minhas Reservas', icon: Calendar },
     { id: 'vouchers', label: 'Meus Vouchers', icon: QrCode },
     { id: 'grupos', label: 'Grupos e Excursões', icon: Users },

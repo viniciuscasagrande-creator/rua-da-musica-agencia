@@ -22,12 +22,15 @@ import {
   Copy,
   Check,
   Upload,
-  Bus
+  Bus,
+  Plus,
+  ArrowRight
 } from 'lucide-react';
 import { OPERATOR_INFO, BOOKINGS_LIST, GROUP_RESERVATIONS_WITH_MANIFEST } from '../../data/mockData';
 
 export const AgencyPortal = ({ onOpenVoucher }) => {
   const [activeTab, setActiveTab] = useState('comprar');
+  const [wizardKey, setWizardKey] = useState(0);
   const [bookings, setBookings] = useState(
     BOOKINGS_LIST.filter(b => b.agencyName.includes('Turismo Brasil'))
   );
@@ -39,6 +42,13 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
   const showToast = (msg) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
+  };
+
+  const handleStartNewBooking = () => {
+    setWizardKey(prev => prev + 1);
+    setActiveTab('comprar');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast("Formulário de Nova Reserva B2B carregado com sucesso.");
   };
 
   const handleDownloadMedia = (title, filename, size) => {
@@ -106,7 +116,16 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
     <div className="flex-1 flex flex-col xl:flex-row bg-[#f8fafc]">
       
       {/* Agency Left Sidebar */}
-      <AgencySidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <AgencySidebar
+        activeTab={activeTab}
+        onTabChange={(tab) => {
+          if (tab === 'comprar') {
+            handleStartNewBooking();
+          } else {
+            setActiveTab(tab);
+          }
+        }}
+      />
 
       {/* Main Agency Content Area */}
       <main className="flex-1 p-4 md:p-6 space-y-6 max-w-7xl mx-auto w-full">
@@ -169,19 +188,30 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
           Ambiente de demonstração: reservas e vouchers exibidos aqui ainda não autorizam venda ou entrada no parque.
         </p>
         {activeTab === 'comprar' && (
-          <BookingWizard onBookingCreated={handleBookingCreated} />
+          <BookingWizard key={wizardKey} onBookingCreated={handleBookingCreated} />
         )}
 
         {activeTab === 'vouchers' && (
           <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
-            <h3 className="font-bold text-slate-900">Meus Vouchers</h3>
-            <p className="text-xs text-slate-500">Consulte os vouchers associados às reservas da agência. A emissão real depende da confirmação do pedido pela API.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+              <div>
+                <h3 className="font-bold text-slate-900">Meus Vouchers B2B</h3>
+                <p className="text-xs text-slate-500">Consulte os vouchers associados às reservas da agência com QR Code e assinatura criptográfica.</p>
+              </div>
+              <button
+                onClick={handleStartNewBooking}
+                className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer self-start sm:self-auto"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Nova Reserva</span>
+              </button>
+            </div>
             {bookings.filter(b => b.qrCode && b.status !== 'Cancelado').length === 0 ? (
               <p className="text-sm text-slate-600">Nenhum voucher disponível.</p>
             ) : bookings.filter(b => b.qrCode && b.status !== 'Cancelado').map(b => (
               <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 border border-slate-200 rounded-xl p-4">
                 <div><p className="font-semibold text-sm text-slate-900">{b.groupName}</p><p className="text-xs text-slate-500">{b.id} · {b.visitDate} · {b.ticketsCount} ingressos</p></div>
-                <button onClick={() => onOpenVoucher?.(b)} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold">Visualizar voucher de demonstração</button>
+                <button onClick={() => onOpenVoucher?.(b)} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold hover:bg-blue-700 transition-colors cursor-pointer">Visualizar voucher de demonstração</button>
               </div>
             ))}
           </section>
@@ -197,16 +227,17 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setShowUploadModal(true)}
-                  className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <Upload className="w-3.5 h-3.5 text-blue-600" />
                   <span>Enviar Planilha de Passageiros</span>
                 </button>
                 <button
-                  onClick={() => setActiveTab('comprar')}
-                  className="px-3.5 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"
+                  onClick={handleStartNewBooking}
+                  className="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
                 >
-                  + Nova Excursão
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ Nova Excursão</span>
                 </button>
               </div>
             </div>
@@ -226,15 +257,30 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
 
                   <div className="flex items-center gap-2">
                     <button
-                      onClick={() => alert(`Emitindo Voucher Master unificado para ${grp.totalPassengers} passageiros. Assinatura HMAC-SHA256 gerada!`)}
-                      className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs"
+                      onClick={() => {
+                        showToast(`Voucher Master gerado para ${grp.groupName} (${grp.totalPassengers} Pax)!`);
+                        onOpenVoucher && onOpenVoucher({
+                          id: grp.bookingCode,
+                          groupName: grp.groupName,
+                          visitDate: grp.visitDate,
+                          visitTime: grp.visitTime,
+                          ticketsCount: grp.totalPassengers,
+                          totalAmount: 960.00,
+                          status: 'Confirmado',
+                          qrCode: `RM.B2B.${grp.bookingCode}.MASTER`
+                        });
+                      }}
+                      className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
                     >
                       <QrCode className="w-3.5 h-3.5" />
                       <span>Voucher Master ({grp.totalPassengers} Pax)</span>
                     </button>
                     <button
-                      onClick={() => alert(`Gerando ${grp.totalPassengers} ingressos nominais individuais em PDF.`)}
-                      className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold"
+                      onClick={() => {
+                        showToast(`Preparando impressão em lote de ${grp.totalPassengers} ingressos nominais...`);
+                        window.print();
+                      }}
+                      className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer transition-colors"
                     >
                       Ingressos Individuais
                     </button>
@@ -361,10 +407,12 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
                 <p className="text-xs text-slate-500">Histórico de reservas emitidas pela Agência Turismo Brasil</p>
               </div>
               <button
-                onClick={() => setActiveTab('comprar')}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"
+                type="button"
+                onClick={handleStartNewBooking}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
               >
-                + Nova Reserva
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Nova Reserva B2B</span>
               </button>
             </div>
 

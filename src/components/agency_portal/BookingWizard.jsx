@@ -91,6 +91,9 @@ export const BookingWizard = ({ onBookingCreated }) => {
 
   const totalFee = subtotal - totalBase;
 
+  const monthNumbers = ['08', '09', '10', '11', '12'];
+  const currentMonthNum = monthNumbers[currentMonthIndex] || '09';
+
   const handleFinishBooking = async () => {
     setSubmitting(true);
     setApiError(null);
@@ -110,7 +113,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
           agencyId: 'ag-06',
           agencyName: 'Agência Turismo Brasil',
           groupName: groupDetails.groupName,
-          visitDate: `2026-09-${String(selectedDay).padStart(2, '0')}`,
+          visitDate: `2026-${currentMonthNum}-${String(selectedDay).padStart(2, '0')}`,
           visitTime: selectedTime,
           items,
           guideName: groupDetails.guideCadastur,
@@ -127,6 +130,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
       setConfirmedBooking(result.data);
       onBookingCreated && onBookingCreated(result.data);
       setCurrentStep(5);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       console.error('Reservation API Error:', err);
       setApiError(err.message || 'Erro de comunicação com o servidor do Parque.');
@@ -136,12 +140,19 @@ export const BookingWizard = ({ onBookingCreated }) => {
   };
 
   const steps = [
-    { num: 1, label: 'Selecionar Data' },
-    { num: 2, label: 'Escolher Ingressos' },
+    { num: 1, label: 'Data & Ingressos' },
     { num: 3, label: 'Detalhes do Grupo' },
-    { num: 4, label: 'Revisar e Pagar' },
-    { num: 5, label: 'Confirmar e Receber' }
+    { num: 4, label: 'Revisão & Pagamento' },
+    { num: 5, label: 'Vouchers B2B' }
   ];
+
+  const canGoToStep = (targetNum) => {
+    if (targetNum <= 2) return true;
+    if (targetNum === 3) return totalTickets > 0;
+    if (targetNum === 4) return totalTickets > 0 && !!groupDetails.groupName;
+    if (targetNum === 5) return !!confirmedBooking;
+    return false;
+  };
 
   return (
     <div className="space-y-6">
@@ -150,15 +161,25 @@ export const BookingWizard = ({ onBookingCreated }) => {
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-3.5">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           {steps.map((st, idx) => {
-            const isActive = currentStep === st.num;
+            const isActive = (st.num === 1 && currentStep <= 2) || currentStep === st.num;
             const isCompleted = currentStep > st.num;
+            const isAllowed = canGoToStep(st.num);
 
             return (
               <div key={st.num} className="flex items-center flex-1 last:flex-none">
                 <button
-                  onClick={() => isCompleted && setCurrentStep(st.num)}
-                  disabled={!isCompleted && !isActive}
-                  className="flex items-center gap-2 text-xs font-semibold focus:outline-none group"
+                  type="button"
+                  onClick={() => {
+                    if (isAllowed) {
+                      setCurrentStep(st.num <= 2 ? 1 : st.num);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  disabled={!isAllowed}
+                  className={`flex items-center gap-2 text-xs font-semibold focus:outline-none transition-all ${
+                    isAllowed ? 'cursor-pointer hover:opacity-85' : 'cursor-not-allowed opacity-40'
+                  }`}
+                  title={isAllowed ? `Ir para ${st.label}` : 'Complete a etapa anterior para habilitar'}
                 >
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
@@ -169,7 +190,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                         : 'bg-slate-100 text-slate-400'
                     }`}
                   >
-                    {isCompleted ? <Check className="w-4 h-4" /> : st.num}
+                    {isCompleted ? <Check className="w-4 h-4" /> : (idx + 1)}
                   </div>
                   <span
                     className={`hidden sm:inline transition-colors ${
@@ -254,48 +275,39 @@ export const BookingWizard = ({ onBookingCreated }) => {
                     {/* Calendar Days */}
                     <div className="grid grid-cols-7 gap-1 text-xs">
                       {/* Empty days for offset */}
-                      <span /><span />
+                      {Array.from({ length: availableMonths[currentMonthIndex].offset }).map((_, i) => (
+                        <span key={`empty-${i}`} />
+                      ))}
                       
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17].map(d => (
-                        <div key={d} className="h-8 flex items-center justify-center text-slate-400 font-medium cursor-not-allowed">
-                          {d}
-                        </div>
-                      ))}
+                      {Array.from({ length: availableMonths[currentMonthIndex].days }, (_, i) => i + 1).map((d) => {
+                        const isPast = currentMonthIndex === 1 && d < 18;
+                        const isSelected = selectedDay === d;
 
-                      {/* Day 18 (Selected) */}
-                      <button
-                        onClick={() => setSelectedDay(18)}
-                        className="h-8 rounded-lg bg-blue-600 text-white font-black text-xs flex items-center justify-center shadow-xs ring-2 ring-blue-300"
-                      >
-                        18
-                      </button>
+                        if (isPast) {
+                          return (
+                            <div key={d} className="h-8 flex items-center justify-center text-slate-300 font-medium cursor-not-allowed">
+                              {d}
+                            </div>
+                          );
+                        }
 
-                      {/* Day 19 (Few tickets) */}
-                      <button
-                        onClick={() => setSelectedDay(19)}
-                        className={`h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-all ${
-                          selectedDay === 19
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
-                        }`}
-                      >
-                        19
-                      </button>
-
-                      {/* Days 20 to 30 (Available) */}
-                      {[20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30].map(d => (
-                        <button
-                          key={d}
-                          onClick={() => setSelectedDay(d)}
-                          className={`h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-all ${
-                            selectedDay === d
-                              ? 'bg-blue-600 text-white ring-2 ring-blue-300'
-                              : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
-                          }`}
-                        >
-                          {d}
-                        </button>
-                      ))}
+                        return (
+                          <button
+                            key={d}
+                            type="button"
+                            onClick={() => setSelectedDay(d)}
+                            className={`h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-all cursor-pointer ${
+                              isSelected
+                                ? 'bg-blue-600 text-white font-bold ring-2 ring-blue-300 border-blue-600 shadow-xs'
+                                : d === 19
+                                ? 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100'
+                                : 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100'
+                            }`}
+                          >
+                            {d}
+                          </button>
+                        );
+                      })}
                     </div>
 
                     {/* Calendar Legend */}
@@ -442,6 +454,31 @@ export const BookingWizard = ({ onBookingCreated }) => {
                 </div>
               </div>
 
+              {/* Advance Action Footer for Step 1/2 */}
+              <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs text-slate-500 block">Total selecionado:</span>
+                  <span className="text-sm font-black text-slate-900">
+                    {totalTickets} ingressos • <span className="text-blue-700">R$ {subtotal.toFixed(2)}</span>
+                  </span>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (totalTickets > 0) {
+                      setCurrentStep(3);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  disabled={totalTickets === 0}
+                  className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <span>Continuar para Detalhes do Grupo</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+
             </div>
           )}
 
@@ -532,16 +569,28 @@ export const BookingWizard = ({ onBookingCreated }) => {
 
               <div className="flex justify-between items-center pt-4 border-t border-slate-100">
                 <button
-                  onClick={() => setCurrentStep(2)}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50"
+                  type="button"
+                  onClick={() => {
+                    setCurrentStep(1);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
                 >
                   Voltar
                 </button>
                 <button
-                  onClick={() => setCurrentStep(4)}
-                  className="px-5 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"
+                  type="button"
+                  onClick={() => {
+                    if (groupDetails.groupName) {
+                      setCurrentStep(4);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
+                  disabled={!groupDetails.groupName}
+                  className="px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  Avançar para Pagamento
+                  <span>Avançar para Pagamento</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
@@ -636,16 +685,21 @@ export const BookingWizard = ({ onBookingCreated }) => {
 
               <div className="flex justify-between items-center pt-4 border-t border-slate-100">
                 <button
-                  onClick={() => setCurrentStep(3)}
+                  type="button"
+                  onClick={() => {
+                    setCurrentStep(3);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
                   disabled={submitting}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 disabled:opacity-50"
+                  className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                   Voltar
                 </button>
                 <button
+                  type="button"
                   onClick={handleFinishBooking}
-                  disabled={submitting}
-                  className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 shadow-md transition-all flex items-center gap-2 disabled:opacity-75 disabled:cursor-wait"
+                  disabled={submitting || totalTickets === 0}
+                  className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 shadow-md transition-all flex items-center gap-2 disabled:opacity-75 disabled:cursor-wait cursor-pointer"
                 >
                   {submitting ? (
                     <>
@@ -737,26 +791,40 @@ export const BookingWizard = ({ onBookingCreated }) => {
               {/* Action Buttons */}
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 <button
+                  type="button"
                   onClick={() => window.print()}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 flex items-center gap-2 shadow-xs"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 flex items-center gap-2 shadow-xs cursor-pointer transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   <span>Baixar Lote de Vouchers (PDF)</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => {
+                    setConfirmedBooking(null);
+                    setApiError(null);
                     setCurrentStep(1);
                     setQuantities({
-                      'ing-inteira': 0,
-                      'ing-meia': 0,
+                      'ing-inteira': 20,
+                      'ing-meia': 10,
                       'ing-tour': 0,
                       'ing-educativo': 0,
                       'ing-corp': 0
                     });
+                    setGroupDetails({
+                      groupName: 'Nova Excursão',
+                      leaderName: '',
+                      leaderPhone: '',
+                      busCompany: '',
+                      guideCadastur: '',
+                      notes: ''
+                    });
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50"
+                  className="px-4 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
                 >
-                  Nova Reserva para Agência
+                  <Plus className="w-4 h-4" />
+                  <span>Nova Reserva para Agência</span>
                 </button>
               </div>
             </div>
@@ -782,7 +850,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                   <CalendarIcon className="w-4 h-4 text-slate-400" />
                   <span>Data da visita</span>
                 </div>
-                <span className="font-bold text-slate-900">{selectedDay}/09/2026 (Sex)</span>
+                <span className="font-bold text-slate-900">{selectedDay}/{currentMonthNum}/2026</span>
               </div>
 
               <div className="flex justify-between items-center text-slate-600">
@@ -830,11 +898,19 @@ export const BookingWizard = ({ onBookingCreated }) => {
             {/* Advance Button */}
             {currentStep < 4 && (
               <button
-                onClick={() => setCurrentStep(prev => prev + 1)}
+                type="button"
+                onClick={() => {
+                  if (currentStep <= 2) {
+                    setCurrentStep(3);
+                  } else {
+                    setCurrentStep(prev => prev + 1);
+                  }
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 disabled={totalTickets === 0}
-                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5"
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>Continuar</span>
+                <span>{currentStep <= 2 ? 'Continuar para Detalhes' : 'Avançar para Pagamento'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             )}
