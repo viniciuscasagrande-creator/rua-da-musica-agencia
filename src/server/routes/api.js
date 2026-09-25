@@ -29,6 +29,7 @@ import {
   getInventory,
   updateInventoryQuotas
 } from '../controllers/inventoryController.js';
+import { askAiAssistant } from '../controllers/aiController.js';
 
 export const apiRouter = express.Router();
 
@@ -72,5 +73,8 @@ apiRouter.post('/b2b/financial/refund', processRefund);
 // 6. Equipe de Vendas (Promoters & Divulgadores)
 apiRouter.get('/sales-agents', listAgents);
 apiRouter.post('/sales-agents', registerAgent);
+
+// 7. Inteligência Artificial (Google Gemini)
+apiRouter.post('/ai/assistant', askAiAssistant);
 
 export default apiRouter;
