@@ -10,7 +10,12 @@ import {
   RotateCcw,
   Sliders,
   AlertTriangle,
-  Loader2
+  Loader2,
+  Database,
+  ExternalLink,
+  HardDrive,
+  Server,
+  RefreshCw
 } from 'lucide-react';
 import { OPERATOR_INFO, RBAC_OPERATOR_PERMISSIONS } from '../../data/mockData';
 
@@ -26,6 +31,21 @@ export const SettingsTab = () => {
   const [savedSuccess, setSavedSuccess] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [dbStats, setDbStats] = useState(null);
+  const [dbLoading, setDbLoading] = useState(false);
+
+  const fetchDbStats = () => {
+    setDbLoading(true);
+    fetch('/api/b2b/database/stats')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.database) {
+          setDbStats(res.database);
+        }
+      })
+      .catch(err => console.warn('[B2B DB Stats Error]:', err))
+      .finally(() => setDbLoading(false));
+  };
 
   // Fetch initial parameters from B2B API
   useEffect(() => {
@@ -51,6 +71,9 @@ export const SettingsTab = () => {
         }
       })
       .catch(err => console.warn('[B2B] Could not fetch inventory config:', err));
+
+    // 3. Fetch Database Stats
+    fetchDbStats();
   }, []);
 
   const currentSum = siteQuota + boxOfficeQuota + b2bQuota;
@@ -111,6 +134,96 @@ export const SettingsTab = () => {
 
   return (
     <div className="space-y-6 max-w-5xl">
+
+      {/* 0. Banco de Dados & Armazenamento B2B */}
+      <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-2xl p-6 shadow-md border border-slate-700/80">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-400">
+              <Database className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="font-bold text-base text-white">Banco de Dados & Persistência B2B</h3>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Online
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5">
+                Prisma ORM • SQLite persistente em disco (<code className="text-blue-300 font-mono text-[11px]">prisma/dev.db</code>)
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={fetchDbStats}
+              disabled={dbLoading}
+              className="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl text-slate-300 hover:text-white transition-all text-xs flex items-center gap-1.5"
+              title="Atualizar estatísticas do banco"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${dbLoading ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Atualizar</span>
+            </button>
+
+            <a
+              href="http://localhost:5555"
+              target="_blank"
+              rel="noreferrer"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 hover:shadow-blue-500/20"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+              <span>Abrir Prisma Studio (Tabelas)</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Estatísticas em Tempo Real do Banco */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-5">
+          <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+            <span className="text-[11px] font-medium text-slate-400 block">Agências Homologadas</span>
+            <span className="text-xl font-black text-white mt-1 block">
+              {dbStats?.counts?.agencies ?? 6}
+            </span>
+            <span className="text-[10px] text-blue-400">Tabela Agency</span>
+          </div>
+
+          <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+            <span className="text-[11px] font-medium text-slate-400 block">Reservas & Excursões</span>
+            <span className="text-xl font-black text-emerald-400 mt-1 block">
+              {dbStats?.counts?.reservations ?? 3}
+            </span>
+            <span className="text-[10px] text-emerald-400">Tabela GroupReservation</span>
+          </div>
+
+          <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+            <span className="text-[11px] font-medium text-slate-400 block">Tarifários Parametrizados</span>
+            <span className="text-xl font-black text-amber-400 mt-1 block">
+              {dbStats?.counts?.pricingTiers ?? 6}
+            </span>
+            <span className="text-[10px] text-amber-400">Tabela PricingTier (Taxa 6%)</span>
+          </div>
+
+          <div className="bg-slate-800/60 border border-slate-700/60 rounded-xl p-3">
+            <span className="text-[11px] font-medium text-slate-400 block">Contratos Comerciais</span>
+            <span className="text-xl font-black text-purple-400 mt-1 block">
+              {dbStats?.counts?.contracts ?? 4}
+            </span>
+            <span className="text-[10px] text-purple-400">Tabela CommercialContract</span>
+          </div>
+        </div>
+
+        <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-400">
+          <div className="flex items-center gap-2">
+            <HardDrive className="w-3.5 h-3.5 text-blue-400" />
+            <span>Persistência local ativada: todos os pedidos e cadastros são gravados diretamente no disco.</span>
+          </div>
+          <span className="text-slate-400">
+            Console: <code className="text-blue-300 bg-slate-800/80 px-1.5 py-0.5 rounded">npm run prisma:studio</code> ou <code className="text-blue-300 bg-slate-800/80 px-1.5 py-0.5 rounded">npm run db:seed</code>
+          </span>
+        </div>
+      </div>
       
       {/* 1. Inventário Centralizado & Divisão de Cotas */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-5">

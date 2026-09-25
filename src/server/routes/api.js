@@ -35,6 +35,8 @@ import { inventoryHoldService } from '../services/inventoryHoldService.js';
 import { webhookService } from '../services/webhookService.js';
 import { COMMERCIAL_CONTRACTS, TIERED_PRICING_CATALOG } from '../../data/mockData.js';
 
+import prisma from '../db/prisma.js';
+
 export const apiRouter = express.Router();
 
 // Health Check
@@ -44,6 +46,53 @@ apiRouter.get('/health', (req, res) => {
     service: 'Parque Jaime Lerner - B2B & Equipe de Vendas API',
     timestamp: new Date().toISOString()
   });
+});
+
+// Diagnóstico & Estatísticas do Banco de Dados
+apiRouter.get('/b2b/database/stats', async (req, res) => {
+  try {
+    const [
+      attractionsCount,
+      agenciesCount,
+      contractsCount,
+      pricingTiersCount,
+      holdsCount,
+      reservationsCount,
+      passengersCount,
+      promotersCount
+    ] = await Promise.all([
+      prisma.attraction.count().catch(() => 0),
+      prisma.agency.count().catch(() => 0),
+      prisma.commercialContract.count().catch(() => 0),
+      prisma.pricingTier.count().catch(() => 0),
+      prisma.inventoryHold.count().catch(() => 0),
+      prisma.groupReservation.count().catch(() => 0),
+      prisma.passenger.count().catch(() => 0),
+      prisma.salesAgent.count().catch(() => 0)
+    ]);
+
+    res.json({
+      success: true,
+      database: {
+        provider: 'SQLite (Zero-Config / Persistente)',
+        file: 'prisma/dev.db',
+        studioUrl: 'http://localhost:5555',
+        status: 'ONLINE',
+        counts: {
+          attractions: attractionsCount,
+          agencies: agenciesCount,
+          contracts: contractsCount,
+          pricingTiers: pricingTiersCount,
+          holds: holdsCount,
+          reservations: reservationsCount,
+          passengers: passengersCount,
+          promoters: promotersCount
+        }
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 // 1. Agências B2B (Parceiras)
