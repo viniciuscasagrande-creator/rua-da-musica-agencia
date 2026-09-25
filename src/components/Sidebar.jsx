@@ -15,23 +15,25 @@ import {
   FileText,
   Bus,
   Megaphone,
-  Code
+  Code,
+  Package,
+  ShoppingBag,
+  FileSpreadsheet
 } from 'lucide-react';
 
 export const Sidebar = ({ activeTab, onTabChange, activeSubTab, onSubTabChange }) => {
   const menuItems = [
-    { id: 'visao-geral', label: 'Visão Geral', icon: LayoutDashboard },
-    { id: 'ingressos', label: 'Ingressos & Estoque', icon: Ticket },
-    { id: 'contratos', label: 'Contratos & Crédito', icon: FileText },
-    { id: 'tarifario', label: 'Tarifário B2B', icon: DollarSign },
-    { id: 'grupos', label: 'Grupos & Excursões', icon: Bus },
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'agencias', label: 'Agências', icon: Users },
-    { id: 'reservas', label: 'Reservas', icon: CalendarRange },
-    { id: 'vouchers', label: 'Vouchers & Catraca', icon: QrCode },
-    { id: 'divulgacao', label: 'Central de Divulgação', icon: Megaphone },
-    { id: 'integracoes', label: 'Integrações API', icon: Code },
-    { id: 'financeiro', label: 'Financeiro & Ledger', icon: DollarSign },
-    { id: 'configuracoes', label: 'Configurações', icon: Settings },
+    { id: 'condicoes-comerciais', label: 'Condições Comerciais', icon: FileText },
+    { id: 'produtos-pacotes', label: 'Produtos e Pacotes', icon: Package },
+    { id: 'reservas-grupos', label: 'Reservas e Grupos', icon: Bus },
+    { id: 'vendas', label: 'Vendas', icon: ShoppingBag },
+    { id: 'acessos', label: 'Acessos', icon: QrCode },
+    { id: 'marketing', label: 'Marketing', icon: Megaphone },
+    { id: 'financeiro', label: 'Financeiro', icon: DollarSign },
+    { id: 'relatorios', label: 'Relatórios', icon: FileSpreadsheet },
+    { id: 'integracoes', label: 'Integrações', icon: Code },
   ];
 
   return (
@@ -71,12 +73,12 @@ export const Sidebar = ({ activeTab, onTabChange, activeSubTab, onSubTabChange }
       <nav className="flex-1 px-3 py-3 space-y-1">
         {menuItems.map((item) => {
           const Icon = item.icon;
-          const isSelected = activeSubTab === item.id || (item.id === 'b2b' && activeSubTab === 'visao-geral');
+          const isSelected = activeSubTab === item.id || (item.id === 'dashboard' && activeSubTab === 'visao-geral');
 
           return (
             <button
               key={item.id}
-              onClick={() => onSubTabChange(item.id === 'b2b' ? 'visao-geral' : item.id)}
+              onClick={() => onSubTabChange(item.id)}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 isSelected
                   ? 'bg-blue-600 text-white shadow-xs'

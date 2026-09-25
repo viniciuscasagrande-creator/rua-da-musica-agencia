@@ -984,3 +984,208 @@ export const WEBHOOKS_LOG_DATA = [
     response: "OK"
   }
 ];
+
+// =========================================================================
+// MÓDULO RELATÓRIOS & INTELIGÊNCIA OPERACIONAL (AGÊNCIA → VENDA → ACESSO)
+// =========================================================================
+
+export const REPORTS_EXECUTIVE_DATA = {
+  totalAgencies: 487,
+  activeWithSales: 291,
+  ticketsSold: 8421,
+  grossSalesAmount: 842100.00,
+  actualParkAccesses: 6937,
+  utilizationRate: 82.4
+};
+
+// Venda × Acesso: Cruzamento por Agência com Drill-down nos acessos individuais
+export const AGENCY_SALES_VS_ACCESS_DATA = [
+  {
+    id: "ag-01",
+    name: "Agência Turismo ABC",
+    city: "Curitiba",
+    state: "PR",
+    ordersCount: 428,
+    ticketsSold: 1284,
+    revenue: 128400.00,
+    ticketsUsed: 1037,
+    ticketsUnused: 247,
+    utilizationRate: 80.8,
+    cancelledTickets: 31,
+    commissionAmount: 10272.00,
+    accessLogs: [
+      { time: "25/09 10:42", ticketId: "ING-82741", orderId: "PED-9241", qrCode: "•••8721", product: "Entrada Parque", gate: "Catraca 01 - Principal", status: "Autorizado" },
+      { time: "25/09 10:41", ticketId: "ING-82738", orderId: "PED-9237", qrCode: "•••3491", product: "Entrada Parque", gate: "Catraca 02 - Grupos", status: "Autorizado" },
+      { time: "25/09 10:40", ticketId: "ING-82722", orderId: "PED-9218", qrCode: "•••1942", product: "Entrada Parque", gate: "Catraca 01 - Principal", status: "Autorizado" },
+      { time: "25/09 10:38", ticketId: "ING-82691", orderId: "PED-9204", qrCode: "•••9912", product: "Sunset Cultural VIP", gate: "Catraca 03 - VIP", status: "Recusado" }
+    ]
+  },
+  {
+    id: "ag-02",
+    name: "Viagens CWB Excursões",
+    city: "São Paulo",
+    state: "SP",
+    ordersCount: 312,
+    ticketsSold: 980,
+    revenue: 98000.00,
+    ticketsUsed: 842,
+    ticketsUnused: 138,
+    utilizationRate: 85.9,
+    cancelledTickets: 14,
+    commissionAmount: 9800.00,
+    accessLogs: [
+      { time: "25/09 10:35", ticketId: "ING-82650", orderId: "PED-9188", qrCode: "•••4512", product: "Excursão Escolar", gate: "Catraca 02 - Grupos", status: "Autorizado" },
+      { time: "25/09 10:34", ticketId: "ING-82649", orderId: "PED-9188", qrCode: "•••4513", product: "Excursão Escolar", gate: "Catraca 02 - Grupos", status: "Autorizado" }
+    ]
+  },
+  {
+    id: "ag-03",
+    name: "Mundo Brasil Turismo",
+    city: "São Paulo",
+    state: "SP",
+    ordersCount: 480,
+    ticketsSold: 1540,
+    revenue: 154000.00,
+    ticketsUsed: 1290,
+    ticketsUnused: 250,
+    utilizationRate: 83.7,
+    cancelledTickets: 22,
+    commissionAmount: 18480.00,
+    accessLogs: [
+      { time: "25/09 10:30", ticketId: "ING-82600", orderId: "PED-9150", qrCode: "•••6781", product: "Tour Arquitetônico", gate: "Catraca 01 - Principal", status: "Autorizado" }
+    ]
+  },
+  {
+    id: "ag-04",
+    name: "Operadora 123 Sul",
+    city: "Florianópolis",
+    state: "SC",
+    ordersCount: 195,
+    ticketsSold: 640,
+    revenue: 64000.00,
+    ticketsUsed: 510,
+    ticketsUnused: 130,
+    utilizationRate: 79.6,
+    cancelledTickets: 8,
+    commissionAmount: 6400.00,
+    accessLogs: [
+      { time: "25/09 09:55", ticketId: "ING-82510", orderId: "PED-9080", qrCode: "•••1124", product: "Entrada Parque", gate: "Catraca 01 - Principal", status: "Autorizado" }
+    ]
+  }
+];
+
+// Relatório Geográfico Nacional Consolidado
+export const GEOGRAPHIC_NATIONAL_DATA = [
+  { stateUf: "PR", stateName: "Paraná", agenciesCount: 82, activeSelling: 61, ticketsSold: 3842, revenue: 384200.00, sharePct: 45.6 },
+  { stateUf: "SP", stateName: "São Paulo", agenciesCount: 74, activeSelling: 48, ticketsSold: 2917, revenue: 291700.00, sharePct: 34.6 },
+  { stateUf: "SC", stateName: "Santa Catarina", agenciesCount: 41, activeSelling: 32, ticketsSold: 1683, revenue: 168300.00, sharePct: 20.0 },
+  { stateUf: "RS", stateName: "Rio Grande do Sul", agenciesCount: 37, activeSelling: 25, ticketsSold: 1284, revenue: 128400.00, sharePct: 15.2 },
+  { stateUf: "MG", stateName: "Minas Gerais", agenciesCount: 29, activeSelling: 17, ticketsSold: 892, revenue: 89200.00, sharePct: 10.6 }
+];
+
+// Relatório de Agências Sem Produção (Ação Comercial Imediata)
+export const AGENCIES_ZERO_SALES_DATA = [
+  { id: "ag-901", name: "Turismo ABC Campinas", city: "Campinas", state: "SP", registeredAt: "03/08/2026", lastSale: "Nunca vendeu", daysInactive: 53, contactName: "Ana Clara Silva", phone: "(19) 98711-2233" },
+  { id: "ag-902", name: "Viagens XPTO Norte", city: "Londrina", state: "PR", registeredAt: "12/07/2026", lastSale: "42 dias atrás", daysInactive: 42, contactName: "Carlos Eduardo", phone: "(43) 99122-4455" },
+  { id: "ag-903", name: "Turismo Sul Catarinense", city: "Joinville", state: "SC", registeredAt: "01/06/2026", lastSale: "67 dias atrás", daysInactive: 67, contactName: "Patrícia Souza", phone: "(47) 98844-7711" },
+  { id: "ag-904", name: "Belo Horizonte Viagens", city: "Belo Horizonte", state: "MG", registeredAt: "15/08/2026", lastSale: "Nunca vendeu", daysInactive: 41, contactName: "Rodrigo Toledo", phone: "(31) 98455-9900" }
+];
+
+// Relatório de Campanhas de Marketing
+export const MARKETING_CAMPAIGNS_DATA = [
+  {
+    id: "CAMP-FERIAS-2026",
+    title: "Férias no Parque Jaime Lerner",
+    period: "01/12/2026 → 31/01/2027",
+    status: "Ativa",
+    participatingAgencies: 127,
+    linksGenerated: 189,
+    clicksCount: 18420,
+    ordersCount: 824,
+    ticketsSold: 1471,
+    revenue: 147100.00,
+    ticketsUsed: 1038,
+    ticketsUnused: 433,
+    conversionPct: 4.47
+  },
+  {
+    id: "CAMP-PRIMAVERA-2026",
+    title: "Primavera Cultural na Rua da Música",
+    period: "01/09/2026 → 30/11/2026",
+    status: "Ativa",
+    participatingAgencies: 94,
+    linksGenerated: 142,
+    clicksCount: 12150,
+    ordersCount: 510,
+    ticketsSold: 980,
+    revenue: 98000.00,
+    ticketsUsed: 712,
+    ticketsUnused: 268,
+    conversionPct: 4.20
+  }
+];
+
+// Acessos das Catracas em Tempo Real
+export const REAL_TIME_GATE_ACCESS_LOGS = [
+  { id: "acc-101", time: "10:42", date: "25/09/2026", ticketId: "ING-82741", orderId: "PED-9241", qrCode: "•••8721", agencyName: "Agência Turismo ABC", product: "Entrada Geral Parque", gate: "Catraca 01 - Principal", status: "Autorizado", attendeeName: "Lucas H. Ferreira" },
+  { id: "acc-102", time: "10:41", date: "25/09/2026", ticketId: "ING-82738", orderId: "PED-9237", qrCode: "•••3491", agencyName: "Agência Turismo ABC", product: "Entrada Geral Parque", gate: "Catraca 02 - Grupos", status: "Autorizado", attendeeName: "Beatriz N. Soares" },
+  { id: "acc-103", time: "10:40", date: "25/09/2026", ticketId: "ING-82722", orderId: "PED-9218", qrCode: "•••1942", agencyName: "Mundo Brasil Turismo", product: "Entrada Geral Parque", gate: "Catraca 01 - Principal", status: "Autorizado", attendeeName: "Gabriel S. Ramos" },
+  { id: "acc-104", time: "10:38", date: "25/09/2026", ticketId: "ING-82691", orderId: "PED-9204", qrCode: "•••9912", agencyName: "Agência Turismo ABC", product: "Sunset Cultural VIP", gate: "Catraca 03 - VIP", status: "Recusado", reason: "Ingresso já utilizado às 09:15", attendeeName: "Desconhecido" },
+  { id: "acc-105", time: "10:35", date: "25/09/2026", ticketId: "ING-82650", orderId: "PED-9188", qrCode: "•••4512", agencyName: "Viagens CWB Excursões", product: "Excursão Escolar", gate: "Catraca 02 - Grupos", status: "Autorizado", attendeeName: "Mariana Alencar" }
+];
+
+// Produtos e Pacotes B2B Comercializáveis
+export const PRODUCTS_AND_PACKAGES_DATA = [
+  {
+    id: "PROD-01",
+    name: "Ingresso Parque Jaime Lerner - Geral",
+    category: "Ingresso Regular",
+    authorizedAgencies: "Todas as Homologadas",
+    publicPrice: 40.00,
+    b2bPrice: 30.00,
+    marginB2B: 25.0,
+    validity: "Qualquer dia (Terça a Domingo)",
+    status: "Ativo"
+  },
+  {
+    id: "PROD-02",
+    name: "Sunset Cultural VIP com Welcome Drink",
+    category: "Experiência Premium",
+    authorizedAgencies: "Agências Ouro e Diamante",
+    publicPrice: 60.00,
+    b2bPrice: 48.00,
+    marginB2B: 20.0,
+    validity: "Sextas e Sábados (17:00)",
+    status: "Ativo"
+  },
+  {
+    id: "PROD-03",
+    name: "Pacote Excursão Escolar + Tour Arquitetônico",
+    category: "Pacote de Grupo (Mín. 20 pax)",
+    authorizedAgencies: "Agências de Turismo Pedagógico",
+    publicPrice: 50.00,
+    b2bPrice: 28.00,
+    marginB2B: 44.0,
+    validity: "Dias Úteis com Agendamento Prévio",
+    status: "Ativo"
+  },
+  {
+    id: "PROD-04",
+    name: "Combo Curitiba Cultural: Parque Lerner + MON",
+    category: "Passaporte Integrado",
+    authorizedAgencies: "Operadoras Nacionais",
+    publicPrice: 75.00,
+    b2bPrice: 55.00,
+    marginB2B: 26.6,
+    validity: "Válido por 3 dias",
+    status: "Ativo"
+  }
+];
+
+// Vendas e Pedidos Originados pelas Agências
+export const ORDERS_SALES_LIST = [
+  { id: "PED-9241", date: "25/09/2026 09:12", agencyName: "Agência Turismo ABC", buyerName: "Lucas Henrique Ferreira", product: "Ingresso Geral (3x)", totalTickets: 3, totalAmount: 90.00, paymentStatus: "Pago", channel: "Portal B2B", usedTickets: 3 },
+  { id: "PED-9237", date: "25/09/2026 08:44", agencyName: "Agência Turismo ABC", buyerName: "Caravana Positivo", product: "Excursão Escolar (45x)", totalTickets: 45, totalAmount: 1431.00, paymentStatus: "Faturado 30D", channel: "API B2B", usedTickets: 45 },
+  { id: "PED-9218", date: "24/09/2026 16:30", agencyName: "Mundo Brasil Turismo", buyerName: "Melhor Idade SP", product: "Ingresso Geral + Tour (32x)", totalTickets: 32, totalAmount: 1024.00, paymentStatus: "Pago", channel: "Portal B2B", usedTickets: 28 },
+  { id: "PED-9204", date: "24/09/2026 14:15", agencyName: "Viagens CWB Excursões", buyerName: "Família Silveira", product: "Sunset Cultural (4x)", totalTickets: 4, totalAmount: 192.00, paymentStatus: "Pago", channel: "Link UTM Afiliado", usedTickets: 4 }
+];

@@ -15,6 +15,9 @@ import { ContractsTab } from './components/tabs/ContractsTab';
 import { GroupsManifestTab } from './components/tabs/GroupsManifestTab';
 import { MarketingHubTab } from './components/tabs/MarketingHubTab';
 import { IntegrationsTab } from './components/tabs/IntegrationsTab';
+import { AccessTab } from './components/tabs/AccessTab';
+import { ProductsPackagesTab } from './components/tabs/ProductsPackagesTab';
+import { SalesTab } from './components/tabs/SalesTab';
 import { AgencyTable } from './components/AgencyTable';
 import { AgencyPortal } from './components/agency_portal/AgencyPortal';
 import { PromoterModule } from './components/promoters/PromoterModule';
@@ -44,7 +47,7 @@ export function App() {
   // 'agency': Portal da Agência (Agência Turismo Brasil)
   // 'promoter': Painel do Produtor (Equipe de Vendas)
   const [currentView, setCurrentView] = useState('operator');
-  const [operatorSubTab, setOperatorSubTab] = useState('visao-geral');
+  const [operatorSubTab, setOperatorSubTab] = useState('dashboard');
 
   // Data State
   const [agencies, setAgencies] = useState(AGENCIES_LIST);
@@ -101,20 +104,17 @@ export function App() {
   };
 
   const operatorTabs = [
-    { id: 'visao-geral', label: 'Visão Geral' },
-    { id: 'ingressos', label: 'Ingressos & Estoque' },
-    { id: 'contratos', label: 'Contratos & Crédito' },
-    { id: 'tarifario', label: 'Tarifário B2B' },
-    { id: 'grupos', label: 'Grupos & Excursões' },
+    { id: 'dashboard', label: 'Dashboard' },
     { id: 'agencias', label: 'Agências' },
-    { id: 'reservas', label: 'Reservas' },
-    { id: 'vouchers', label: 'Vouchers & Catraca' },
-    { id: 'divulgacao', label: 'Central de Divulgação' },
-    { id: 'integracoes', label: 'Integrações API' },
-    { id: 'comissoes', label: 'Comissões' },
+    { id: 'condicoes-comerciais', label: 'Condições Comerciais' },
+    { id: 'produtos-pacotes', label: 'Produtos e Pacotes' },
+    { id: 'reservas-grupos', label: 'Reservas e Grupos' },
+    { id: 'vendas', label: 'Vendas' },
+    { id: 'acessos', label: 'Acessos' },
+    { id: 'marketing', label: 'Marketing' },
     { id: 'financeiro', label: 'Financeiro' },
     { id: 'relatorios', label: 'Relatórios' },
-    { id: 'configuracoes', label: 'Configurações' },
+    { id: 'integracoes', label: 'Integrações' },
   ];
 
   return (
@@ -252,7 +252,7 @@ export function App() {
             </div>
 
             {/* Tab Views */}
-            {operatorSubTab === 'visao-geral' && (
+            {(operatorSubTab === 'dashboard' || operatorSubTab === 'visao-geral') && (
               <OverviewTab
                 kpis={kpis}
                 agencies={agencies}
@@ -263,14 +263,6 @@ export function App() {
                 }}
                 onNavigateTab={setOperatorSubTab}
               />
-            )}
-
-            {operatorSubTab === 'contratos' && (
-              <ContractsTab />
-            )}
-
-            {operatorSubTab === 'grupos' && (
-              <GroupsManifestTab />
             )}
 
             {operatorSubTab === 'agencias' && (
@@ -284,43 +276,31 @@ export function App() {
               />
             )}
 
-            {operatorSubTab === 'ingressos' && (
-              <InventoryTab />
+            {(operatorSubTab === 'condicoes-comerciais' || operatorSubTab === 'contratos' || operatorSubTab === 'tarifario') && (
+              <ContractsTab />
             )}
 
-            {operatorSubTab === 'bilheteria' && (
-              <BoxOfficeTab />
+            {(operatorSubTab === 'produtos-pacotes' || operatorSubTab === 'ingressos') && (
+              <ProductsPackagesTab />
             )}
 
-            {operatorSubTab === 'tarifario' && (
-              <PricingTab />
+            {(operatorSubTab === 'reservas-grupos' || operatorSubTab === 'grupos' || operatorSubTab === 'reservas') && (
+              <GroupsManifestTab />
             )}
 
-            {operatorSubTab === 'reservas' && (
-              <BookingsTab
-                onOpenVoucher={(booking) => setSelectedBookingForVoucher(booking)}
-              />
+            {(operatorSubTab === 'vendas' || operatorSubTab === 'bilheteria') && (
+              <SalesTab />
             )}
 
-            {operatorSubTab === 'vouchers' && (
-              <VouchersTab
-                onOpenVoucher={(booking) => setSelectedBookingForVoucher(booking)}
-              />
+            {(operatorSubTab === 'acessos' || operatorSubTab === 'vouchers') && (
+              <AccessTab />
             )}
 
-            {operatorSubTab === 'divulgacao' && (
+            {(operatorSubTab === 'marketing' || operatorSubTab === 'divulgacao') && (
               <MarketingHubTab />
             )}
 
-            {operatorSubTab === 'integracoes' && (
-              <IntegrationsTab />
-            )}
-
-            {operatorSubTab === 'comissoes' && (
-              <CommissionsTab />
-            )}
-
-            {operatorSubTab === 'financeiro' && (
+            {(operatorSubTab === 'financeiro' || operatorSubTab === 'comissoes') && (
               <FinancialTab kpis={kpis} />
             )}
 
@@ -328,8 +308,8 @@ export function App() {
               <ReportsTab />
             )}
 
-            {operatorSubTab === 'configuracoes' && (
-              <SettingsTab />
+            {(operatorSubTab === 'integracoes' || operatorSubTab === 'configuracoes') && (
+              <IntegrationsTab />
             )}
 
           </main>

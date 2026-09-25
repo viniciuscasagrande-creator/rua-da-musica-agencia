@@ -19,12 +19,14 @@ export const NationalExecutiveDashboard = ({ onNavigateTab }) => {
 
   const quickLinks = [
     { id: 'agencias', label: 'Agências' },
-    { id: 'reservas', label: 'Reservas' },
-    { id: 'grupos', label: 'Grupos & Excursões' },
-    { id: 'bilheteria', label: 'Vendas' },
+    { id: 'condicoes-comerciais', label: 'Condições Comerciais' },
+    { id: 'produtos-pacotes', label: 'Produtos e Pacotes' },
+    { id: 'reservas-grupos', label: 'Reservas e Grupos' },
+    { id: 'vendas', label: 'Vendas' },
+    { id: 'acessos', label: 'Acessos Catraca' },
+    { id: 'marketing', label: 'Marketing' },
     { id: 'financeiro', label: 'Financeiro' },
-    { id: 'contratos', label: 'Contratos B2B' },
-    { id: 'divulgacao', label: 'Divulgação' },
+    { id: 'relatorios', label: 'Relatórios' },
     { id: 'integracoes', label: 'Integrações API' },
   ];
 
