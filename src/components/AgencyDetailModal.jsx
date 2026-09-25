@@ -171,7 +171,7 @@ export const AgencyDetailModal = ({ agency, isOpen, onClose, onUpdateQuota, onOp
               </div>
               <div className="flex items-center gap-2 text-blue-600 font-medium">
                 <CheckCircle className="w-3.5 h-3.5 shrink-0" />
-                <span>Taxa DiskIngressos: 6,0%</span>
+                <span>Comissão Contratual: {agency.commissionRate || 10}%</span>
               </div>
             </div>
           </div>

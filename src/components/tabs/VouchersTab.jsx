@@ -90,7 +90,7 @@ export const VouchersTab = ({ onOpenVoucher }) => {
             <h3 className="font-extrabold text-base text-white">Scanner de Catraca — Entrada do Parque Jaime Lerner</h3>
           </div>
           <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
-            Validação de QR Codes com assinatura criptográfica HMAC-SHA256 para grupos e excursões B2B. A leitura atualiza automaticamente a utilização no PDT.
+            Validação de QR Codes com assinatura criptográfica HMAC-SHA256 para grupos e excursões B2B. A leitura atualiza automaticamente a utilização nas catracas do parque.
           </p>
         </div>
 

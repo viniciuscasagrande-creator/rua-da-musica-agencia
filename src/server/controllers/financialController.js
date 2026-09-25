@@ -5,7 +5,7 @@ let ledgerEntries = [
   { id: 'LED-8920', date: '2026-09-23', type: 'Crédito Reserva', agency: 'Mundo Brasil Turismo', gross: 1155.40, fee: 65.40, net: 1090.00, status: 'Conciliado' },
   { id: 'LED-8919', date: '2026-09-22', type: 'Crédito Reserva', agency: 'Curitiba Tour', gross: 636.00, fee: 36.00, net: 600.00, status: 'Conciliado' },
   { id: 'LED-8918', date: '2026-09-21', type: 'Estorno Parcial', agency: 'Sul Turismo', gross: -127.20, fee: -7.20, net: -120.00, status: 'Revertido no Ledger' },
-  { id: 'LED-8917', date: '2026-09-20', type: 'Repasse Semanal', agency: 'DiskIngressos PDT', gross: 42500.00, fee: 0, net: 42500.00, status: 'Liquidado na Conta' },
+  { id: 'LED-8917', date: '2026-09-20', type: 'Repasse Semanal', agency: 'Conta Principal B2B', gross: 42500.00, fee: 0, net: 42500.00, status: 'Liquidado na Conta' },
 ];
 
 export const getLedgerEntries = async (req, res) => {
@@ -53,7 +53,7 @@ export const processRefund = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Reversão contábil registrada com preservação de auditoria no PDT.',
+      message: 'Reversão contábil registrada com preservação de trilha de auditoria B2B.',
       data: reversalEntry
     });
   } catch (error) {

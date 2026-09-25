@@ -18,7 +18,7 @@ export const PricingTab = () => {
           }
         }
       })
-      .catch(err => console.warn('[PDT] Could not fetch pricing catalog:', err));
+      .catch(err => console.warn('[B2B] Could not fetch pricing catalog:', err));
   }, []);
 
   const calculateFinal = (base, fee) => {
@@ -53,7 +53,7 @@ export const PricingTab = () => {
         body: JSON.stringify({ basePrice: base })
       });
     } catch (err) {
-      console.warn('[PDT] Could not sync price with API:', err);
+      console.warn('[B2B] Could not sync price with API:', err);
     }
   };
 
@@ -66,7 +66,7 @@ export const PricingTab = () => {
         body: JSON.stringify({ feePercent: newFee })
       });
     } catch (err) {
-      console.warn('[PDT] Could not sync fee with API:', err);
+      console.warn('[B2B] Could not sync fee with API:', err);
     }
   };
 
@@ -83,14 +83,14 @@ export const PricingTab = () => {
             <h3 className="font-bold text-lg">Tarifário B2B & Parametrização de Taxa</h3>
           </div>
           <p className="text-xs text-blue-100 max-w-2xl leading-relaxed">
-            Catálogo de produtos comercializáveis para agências de turismo credenciadas. A taxa administrativa DiskIngressos é parametrizada no sistema e embutida no valor final cobrado da agência parceira.
+            Catálogo de produtos comercializáveis para agências de turismo credenciadas. A taxa de serviço B2B é parametrizada no sistema e embutida no valor final cobrado da agência parceira.
           </p>
         </div>
 
         {/* Global Fee Slider */}
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl p-4 min-w-[240px]">
           <div className="flex justify-between items-center mb-1 text-xs">
-            <span className="font-semibold text-blue-100">Taxa Administrativa PDT:</span>
+            <span className="font-semibold text-blue-100">Taxa Administrativa B2B:</span>
             <span className="font-extrabold text-white text-base">{feePercent.toFixed(1)}%</span>
           </div>
           <input
@@ -132,7 +132,7 @@ export const PricingTab = () => {
                 <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px]">
                   <th className="py-3 px-5">Produto</th>
                   <th className="py-3 px-4">Preço Base (Operador)</th>
-                  <th className="py-3 px-4">Taxa Disk ({feePercent}%)</th>
+                  <th className="py-3 px-4">Taxa B2B ({feePercent}%)</th>
                   <th className="py-3 px-4 text-right">Preço Final B2B</th>
                   <th className="py-3 px-4 text-center">Status</th>
                 </tr>
@@ -214,7 +214,7 @@ export const PricingTab = () => {
                   <span className="font-semibold text-slate-800">R$ {simBasePrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center text-slate-600">
-                  <span>Taxa DiskIngressos ({feePercent}%):</span>
+                  <span>Taxa de Serviço ({feePercent}%):</span>
                   <span className="font-semibold text-orange-600">+ R$ {simCalc.feeVal.toFixed(2)}</span>
                 </div>
                 <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-blue-900 font-bold">
@@ -227,7 +227,7 @@ export const PricingTab = () => {
 
           <div className="p-3 mt-4 bg-emerald-50 rounded-xl border border-emerald-200 text-emerald-900 text-xs">
             <span className="font-bold block mb-0.5">Repasse Garantido</span>
-            O valor de R$ {simBasePrice.toFixed(2)} é repassado integralmente ao operador na conciliação semanal do PDT.
+            O valor de R$ {simBasePrice.toFixed(2)} é repassado integralmente ao operador na conciliação semanal.
           </div>
         </div>
 

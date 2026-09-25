@@ -59,10 +59,17 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
             <Menu className="w-5 h-5" />
           </button>
           
-          <div className="flex items-center gap-2 cursor-pointer select-none">
-            <div className="flex items-center font-extrabold text-2xl tracking-tight">
-              <span className="text-[#0252b4] font-black italic">Disk</span>
-              <span className="text-[#ff5500] font-black italic ml-0.5">Ingressos</span>
+          <div className="flex items-center gap-2.5 cursor-pointer select-none">
+            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-xs">
+              RM
+            </div>
+            <div>
+              <div className="flex items-center font-extrabold text-base tracking-tight text-slate-900 leading-tight">
+                Rua da Música
+              </div>
+              <span className="text-[10px] font-bold text-blue-600 tracking-wider uppercase block">
+                Portal de Agências
+              </span>
             </div>
           </div>
 
@@ -326,9 +333,9 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
               <div className="bg-blue-50 p-3.5 rounded-xl border border-blue-100 flex items-start gap-3">
                 <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-blue-900 mb-0.5">Modelo Integrado DiskIngressos PDT</h4>
+                  <h4 className="font-semibold text-blue-900 mb-0.5">Plataforma B2B Parque Jaime Lerner</h4>
                   <p className="text-blue-800">
-                    O inventário de ingressos do Parque Jaime Lerner é centralizado. As agências reservam pacotes com taxa de 6% transparente, emitindo vouchers com QR Code válidos na entrada física do parque.
+                    O inventário de ingressos do Parque Jaime Lerner é gerido de forma direta. As agências parceiras reservam pacotes comerciais, geram excursões e emitem ingressos nominais com QR Code validados nas catracas do parque.
                   </p>
                 </div>
               </div>
@@ -336,14 +343,14 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
               <div>
                 <h4 className="font-semibold text-slate-800 mb-1">Como alternar entre as visões:</h4>
                 <ul className="list-disc pl-4 space-y-1">
-                  <li><strong>Painel do Operador:</strong> Gestão de cotas, faturamento, aprovação de agências e relatórios por estado.</li>
-                  <li><strong>Portal da Agência:</strong> Wizard de reserva de 5 passos com escolha de datas, horários e emissão de vouchers para excursões.</li>
+                  <li><strong>Painel do Operador:</strong> Gestão de contratos, faturamento, homologação de agências e relatórios por estado.</li>
+                  <li><strong>Portal da Agência:</strong> Wizard de reserva com escolha de datas, horários e emissão de vouchers para excursões.</li>
                 </ul>
               </div>
 
               <div className="bg-slate-50 p-3 rounded-lg border border-slate-200">
-                <span className="font-semibold text-slate-700 block mb-0.5">Composição do Preço B2B:</span>
-                <span>Ingresso base (R$ 30,00) + Taxa DiskIngressos 6% (R$ 1,80) = <strong>R$ 31,80</strong> final para a agência.</span>
+                <span className="font-semibold text-slate-700 block mb-0.5">Composição Comercial:</span>
+                <span>Ingresso base com condições comerciais e comissões definidas por contrato de cada agência parceira.</span>
               </div>
             </div>
 

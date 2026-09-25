@@ -40,7 +40,7 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
           setBookings(res.data);
         }
       })
-      .catch(err => console.warn('[PDT] Could not fetch reservations from API:', err));
+      .catch(err => console.warn('[B2B] Could not fetch reservations from API:', err));
   }, []);
 
   const handleBookingCreated = (newBooking) => {
@@ -223,7 +223,7 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
                 <h3 className="font-bold text-base text-slate-900">Integração API B2B & Webhooks (Autoatendimento)</h3>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Conecte seu sistema de vendas ou ERP (Monde, CVC Intranet, Totvs) diretamente com o Core Transacional DiskIngressos.
+                Conecte seu sistema de vendas ou ERP (Monde, CVC Intranet, Totvs) diretamente com a API do Parque Jaime Lerner.
               </p>
             </div>
 
@@ -237,7 +237,7 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
                 <input
                   type="text"
                   readOnly
-                  value="dk_test_9921_turismobrasil_sandbox_token_2026"
+                  value="rm_test_9921_turismobrasil_sandbox_token_2026"
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-700"
                 />
                 <span className="text-[10px] text-slate-400 block">Use para simulações e chamadas sem débito financeiro.</span>
@@ -251,7 +251,7 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
                 <input
                   type="text"
                   readOnly
-                  value="dk_live_8412_turismobrasil_production_key_2026"
+                  value="rm_live_8412_turismobrasil_production_key_2026"
                   className="w-full bg-white border border-slate-200 rounded-lg p-2 text-xs font-mono text-slate-700"
                 />
                 <span className="text-[10px] text-slate-400 block">Chave ativa vinculada ao seu limite de crédito faturado.</span>
@@ -264,11 +264,11 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  defaultValue="https://erp.agenciaturismo.com.br/webhooks/diskingressos"
+                  defaultValue="https://erp.agenciaturismo.com.br/webhooks/parquejaimelerner"
                   className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs font-mono text-slate-700"
                 />
                 <button
-                  onClick={() => alert("URL de Webhook salva no Core DiskIngressos! Eventos serão despachados automaticamente.")}
+                  onClick={() => alert("URL de Webhook salva com sucesso! Eventos serão despachados automaticamente.")}
                   className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors"
                 >
                   Salvar Webhook

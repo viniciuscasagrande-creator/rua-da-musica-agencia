@@ -58,7 +58,7 @@ export const SidePriceCard = () => {
             </div>
 
             <div className="flex justify-between items-center py-1 border-b border-slate-100">
-              <span className="text-slate-600">Taxa administrativa DiskIngressos (6%)</span>
+              <span className="text-slate-600">Taxa de Serviço B2B</span>
               <span className="font-semibold text-slate-800">R$ 1,80</span>
             </div>
 

@@ -53,7 +53,7 @@ export function App() {
   const [agencies, setAgencies] = useState(AGENCIES_LIST);
   const [kpis, setKpis] = useState(KPIS_OVERVIEW);
 
-  // Fetch initial agencies from PDT API
+  // Fetch initial agencies from B2B API
   useEffect(() => {
     fetch('/api/b2b/agencies')
       .then(res => res.json())
@@ -62,7 +62,7 @@ export function App() {
           setAgencies(res.data);
         }
       })
-      .catch(err => console.warn('[PDT] Could not fetch agencies, using mock data:', err));
+      .catch(err => console.warn('[B2B-API] Could not fetch agencies, using mock data:', err));
   }, []);
 
   // Modals State
@@ -92,9 +92,9 @@ export function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quotaLimit: newQuota })
       });
-      showToast("Limite de cota atualizado e sincronizado no PDT!");
+      showToast("Limite de cota atualizado com sucesso!");
     } catch (err) {
-      console.warn('[PDT] Failed to sync quota with API:', err);
+      console.warn('[B2B-API] Failed to sync quota with API:', err);
       showToast("Limite de cota atualizado localmente!");
     }
   };
@@ -131,8 +131,8 @@ export function App() {
       <div className="bg-slate-900 text-white px-4 py-2 text-xs flex flex-wrap items-center justify-between gap-3 border-b border-slate-800">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span className="font-semibold text-slate-200">Ambiente PDT DiskIngressos:</span>
-          <span className="text-slate-400 hidden sm:inline">Arquitetura Integrada Node.js / PostgreSQL / Redis</span>
+          <span className="font-semibold text-slate-200">Portal de Agências • Parque Jaime Lerner:</span>
+          <span className="text-slate-400 hidden sm:inline">Plataforma de Distribuição Turística B2B</span>
         </div>
 
         <div className="flex items-center gap-2">

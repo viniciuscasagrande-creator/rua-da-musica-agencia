@@ -7,7 +7,7 @@ export const FinancialTab = ({ kpis }) => {
     { id: 'LED-8920', date: '23/09/2026', type: 'Crédito Reserva', agency: 'Mundo Brasil Turismo', gross: 1155.40, fee: 65.40, net: 1090.00, status: 'Conciliado' },
     { id: 'LED-8919', date: '22/09/2026', type: 'Crédito Reserva', agency: 'Curitiba Tour', gross: 636.00, fee: 36.00, net: 600.00, status: 'Conciliado' },
     { id: 'LED-8918', date: '21/09/2026', type: 'Estorno Parcial', agency: 'Sul Turismo', gross: -127.20, fee: -7.20, net: -120.00, status: 'Revertido no Ledger' },
-    { id: 'LED-8917', date: '20/09/2026', type: 'Repasse Semanal', agency: 'DiskIngressos PDT', gross: 42500.00, fee: 0, net: 42500.00, status: 'Liquidado na Conta' },
+    { id: 'LED-8917', date: '20/09/2026', type: 'Repasse Semanal', agency: 'Liquidação Financeira', gross: 42500.00, fee: 0, net: 42500.00, status: 'Liquidado na Conta' },
   ];
 
   return (
@@ -29,7 +29,7 @@ export const FinancialTab = ({ kpis }) => {
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
           <div className="flex items-center justify-between text-slate-500 text-xs mb-1">
-            <span>Taxa DiskIngressos (6%)</span>
+            <span>Taxa de Serviço B2B (6%)</span>
             <span className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded">Retenção</span>
           </div>
           <span className="text-2xl font-black text-orange-600">R$ 12.859,20</span>
@@ -45,7 +45,7 @@ export const FinancialTab = ({ kpis }) => {
           </div>
           <span className="text-2xl font-black text-emerald-700">R$ 201.460,80</span>
           <p className="text-[11px] text-emerald-600 mt-1 font-medium">
-            100% conciliado via Ledger PDT
+            100% conciliado no Ledger Financeiro
           </p>
         </div>
       </div>
@@ -54,8 +54,8 @@ export const FinancialTab = ({ kpis }) => {
       <div className="bg-blue-50 border border-blue-200 p-4 rounded-2xl flex items-start gap-3">
         <ShieldCheck className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
         <div className="text-xs text-blue-900 leading-relaxed">
-          <span className="font-bold block mb-0.5">Arquitetura de Integridade Contábil (Escopo Item 5.8 e 7)</span>
-          O canal B2B utiliza as entidades de <strong>Pedidos</strong> e <strong>Ledger</strong> nativas da DiskIngressos, sem duplicidade financeira. Em caso de cancelamentos ou estornos, os lançamentos originais são preservados com registro de reversão correspondente para garantia de auditoria legal.
+          <span className="font-bold block mb-0.5">Arquitetura de Integridade Contábil</span>
+          O canal B2B utiliza as entidades de <strong>Pedidos</strong> e <strong>Ledger</strong> financeiro unificado, sem duplicidade financeira. Em caso de cancelamentos ou estornos, os lançamentos originais são preservados com registro de reversão correspondente para garantia de auditoria legal.
         </div>
       </div>
 
@@ -63,7 +63,7 @@ export const FinancialTab = ({ kpis }) => {
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="p-5 border-b border-slate-100 flex items-center justify-between">
           <div>
-            <h4 className="font-bold text-slate-800 text-sm">Extrato de Movimentações B2B (Ledger PDT)</h4>
+            <h4 className="font-bold text-slate-800 text-sm">Extrato de Movimentações B2B (Ledger Financeiro)</h4>
             <p className="text-xs text-slate-500">Conciliação em tempo real entre operadora, parceiros e parque</p>
           </div>
           <button className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition-colors">
@@ -81,7 +81,7 @@ export const FinancialTab = ({ kpis }) => {
                 <th className="py-3 px-4">Tipo de Transação</th>
                 <th className="py-3 px-4">Origem / Agência</th>
                 <th className="py-3 px-4 text-right">Valor Bruto</th>
-                <th className="py-3 px-4 text-right">Taxa Disk (6%)</th>
+                <th className="py-3 px-4 text-right">Taxa B2B (6%)</th>
                 <th className="py-3 px-4 text-right">Líquido Operador</th>
                 <th className="py-3 px-4 text-center">Status</th>
               </tr>

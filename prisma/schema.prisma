@@ -1,4 +1,4 @@
-// Schema Incremental DiskIngressos - Plataforma de Distribuição Turística B2B 2.0
+// Schema Incremental - Parque Jaime Lerner | Plataforma de Distribuição Turística B2B 2.0
 // Baseado na arquitetura unificada Node.js + PostgreSQL + Redis/BullMQ
 
 datasource db {
@@ -71,7 +71,7 @@ model Attraction {
   state           String               @default("PR")
   address         String               @default("Rua da Música")
   generalCapacity Int                  @default(3000)
-  defaultFeeBps   Int                  @default(600) // 6.0% padrão DiskIngressos
+  defaultFeeBps   Int                  @default(600) // 6.0% padrão Taxa B2B
   active          Boolean              @default(true)
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
@@ -119,7 +119,7 @@ model CommercialContract {
   agencyId              String
   attractionId          String
   version               Int            @default(1)
-  diskFeeBps            Int            @default(600) // Taxa Disk: 600 bps = 6.0%
+  diskFeeBps            Int            @default(600) // Taxa de Serviço B2B: 600 bps = 6.0%
   agencyCommissionBps   Int            @default(1000) // Comissão repassada à agência: 10.0%
   netPriceCents         Int?           // Preço líquido acordado se aplicável
   minTicketsPerBooking  Int            @default(1)
@@ -145,7 +145,7 @@ model PricingTier {
   name            String          // Inteira, Meia, Excursão Escolar, etc.
   tierType        PricingTierType @default(AGENCY_B2B)
   basePriceCents  Int             // Preço base em centavos
-  diskFeeBps      Int             @default(600) // Taxa DiskIngressos
+  diskFeeBps      Int             @default(600) // Taxa de Serviço B2B (6%)
   minQty          Int             @default(1)
   active          Boolean         @default(true)
   createdAt       DateTime        @default(now())

@@ -5,7 +5,7 @@ import crypto from 'crypto';
  * Uses HMAC-SHA256 with secret key to prevent forgery at park turnstiles.
  */
 export class VoucherSignerService {
-  constructor(secretKey = process.env.VOUCHER_SIGNING_SECRET || 'diskingressos-parque-jaime-lerner-secret-2026') {
+  constructor(secretKey = process.env.VOUCHER_SIGNING_SECRET || 'parque-jaime-lerner-b2b-secret-2026') {
     this.secretKey = secretKey;
   }
 
@@ -29,7 +29,7 @@ export class VoucherSignerService {
       .substring(0, 16);
 
     const base64Data = Buffer.from(dataString).toString('base64url');
-    const qrCodePayload = `DISK.B2B.${base64Data}.${signature}`;
+    const qrCodePayload = `RM.B2B.${base64Data}.${signature}`;
 
     return { qrCodePayload, signature };
   }
@@ -40,8 +40,8 @@ export class VoucherSignerService {
   verifyVoucher(qrCodeString) {
     try {
       const parts = qrCodeString.split('.');
-      if (parts.length !== 4 || parts[0] !== 'DISK' || parts[1] !== 'B2B') {
-        return { valid: false, error: 'Formato de voucher DiskIngressos inválido' };
+      if (parts.length !== 4 || parts[0] !== 'RM' || parts[1] !== 'B2B') {
+        return { valid: false, error: 'Formato de voucher B2B inválido' };
       }
 
       const base64Data = parts[2];

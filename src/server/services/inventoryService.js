@@ -1,7 +1,7 @@
 /**
- * Centralized Inventory Service for DiskIngressos PDT
+ * Centralized Inventory Service for Parque Jaime Lerner B2B
  * Manages unified product capacity across channels:
- * - Online (Site DiskIngressos)
+ * - Online (Site Oficial)
  * - Bilheteria Local
  * - Canal Agências B2B
  *

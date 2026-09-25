@@ -20,7 +20,7 @@ export const IntegrationsTab = () => {
   const [activeTab, setActiveTab] = useState('endpoints');
   const [sandboxMode, setSandboxMode] = useState(true);
   const [copiedKey, setCopiedKey] = useState(false);
-  const [webhookUrl, setWebhookUrl] = useState('https://erp.agenciaturismo.com.br/webhooks/diskingressos');
+  const [webhookUrl, setWebhookUrl] = useState('https://erp.agenciaturismo.com.br/webhooks/parquejaimelerner');
   const [selectedEventToSimulate, setSelectedEventToSimulate] = useState('reserva.confirmada');
   const [webhookLogs, setWebhookLogs] = useState(WEBHOOKS_LOG_DATA);
   const [toastMsg, setToastMsg] = useState(null);
@@ -32,8 +32,8 @@ export const IntegrationsTab = () => {
 
   const handleCopyApiKey = () => {
     const key = sandboxMode
-      ? 'dk_test_9921_turismobrasil_sandbox_token_2026'
-      : 'dk_live_8412_turismobrasil_production_key_2026';
+      ? 'rm_test_9921_turismobrasil_sandbox_token_2026'
+      : 'rm_live_8412_turismobrasil_production_key_2026';
     navigator.clipboard?.writeText(key);
     setCopiedKey(true);
     notify("Chave de API copiada!");
@@ -56,7 +56,7 @@ export const IntegrationsTab = () => {
         }
       },
       status: 200,
-      response: "200 OK (Dispatched via Core DiskIngressos)"
+      response: "200 OK (Dispatched via Parque Jaime Lerner API)"
     };
 
     setWebhookLogs(prev => [newLog, ...prev]);
@@ -77,7 +77,7 @@ export const IntegrationsTab = () => {
             Integrações & Webhooks para Grandes Agências
           </h2>
           <p className="text-xs text-slate-500 mt-1 max-w-2xl">
-            Permite que operadoras e redes nacionais (CVC, Flytour, Monde, Totvs) integrem seus sistemas diretamente com a DiskIngressos para cotação, reserva com holding temporário, emissão de vouchers e notificações assíncronas.
+            Permite que operadoras e redes nacionais (CVC, Flytour, Monde, Totvs) integrem seus sistemas diretamente com a API do Parque Jaime Lerner para cotação, reserva com holding temporário, emissão de vouchers e notificações assíncronas.
           </p>
         </div>
 

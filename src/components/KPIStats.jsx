@@ -66,9 +66,9 @@ export const KPIStats = ({ kpis }) => {
     },
     {
       id: 'fee',
-      title: 'Taxas DiskIngressos',
+      title: 'Comissões B2B',
       value: kpis.diskFees.formatted,
-      subtext: kpis.diskFees.note,
+      subtext: 'Comissões e repasses',
       isFee: true,
       icon: PieChart,
       iconBg: 'bg-rose-500',
@@ -113,9 +113,9 @@ export const KPIStats = ({ kpis }) => {
 
                   {showFeeInfo && (
                     <div className="absolute bottom-6 left-0 w-52 bg-slate-900 text-white text-[11px] p-2.5 rounded-lg shadow-xl z-30 pointer-events-none">
-                      <p className="font-semibold mb-0.5">Taxa de Intermediação 6%</p>
+                      <p className="font-semibold mb-0.5">Comissões B2B</p>
                       <p className="text-slate-300 leading-tight">
-                        Calculada sobre o valor-base dos ingressos distribuídos para agências parceiras credenciadas.
+                        Valores calculados com base nas regras contratuais e comissões de cada agência parceira.
                       </p>
                     </div>
                   )}

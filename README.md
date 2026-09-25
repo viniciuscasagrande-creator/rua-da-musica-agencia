@@ -1,8 +1,8 @@
-# DiskIngressos — Plataforma B2B de Distribuição Turística 2.0
+# Parque Jaime Lerner — Plataforma B2B de Distribuição Turística 2.0
 
-## Parque Jaime Lerner (Rua da Música • Curitiba - PR) & Multi-Atrativo
+## Rua da Música • Curitiba - PR & Multi-Atrativo
 
-Plataforma de alta escala desenvolvida para transformar a venda de ingressos do PDT DiskIngressos em um ecossistema completo de **Distribuição Turística B2B**, mantendo a DiskIngressos como **Core Transacional**.
+Plataforma de alta escala desenvolvida para transformar a venda de ingressos em um ecossistema completo de **Distribuição Turística B2B**.
 
 Projetada inicialmente para o **Parque Jaime Lerner**, mas com **arquitetura multi-atrativo reutilizável** para futuros parques, museus e experiências turísticas (ex: MON, Serra Verde Express).
 
@@ -15,8 +15,8 @@ Projetada inicialmente para o **Parque Jaime Lerner**, mas com **arquitetura mul
                                   │
                                   ▼
                        ┌─────────────────────┐
-                       │    DISKINGRESSOS    │
-                       │   CORE TRANSACIONAL │
+                       │  CORE TRANSACIONAL  │
+                       │ PARQUE JAIME LERNER │
                        └──────────┬──────────┘
                                   │
                           API B2B TURISMO
@@ -43,7 +43,7 @@ Projetada inicialmente para o **Parque Jaime Lerner**, mas com **arquitetura mul
 
 ### Funcionalidades Integradas:
 
-1. **Motor Comercial por Agência:** Contratos comerciais versionados (taxa Disk padrão de 6%, comissão da agência, preço líquido, vigência, limites de crédito, prazos de faturamento 15/30 dias e bloqueio automático).
+1. **Motor Comercial por Agência:** Contratos comerciais versionados (taxa B2B padrão de 6%, comissão da agência, preço líquido, vigência, limites de crédito, prazos de faturamento 15/30 dias e bloqueio automático).
 2. **Tarifário B2B Separado:** Tarifa Pública vs Tarifa Agência B2B vs Grupo 15+ vs Excursão Escolar vs Promocional.
 3. **Reserva de Estoque Temporária (Holding com TTL):** Bloqueio temporário de vagas com contagem regressiva e liberação automática anti-overselling.
 4. **Grupos & Manifesto Nominal de Passageiros:** `Grupo → Reserva → Passageiros → Ingressos`, com importador de planilhas Excel/CSV e validação.
@@ -52,7 +52,7 @@ Projetada inicialmente para o **Parque Jaime Lerner**, mas com **arquitetura mul
 7. **Central de Divulgação (Mídia Kit):** Fotos oficiais 4K, vídeos para redes, copies prontas para WhatsApp/Instagram e gerador de links com UTM.
 8. **Atribuição Transparente:** Diferenciação entre Afiliado Divulgador (gerou lead no site B2C) e Agência B2B Direta (reserva de lote).
 9. **API B2B Comercial & Webhooks:** Catálogo, cotação, holding, emissão e webhooks em tempo real com simulador interativo.
-10. **Sandbox para Homologação:** Chaves de teste (`dk_test_...`) e de produção (`dk_live_...`).
+10. **Sandbox para Homologação:** Chaves de teste (`rm_test_...`) e de produção (`rm_live_...`).
 11. **Dashboard Executivo Nacional:** 384 agências ativas, R$ 428 mil vendas B2B, 87 reservas, R$ 512 mil receita, ranking estadual (PR, SP, SC, RS, MG...) e top agências.
 12. **Multi-Atrativo Reutilizável:** Chaveamento arquitetural pronto no topo do sistema.
 
@@ -95,7 +95,7 @@ npm run build
 │   └── assets/                        # Assets oficiais do Parque Jaime Lerner e banners
 ├── src/
 │   ├── components/
-│   │   ├── Header.jsx                 # Topbar DiskIngressos com seletor de superfícies
+│   │   ├── Header.jsx                 # Topbar com seletor de superfícies e perfil
 │   │   ├── Sidebar.jsx                # Menu do operador com perfil do Parque Jaime Lerner
 │   │   ├── BrazilMap.jsx              # Mapa SVG interativo do Brasil com distribuição por UF
 │   │   ├── KPIStats.jsx               # Cards de indicadores operacionais (Receita, Cotas, Taxas)

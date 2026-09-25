@@ -1,5 +1,5 @@
 /**
- * Motor Comercial B2B 2.0 - Core DiskIngressos
+ * Motor Comercial B2B 2.0 - Parque Jaime Lerner
  * Gerencia contratos versionados por agência, tarifas escalonadas,
  * limites de crédito faturado e regras comerciais de cancelamento.
  */
@@ -27,7 +27,7 @@ export class CommercialEngineService {
     // Subtotal base
     const totalBase = unitBasePrice * quantity;
 
-    // Taxa DiskIngressos (padrão 6% / 600 bps)
+    // Taxa de Serviço B2B (padrão 6% / 600 bps)
     const diskFeeBps = agencyContract?.diskFeeBps ?? 600;
     const diskFeeAmount = Math.round((totalBase * diskFeeBps) / 10000 * 100) / 100;
 

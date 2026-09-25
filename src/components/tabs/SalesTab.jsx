@@ -33,7 +33,7 @@ export const SalesTab = () => {
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
             <ShoppingBag className="w-4 h-4" />
-            <span>Core Transacional DiskIngressos • Vendas B2B</span>
+            <span>Canal de Distribuição B2B • Parque Jaime Lerner</span>
           </div>
           <h2 className="text-xl font-black text-slate-900 tracking-tight">
             Pedidos & Vendas Originadas pelas Agências

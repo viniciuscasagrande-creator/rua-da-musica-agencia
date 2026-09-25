@@ -18,7 +18,7 @@ app.use(express.json());
 
 // Request logger for audit
 app.use((req, res, next) => {
-  console.log(`[PDT-API] ${req.method} ${req.url} - ${new Date().toISOString()}`);
+  console.log(`[B2B-API] ${req.method} ${req.url} - ${new Date().toISOString()}`);
   next();
 });
 
@@ -27,17 +27,17 @@ app.use('/api', apiRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('[PDT-API Error]:', err.stack);
+  console.error('[B2B-API Error]:', err.stack);
   res.status(500).json({
     success: false,
-    error: 'Erro interno no servidor da DiskIngressos',
+    error: 'Erro interno no servidor do Parque Jaime Lerner',
     message: err.message
   });
 });
 
 const server = app.listen(PORT, () => {
   console.log(`=======================================================`);
-  console.log(`🚀 DiskIngressos PDT API REST rodando com sucesso!`);
+  console.log(`🚀 Parque Jaime Lerner B2B API REST rodando com sucesso!`);
   console.log(`📡 URL Base: http://localhost:${PORT}/api`);
   console.log(`🎫 Rotas B2B: http://localhost:${PORT}/api/b2b/agencies`);
   console.log(`👥 Equipe Vendas: http://localhost:${PORT}/api/sales-agents`);

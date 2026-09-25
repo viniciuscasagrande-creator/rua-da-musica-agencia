@@ -58,7 +58,7 @@ export const NewAgencyModal = ({ isOpen, onClose, onAddAgency }) => {
       onClose();
     } catch (err) {
       console.error('Agency registration error:', err);
-      setError(err.message || 'Falha na conexão com o servidor da DiskIngressos.');
+      setError(err.message || 'Falha na conexão com o servidor.');
     } finally {
       setLoading(false);
     }
@@ -246,8 +246,8 @@ export const NewAgencyModal = ({ isOpen, onClose, onAddAgency }) => {
           <div className="p-3 bg-blue-50/70 border border-blue-100 rounded-xl text-blue-900 flex items-start gap-2.5">
             <Percent className="w-4 h-4 text-blue-600 mt-0.5 shrink-0" />
             <div className="text-[11px] leading-relaxed">
-              <span className="font-semibold block">Regra Padrão DiskIngressos</span>
-              Será aplicada a taxa padrão de <strong>6,0%</strong> sobre os ingressos reservados via Portal B2B, com liberação imediata de emissão de vouchers com QR Code.
+              <span className="font-semibold block">Regra Comercial B2B</span>
+              Condições comerciais e comissão aplicadas sobre os ingressos reservados via Portal B2B, com liberação imediata de emissão de vouchers com QR Code.
             </div>
           </div>
 
@@ -269,7 +269,7 @@ export const NewAgencyModal = ({ isOpen, onClose, onAddAgency }) => {
               {loading ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Cadastrando no PDT...</span>
+                  <span>Cadastrando agência...</span>
                 </>
               ) : (
                 <span>Concluir Credenciamento</span>

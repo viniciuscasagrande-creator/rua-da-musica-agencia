@@ -27,7 +27,7 @@ export const SettingsTab = () => {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
-  // Fetch initial parameters from PDT API
+  // Fetch initial parameters from B2B API
   useEffect(() => {
     // 1. Fetch fee
     fetch('/api/b2b/pricing')
@@ -37,7 +37,7 @@ export const SettingsTab = () => {
           setFeePercent(res.currentFeePercent);
         }
       })
-      .catch(err => console.warn('[PDT] Could not fetch pricing config:', err));
+      .catch(err => console.warn('[B2B] Could not fetch pricing config:', err));
 
     // 2. Fetch inventory allocation
     fetch('/api/b2b/inventory/status')
@@ -50,7 +50,7 @@ export const SettingsTab = () => {
           setB2bQuota(res.data.channels.b2b.quota);
         }
       })
-      .catch(err => console.warn('[PDT] Could not fetch inventory config:', err));
+      .catch(err => console.warn('[B2B] Could not fetch inventory config:', err));
   }, []);
 
   const currentSum = siteQuota + boxOfficeQuota + b2bQuota;
@@ -103,7 +103,7 @@ export const SettingsTab = () => {
       setTimeout(() => setSavedSuccess(false), 4000);
     } catch (err) {
       console.error('Save settings error:', err);
-      setSaveError(err.message || 'Falha ao salvar parâmetros no servidor da DiskIngressos.');
+      setSaveError(err.message || 'Falha ao salvar parâmetros no servidor.');
     } finally {
       setSaving(false);
     }
@@ -112,7 +112,7 @@ export const SettingsTab = () => {
   return (
     <div className="space-y-6 max-w-5xl">
       
-      {/* 1. Inventário Centralizado & Divisão de Cotas (Item 5.4 da Espec) */}
+      {/* 1. Inventário Centralizado & Divisão de Cotas */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-5">
         <div className="flex items-center justify-between border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2.5">
@@ -133,7 +133,7 @@ export const SettingsTab = () => {
         {/* Visual Channel Distribution Bar */}
         <div>
           <div className="flex justify-between text-xs font-semibold mb-2">
-            <span className="text-blue-600">Site DiskIngressos ({Math.round((siteQuota / totalCapacity) * 100)}%)</span>
+            <span className="text-blue-600">Venda Online ({Math.round((siteQuota / totalCapacity) * 100)}%)</span>
             <span className="text-emerald-600">Bilheteria Física ({Math.round((boxOfficeQuota / totalCapacity) * 100)}%)</span>
             <span className="text-purple-600">Canal Agências B2B ({Math.round((b2bQuota / totalCapacity) * 100)}%)</span>
           </div>
@@ -155,7 +155,7 @@ export const SettingsTab = () => {
         {/* Channel Sliders */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 text-xs">
           <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-            <label className="font-bold text-slate-800 block mb-1">Cota Site DiskIngressos</label>
+            <label className="font-bold text-slate-800 block mb-1">Cota Venda Online</label>
             <span className="text-xl font-extrabold text-blue-600 block mb-2">{siteQuota} ingressos</span>
             <input
               type="range"
@@ -222,14 +222,14 @@ export const SettingsTab = () => {
         </div>
       </div>
 
-      {/* 2. Parametrização da Taxa DiskIngressos (Item 5.2 da Espec) */}
+      {/* 2. Parametrização da Taxa Administrativa B2B */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4 text-xs">
         <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
           <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
             <Percent className="w-4 h-4" />
           </div>
           <div>
-            <h3 className="font-bold text-base text-slate-900">Taxa Administrativa DiskIngressos (B2B)</h3>
+            <h3 className="font-bold text-base text-slate-900">Taxa Administrativa B2B</h3>
             <p className="text-xs text-slate-500">Configuração de margem e apuração contábil no Ledger</p>
           </div>
         </div>
@@ -268,7 +268,7 @@ export const SettingsTab = () => {
         </div>
       </div>
 
-      {/* 3. Controle de Permissões RBAC (Item 4 & 7 da Espec) */}
+      {/* 3. Controle de Permissões RBAC */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-4 text-xs">
         <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
           <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
@@ -276,7 +276,7 @@ export const SettingsTab = () => {
           </div>
           <div>
             <h3 className="font-bold text-base text-slate-900">Perfis de Acesso & Permissões RBAC</h3>
-            <p className="text-xs text-slate-500">Reutiliza o sistema nativo de permissões do PDT DiskIngressos</p>
+            <p className="text-xs text-slate-500">Sistema nativo de controle de acesso e permissões RBAC</p>
           </div>
         </div>
 
@@ -316,7 +316,7 @@ export const SettingsTab = () => {
 
         {savedSuccess && (
           <span className="text-xs text-emerald-600 font-bold flex items-center gap-1 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-lg">
-            <Check className="w-4 h-4" /> Parâmetros do Parque e Cotas atualizados no PDT!
+            <Check className="w-4 h-4" /> Parâmetros do Parque e Cotas atualizados com sucesso!
           </span>
         )}
 
@@ -328,7 +328,7 @@ export const SettingsTab = () => {
           {saving ? (
             <>
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Salvando no PDT...</span>
+              <span>Salvando parâmetros...</span>
             </>
           ) : (
             <>

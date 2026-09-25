@@ -80,7 +80,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
     return acc + qty * ticket.basePrice;
   }, 0);
 
-  const totalDiskFee = subtotal - totalBase;
+  const totalFee = subtotal - totalBase;
 
   const handleFinishBooking = async () => {
     setSubmitting(true);
@@ -112,7 +112,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
 
       const result = await response.json();
       if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Falha ao emitir reserva e vouchers no PDT.');
+        throw new Error(result.error || 'Falha ao emitir reserva e vouchers.');
       }
 
       setConfirmedBooking(result.data);
@@ -120,7 +120,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
       setCurrentStep(5);
     } catch (err) {
       console.error('Reservation API Error:', err);
-      setApiError(err.message || 'Erro de comunicação com o servidor da DiskIngressos.');
+      setApiError(err.message || 'Erro de comunicação com o servidor do Parque.');
     } finally {
       setSubmitting(false);
     }
@@ -349,7 +349,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                         <th className="py-3 px-4">Tipo de Ingresso</th>
                         <th className="py-3 px-4">Descrição</th>
                         <th className="py-3 px-4">Preço Base</th>
-                        <th className="py-3 px-4">Taxa Disk (6%)</th>
+                        <th className="py-3 px-4">Taxa B2B (6%)</th>
                         <th className="py-3 px-4 font-bold text-slate-700">Preço para Agência</th>
                         <th className="py-3 px-4 text-center">Quantidade</th>
                       </tr>
@@ -416,7 +416,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                 <div className="bg-blue-50/80 border border-blue-200/80 rounded-xl p-3.5 mt-4 flex items-center gap-2.5 text-blue-900 text-xs">
                   <Info className="w-4 h-4 text-blue-600 shrink-0" />
                   <span>
-                    A taxa administrativa DiskIngressos de 6% já está incluída no valor final para a agência.
+                    A taxa administrativa B2B de 6% já está incluída no valor final para a agência.
                   </span>
                 </div>
               </div>
@@ -587,7 +587,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                       <span className="font-bold text-xs text-slate-800">PIX B2B Instantâneo</span>
                       <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">Imediato</span>
                     </div>
-                    <p className="text-[11px] text-slate-500">QR Code dinâmico com baixa instantânea no PDT</p>
+                    <p className="text-[11px] text-slate-500">QR Code dinâmico com baixa instantânea na catraca</p>
                   </div>
 
                   <div
@@ -629,7 +629,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                   {submitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Processando no PDT...</span>
+                      <span>Processando reserva...</span>
                     </>
                   ) : (
                     <>
@@ -798,7 +798,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
             <div className="pt-3 pb-4">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-semibold text-slate-700">
-                  Subtotal (com taxa Disk 6%)
+                  Subtotal (com taxa B2B 6%)
                 </span>
                 <span className="text-lg font-black text-blue-700">
                   R$ {subtotal.toFixed(2)}
@@ -838,7 +838,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <span>Suporte dedicado DiskIngressos</span>
+                <span>Suporte comercial do Parque Jaime Lerner</span>
               </div>
               <div className="flex items-start gap-2">
                 <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />

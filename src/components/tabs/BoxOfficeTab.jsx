@@ -51,7 +51,7 @@ export const BoxOfficeTab = () => {
           </div>
           <span className="text-2xl font-black text-slate-900">4 / 4 Ativas</span>
           <p className="text-[11px] text-slate-400 mt-1">
-            Sincronização instantânea com PDT
+            Sincronização instantânea em tempo real
           </p>
         </div>
       </div>

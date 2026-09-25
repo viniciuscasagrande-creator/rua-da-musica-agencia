@@ -31,7 +31,7 @@ export const VoucherModal = ({ booking, isOpen, onClose, onSimulateCheckin }) =>
         {/* Header */}
         <div className="px-5 py-3.5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-blue-700 tracking-tight">Disk<span className="text-orange-600">Ingressos</span></span>
+            <span className="font-extrabold text-blue-700 tracking-tight">Rua da <span className="text-orange-600">Música</span></span>
             <span className="text-slate-300">|</span>
             <span className="text-xs font-semibold text-slate-700">Voucher B2B Oficial</span>
           </div>

@@ -75,7 +75,7 @@ export const CommissionsTab = () => {
             R$ {totalPaid.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
           </span>
           <p className="text-[11px] text-emerald-600 font-medium mt-1">
-            Conciliadas no Ledger do PDT
+            Conciliadas no Ledger Financeiro
           </p>
         </div>
 
@@ -157,7 +157,7 @@ export const CommissionsTab = () => {
       <div className="bg-slate-50 border border-slate-200 p-5 rounded-2xl">
         <h4 className="font-bold text-xs text-slate-900 mb-2 flex items-center gap-2">
           <Layers className="w-4 h-4 text-blue-600" />
-          <span>Modelos Suportados no PDT (Item 6 da Espec)</span>
+          <span>Modelos Comerciais Suportados</span>
         </h4>
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
           <div className="bg-white p-3 rounded-xl border border-slate-200">

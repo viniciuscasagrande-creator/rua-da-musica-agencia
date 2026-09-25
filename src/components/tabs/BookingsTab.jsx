@@ -26,7 +26,7 @@ export const BookingsTab = ({ onOpenVoucher }) => {
           setBookings(res.data);
         }
       })
-      .catch(err => console.warn('[PDT] Could not fetch operator reservations:', err));
+      .catch(err => console.warn('[B2B] Could not fetch operator reservations:', err));
   }, []);
 
   const filtered = bookings.filter(b => {
@@ -132,7 +132,7 @@ export const BookingsTab = ({ onOpenVoucher }) => {
                     R$ {item.totalAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                   <div className="text-[10px] text-slate-400">
-                    Taxa Disk: R$ {item.diskFeeAmount.toFixed(2)}
+                    Taxa B2B: R$ {item.diskFeeAmount.toFixed(2)}
                   </div>
                 </td>
                 <td className="py-3.5 px-4 text-center">

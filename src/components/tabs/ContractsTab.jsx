@@ -54,13 +54,13 @@ export const ContractsTab = () => {
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
             <ShieldCheck className="w-4 h-4" />
-            <span>Motor Comercial B2B 2.0 • DiskIngressos Core</span>
+            <span>Motor Comercial B2B • Parque Jaime Lerner</span>
           </div>
           <h2 className="text-xl font-black text-slate-900 tracking-tight">
             Contratos Comerciais & Limites de Crédito
           </h2>
           <p className="text-xs text-slate-500 mt-1 max-w-2xl">
-            Cada agência possui um contrato comercial versionado, definindo taxa Disk (6%), comissão da agência, prazo de pagamento (faturado 15/30 dias ou pré-pago) e limite de crédito com bloqueio automático.
+            Cada agência possui um contrato comercial versionado, definindo taxa de serviço B2B, comissão da agência, prazo de pagamento (faturado 15/30 dias ou pré-pago) e limite de crédito com bloqueio automático.
           </p>
         </div>
 
@@ -97,7 +97,7 @@ export const ContractsTab = () => {
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[10px] font-bold">
               <tr>
                 <th className="py-3 px-4">Contrato & Agência</th>
-                <th className="py-3 px-4">Taxa Disk</th>
+                <th className="py-3 px-4">Taxa B2B</th>
                 <th className="py-3 px-4">Comissão Agência</th>
                 <th className="py-3 px-4">Condição de Pagamento</th>
                 <th className="py-3 px-4">Limite de Crédito</th>
@@ -127,7 +127,7 @@ export const ContractsTab = () => {
                       </div>
                     </td>
 
-                    {/* Disk Fee */}
+                    {/* Taxa B2B */}
                     <td className="py-3.5 px-4">
                       <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                         {c.diskFeePercent.toFixed(1)}%
@@ -248,7 +248,7 @@ export const ContractsTab = () => {
             <div className="p-6 space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Taxa DiskIngressos</span>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Taxa B2B</span>
                   <span className="text-sm font-extrabold text-blue-700">{selectedContract.diskFeePercent.toFixed(1)}%</span>
                 </div>
                 <div>

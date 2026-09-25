@@ -294,7 +294,7 @@ export const GroupsManifestTab = () => {
               <div className="flex items-center justify-between pt-2 border-t border-slate-100">
                 <a
                   href="#modelo"
-                  onClick={(e) => { e.preventDefault(); notify("Baixando modelo padronizado de planilha DiskIngressos..."); }}
+                  onClick={(e) => { e.preventDefault(); notify("Baixando modelo padronizado de planilha..."); }}
                   className="text-blue-600 hover:underline flex items-center gap-1 font-semibold"
                 >
                   <Download className="w-3.5 h-3.5" />

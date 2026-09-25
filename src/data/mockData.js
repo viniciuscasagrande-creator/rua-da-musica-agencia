@@ -1,4 +1,4 @@
-// Mock data for DiskIngressos - Distribuição Turística B2B (Parque Jaime Lerner - Curitiba)
+// Mock data for Parque Jaime Lerner - Distribuição Turística B2B (Rua da Música - Curitiba)
 
 export const OPERATOR_INFO = {
   id: "PRQ-JLERNER-001",
@@ -20,11 +20,11 @@ export const OPERATOR_INFO = {
   },
   generalCapacity: 3000,
   inventoryAllocation: {
-    siteDiskIngressos: 1500, // 50%
+    vendaOnline: 1500,       // 50%
     bilheteriaLocal: 800,    // 26.7%
     agenciasB2B: 700        // 23.3%
   },
-  defaultFeePercent: 6.0 // Taxa DiskIngressos de 6%
+  defaultFeePercent: 6.0 // Taxa de Serviço B2B de 6%
 };
 
 export const KPIS_OVERVIEW = {
@@ -33,7 +33,7 @@ export const KPIS_OVERVIEW = {
   b2bBookings: { value: 1248, formatted: "1.248", change: "+28%", period: "vs. mês anterior", trend: "up" },
   distributedTickets: { value: 6842, formatted: "6.842", change: "+32%", period: "vs. mês anterior", trend: "up" },
   grossRevenue: { value: 214320.00, formatted: "R$ 214.320,00", change: "+30%", period: "vs. mês anterior", trend: "up" },
-  diskFees: { value: 12859.20, formatted: "R$ 12.859,20", note: "6% sobre os ingressos", trend: "neutral" }
+  diskFees: { value: 12859.20, formatted: "R$ 12.859,20", note: "Taxa de Serviço B2B", trend: "neutral" }
 };
 
 export const TICKET_CATALOG = [
@@ -304,7 +304,7 @@ export const BOOKINGS_LIST = [
     guideName: "Cláudio Sampaio (Cadastur: 18.092.332-PR)",
     transport: "Ônibus Marcopolo G7 - Placa BEQ-4G90",
     status: "Voucher emitido",
-    qrCode: "DISK-B2B-RES1089-9821-VALID",
+    qrCode: "RM-B2B-RES1089-9821-VALID",
     createdAt: "2026-09-24 10:15",
     paymentStatus: "Faturado (Cota B2B)",
     checkinCount: 0
@@ -327,7 +327,7 @@ export const BOOKINGS_LIST = [
     guideName: "Valéria Toledo (Cadastur: 26.114.901-SP)",
     transport: "Ônibus Irizar - Placa FOX-8821",
     status: "Confirmado",
-    qrCode: "DISK-B2B-RES1088-7712-VALID",
+    qrCode: "RM-B2B-RES1088-7712-VALID",
     createdAt: "2026-09-23 15:40",
     paymentStatus: "Pago via PIX B2B",
     checkinCount: 0
@@ -350,7 +350,7 @@ export const BOOKINGS_LIST = [
     guideName: "Carlos Eduardo Mendes",
     transport: "Micro-ônibus Volare - Placa BRA-3E12",
     status: "Concluído",
-    qrCode: "DISK-B2B-RES1087-1123-CHECKIN",
+    qrCode: "RM-B2B-RES1087-1123-CHECKIN",
     createdAt: "2026-09-22 09:12",
     paymentStatus: "Faturado (Cota B2B)",
     checkinCount: 22
@@ -373,7 +373,7 @@ export const BOOKINGS_LIST = [
     guideName: "Marina Bastos",
     transport: "2x Vans Executivas Sprinter",
     status: "Pré-reservado",
-    qrCode: "DISK-B2B-RES1086-4432-PENDING",
+    qrCode: "RM-B2B-RES1086-4432-PENDING",
     createdAt: "2026-09-24 11:55",
     paymentStatus: "Aguardando Confirmação",
     checkinCount: 0
@@ -385,9 +385,9 @@ export const OPERATIONAL_PIPELINE_STEPS = [
   { step: 2, title: "Reserva B2B", desc: "Agência reserva ingressos pelo Portal B2B com preços parametrizados" },
   { step: 3, title: "Pacote Turístico", desc: "Agência adiciona hotel, transporte e guia privativo no pacote final" },
   { step: 4, title: "Venda ao Turista", desc: "Cliente final adquire o pacote turístico comercializado pela agência" },
-  { step: 5, title: "Emissão de Vouchers", desc: "Sistema DiskIngressos gera vouchers com QR Code individual ou em lote" },
-  { step: 6, title: "Validação na Entrada", desc: "Equipe do Parque Jaime Lerner valida os vouchers na catraca via app PDT" },
-  { step: 7, title: "Conciliação & Repasse", desc: "Ledger processa taxa de 6% e credita saldo líquido ao operador" }
+  { step: 5, title: "Emissão de Vouchers", desc: "Sistema B2B gera vouchers com QR Code individual ou em lote" },
+  { step: 6, title: "Validação na Entrada", desc: "Equipe do Parque Jaime Lerner valida os vouchers na catraca" },
+  { step: 7, title: "Conciliação & Repasse", desc: "Ledger processa taxa de serviço e credita saldo líquido ao operador" }
 ];
 
 export const COMMISSION_RULES_DATA = [
@@ -500,7 +500,7 @@ export const VOUCHERS_LIST_DATA = [
     validatedCount: 0,
     visitDate: "2026-09-28",
     visitTime: "09:00",
-    qrCodeString: "DISK.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODkiLCJhaWQiOiJhZy0wNiJ9.7f89d1",
+    qrCodeString: "RM.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODkiLCJhaWQiOiJhZy0wNiJ9.7f89d1",
     status: "Aguardando Check-in",
     issuedAt: "2026-09-24 10:15"
   },
@@ -514,7 +514,7 @@ export const VOUCHERS_LIST_DATA = [
     validatedCount: 0,
     visitDate: "2026-09-26",
     visitTime: "10:00",
-    qrCodeString: "DISK.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODgiLCJhaWQiOiJhZy0wMSJ9.4a22b9",
+    qrCodeString: "RM.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODgiLCJhaWQiOiJhZy0wMSJ9.4a22b9",
     status: "Aguardando Check-in",
     issuedAt: "2026-09-23 15:40"
   },
@@ -528,7 +528,7 @@ export const VOUCHERS_LIST_DATA = [
     validatedCount: 22,
     visitDate: "2026-09-24",
     visitTime: "09:00",
-    qrCodeString: "DISK.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODciLCJhaWQiOiJhZy0wMyJ9.9c11e4",
+    qrCodeString: "RM.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODciLCJhaWQiOiJhZy0wMyJ9.9c11e4",
     status: "Check-in Concluído",
     issuedAt: "2026-09-22 09:12"
   }
@@ -537,7 +537,7 @@ export const VOUCHERS_LIST_DATA = [
 export const RBAC_OPERATOR_PERMISSIONS = [
   { id: "perm-sell", name: "Vender Ingressos B2B", desc: "Emitir pedidos e reservas para agências credenciadas", defaultActive: true },
   { id: "perm-quotas", name: "Gerenciar Cotas e Limites", desc: "Aumentar ou suspender limites mensais de agências parceiras", defaultActive: true },
-  { id: "perm-pricing", name: "Parametrizar Tarifário e Taxa 6%", desc: "Alterar preços-base e taxa administrativa DiskIngressos", defaultActive: true },
+  { id: "perm-pricing", name: "Parametrizar Tarifário e Taxa 6%", desc: "Alterar preços-base e taxa administrativa B2B", defaultActive: true },
   { id: "perm-complimentary", name: "Emitir Cortesias Operacionais", desc: "Liberar gratuidades para guias de turismo e motoristas", defaultActive: true },
   { id: "perm-gate-checkin", name: "Fiscalização e Catraca", desc: "Validar QR Codes e autorizar entradas em lote", defaultActive: true },
   { id: "perm-ledger-audit", name: "Conciliação Financeira / Ledger", desc: "Consultar repasses líquidos e autorizar reversões de estorno", defaultActive: false }
@@ -812,7 +812,7 @@ export const GROUP_RESERVATIONS_WITH_MANIFEST = [
     totalPassengers: 45,
     checkedInCount: 0,
     voucherMode: "VOUCHER_MASTER", // 1 Voucher Master para o ônibus todo
-    masterQrCode: "DISK.B2B.MASTER.GRP101.99281a",
+    masterQrCode: "RM.B2B.MASTER.GRP101.99281a",
     passengers: [
       { id: "pax-1", name: "Lucas Henrique Ferreira", doc: "098.412.339-11", type: "ESTUDANTE", seat: "Poltrona 01", checkin: false },
       { id: "pax-2", name: "Beatriz Nogueira Soares", doc: "102.584.992-04", type: "ESTUDANTE", seat: "Poltrona 02", checkin: false },
@@ -834,7 +834,7 @@ export const GROUP_RESERVATIONS_WITH_MANIFEST = [
     totalPassengers: 32,
     checkedInCount: 0,
     voucherMode: "INDIVIDUAL", // Ingressos nominais individuais
-    masterQrCode: "DISK.B2B.MASTER.GRP102.7711ab",
+    masterQrCode: "RM.B2B.MASTER.GRP102.7711ab",
     passengers: [
       { id: "pax-10", name: "Dirce Fontes", doc: "299.110.450-20", type: "IDOSO", seat: "01", checkin: false },
       { id: "pax-11", name: "Sebastião Fontes", doc: "288.401.320-11", type: "IDOSO", seat: "02", checkin: false },
@@ -852,8 +852,8 @@ export const MARKETING_COLLATERAL_KIT = {
     { id: "ph-4", title: "Totem Promocional & Banner Vertical", size: "4.2 MB", dimensions: "1080x1920", url: "/assets/sidebar-bottom-promo.jpg", category: "Social" }
   ],
   videos: [
-    { id: "vd-1", title: "Vídeo Oficial Promocional 60s (Curitiba Encanta)", format: "MP4 4K / 60fps", duration: "01:00", url: "https://assets.diskingressos.com.br/videos/parque-lerner-promo.mp4" },
-    { id: "vd-2", title: "Reels / TikTok Vertical 30s (Experiência Musical)", format: "MP4 1080x1920", duration: "00:30", url: "https://assets.diskingressos.com.br/videos/parque-lerner-reels.mp4" }
+    { id: "vd-1", title: "Vídeo Oficial Promocional 60s (Curitiba Encanta)", format: "MP4 4K / 60fps", duration: "01:00", url: "https://assets.parquejaimelerner.com.br/videos/parque-lerner-promo.mp4" },
+    { id: "vd-2", title: "Reels / TikTok Vertical 30s (Experiência Musical)", format: "MP4 1080x1920", duration: "00:30", url: "https://assets.parquejaimelerner.com.br/videos/parque-lerner-reels.mp4" }
   ],
   campaignCopies: [
     {
@@ -878,7 +878,7 @@ export const ATTRIBUTION_COMPARISON_DATA = [
     actorName: "Curitiba Cult Blog (Afiliado)",
     clientName: "Mariana Costa",
     action: "Divulgação com Link Rastreado / UTM",
-    transactionChannel: "Site DiskIngressos Público (B2C)",
+    transactionChannel: "Site Oficial do Parque (B2C)",
     ticketQty: 4,
     orderTotal: 160.00,
     commissionPct: 4.0,
@@ -913,7 +913,7 @@ export const B2B_API_ENDPOINTS = [
     method: "POST",
     path: "/api/b2b/quote",
     title: "Cotação Comercial em Tempo Real",
-    desc: "Calcula preço líquido, taxa Disk (6%), comissão da agência e descontos progressivos por quantidade."
+    desc: "Calcula preço líquido, taxa de serviço B2B, comissão da agência e descontos progressivos por quantidade."
   },
   {
     method: "POST",
@@ -965,7 +965,7 @@ export const WEBHOOKS_LOG_DATA = [
     payload: {
       voucherId: "VCH-2026-901",
       voucherMode: "MASTER_QR",
-      qrCodeString: "DISK.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODkiLCJhaWQiOiJhZy0wNiJ9.7f89d1"
+      qrCodeString: "RM.B2B.eyJyaWQiOiJSRVMtQjJCLTEwODkiLCJhaWQiOiJhZy0wNiJ9.7f89d1"
     },
     status: 200,
     response: "OK"

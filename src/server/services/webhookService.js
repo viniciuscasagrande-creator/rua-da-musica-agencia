@@ -23,7 +23,7 @@ export class WebhookService {
 
     const payloadString = JSON.stringify(payload);
 
-    // Assinatura HMAC-SHA256 para o cabeçalho X-DiskIngressos-Signature
+    // Assinatura HMAC-SHA256 para o cabeçalho X-Parque-Signature
     const signature = crypto
       .createHmac('sha256', secret || 'default-webhook-secret')
       .update(payloadString)

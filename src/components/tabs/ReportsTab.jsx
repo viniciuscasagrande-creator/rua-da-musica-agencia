@@ -129,7 +129,7 @@ export const ReportsTab = () => {
                 </span>
                 <h3 className="text-xl font-black text-white">RELATÓRIOS — REDE DE AGÊNCIAS</h3>
               </div>
-              <span className="text-xs text-slate-400">Dados consolidados do Core DiskIngressos</span>
+              <span className="text-xs text-slate-400">Dados consolidados do Parque Jaime Lerner</span>
             </div>
 
             {/* Top 6 Executive Metrics */}
@@ -496,7 +496,7 @@ export const ReportsTab = () => {
                 <tr>
                   <th className="py-3 px-4">Agência & Contrato</th>
                   <th className="py-3 px-4 text-right">Vendas Brutas</th>
-                  <th className="py-3 px-4 text-right">Taxa Disk (Contratual)</th>
+                  <th className="py-3 px-4 text-right">Taxa B2B (Contratual)</th>
                   <th className="py-3 px-4 text-right">Comissões Retidas</th>
                   <th className="py-3 px-4 text-right">Cancelamentos</th>
                   <th className="py-3 px-4 text-right font-bold text-emerald-700">Valor Conciliado Líquido</th>

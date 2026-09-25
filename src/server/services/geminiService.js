@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Service for Google Gemini AI integrations in DiskIngressos PDT
+ * Service for Google Gemini AI integrations in Parque Jaime Lerner B2B
  */
 export class GeminiService {
   constructor() {
@@ -76,13 +76,13 @@ export class GeminiService {
   }
 
   /**
-   * Specialized assistant for Parque Jaime Lerner & DiskIngressos operations
+   * Specialized assistant for Parque Jaime Lerner operations
    */
   async askB2BAssistant(userMessage, context = {}) {
-    const systemPrompt = `Você é o Assistente Virtual Inteligente da DiskIngressos para o módulo B2B do Parque Jaime Lerner (Rua da Música, Curitiba - PR).
+    const systemPrompt = `Você é o Assistente Virtual Inteligente do Parque Jaime Lerner (Rua da Música, Curitiba - PR) para a Plataforma B2B de Agências e Distribuição Turística.
 Responda de forma profissional, direta e assertiva sobre:
 - Distribuição turística B2B, cotas de inventário e regras de agências parceiras.
-- Estrutura de precificação (taxa de serviço padrão de 6% DiskIngressos).
+- Estrutura de precificação (taxa de serviço B2B padrão de 6%).
 - Emissão, lote e validação de vouchers com QR Code para catracas.
 - Módulo de Equipe de Vendas, promotores, links rastreáveis e comissões.
 Contexto adicional do sistema: ${JSON.stringify(context)}`;

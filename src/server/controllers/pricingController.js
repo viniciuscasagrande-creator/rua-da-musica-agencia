@@ -68,7 +68,7 @@ export const updateGlobalFee = async (req, res) => {
 
     res.json({
       success: true,
-      message: `Taxa DiskIngressos parametrizada para ${currentFeePercent}%.`,
+      message: `Taxa de Serviço B2B parametrizada para ${currentFeePercent}%.`,
       currentFeePercent
     });
   } catch (error) {

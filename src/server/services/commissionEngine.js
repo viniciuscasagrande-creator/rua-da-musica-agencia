@@ -1,5 +1,5 @@
 /**
- * Commission Engine for DiskIngressos PDT
+ * Commission Engine for Parque Jaime Lerner B2B
  * Computes commissions for promoters, sales agents, and partner agencies.
  * 
  * Rules:

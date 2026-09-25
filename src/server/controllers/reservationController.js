@@ -75,7 +75,7 @@ export const createReservation = async (req, res) => {
         visitDate,
         ticketTypeId: 'GROUP-BATCH',
         quantity: totalTickets,
-        agencyEventFeeBps: 600 // Fixed 6% DiskIngressos fee
+        agencyEventFeeBps: 600 // Taxa de Serviço B2B padrão (6%)
       });
     } catch (invErr) {
       return res.status(409).json({
@@ -162,7 +162,7 @@ export const createReservation = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Reserva e pedido B2B gerados com sucesso pelo Core da DiskIngressos!',
+      message: 'Reserva e pedido B2B gerados com sucesso pelo Sistema Parque Jaime Lerner!',
       data: newReservation
     });
   } catch (error) {

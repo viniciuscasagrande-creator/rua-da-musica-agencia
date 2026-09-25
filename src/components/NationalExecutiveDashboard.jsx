@@ -51,8 +51,8 @@ export const NationalExecutiveDashboard = ({ onNavigateTab }) => {
         </div>
 
         <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
-          <span className="text-slate-500">Core Transacional:</span>
-          <span className="font-bold text-orange-600">DiskIngressos PDT</span>
+          <span className="text-slate-500">Sistema:</span>
+          <span className="font-bold text-blue-600">Parque Jaime Lerner B2B</span>
         </div>
       </div>
 

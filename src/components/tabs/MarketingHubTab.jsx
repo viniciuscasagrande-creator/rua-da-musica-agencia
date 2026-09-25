@@ -40,7 +40,7 @@ export const MarketingHubTab = () => {
     setTimeout(() => setCopiedId(null), 2500);
   };
 
-  const generatedAffiliateUrl = `https://diskingressos.com.br/atracao/parque-jaime-lerner?utm_source=${customUtmAgency}&utm_medium=afiliado_turismo&utm_campaign=${customUtmCampaign}`;
+  const generatedAffiliateUrl = `https://parquejaimelerner.com.br/ingressos?utm_source=${customUtmAgency}&utm_medium=afiliado_turismo&utm_campaign=${customUtmCampaign}`;
 
   return (
     <div className="space-y-6">
@@ -278,10 +278,10 @@ export const MarketingHubTab = () => {
           <div className="bg-slate-50 border border-slate-200 p-4 rounded-2xl text-xs text-slate-600 space-y-1">
             <h4 className="font-bold text-slate-900 flex items-center gap-2">
               <Compass className="w-4 h-4 text-blue-600" />
-              <span>Regra de Atribuição Dupla do Core DiskIngressos</span>
+              <span>Regra de Atribuição Dupla de Canais</span>
             </h4>
             <p>
-              • <strong>Afiliado Divulgador:</strong> A agência ou influencer atrai o visitante pela web. A compra é concluída pelo cliente final no site da DiskIngressos. O sistema registra a UTM e comissiona a divulgação.<br />
+              • <strong>Afiliado Divulgador:</strong> A agência ou influencer atrai o visitante pela web. A compra é concluída pelo cliente final na página oficial do parque. O sistema registra a UTM e comissiona a divulgação.<br />
               • <strong>Agência Compradora B2B:</strong> A agência compra em atacado com cota reservada, emite vouchers próprios e revende no pacote turístico.
             </p>
           </div>

@@ -41,7 +41,7 @@ export const apiRouter = express.Router();
 apiRouter.get('/health', (req, res) => {
   res.json({
     status: 'ONLINE',
-    service: 'DiskIngressos PDT - B2B & Equipe de Vendas API',
+    service: 'Parque Jaime Lerner - B2B & Equipe de Vendas API',
     timestamp: new Date().toISOString()
   });
 });
@@ -70,7 +70,7 @@ apiRouter.put('/b2b/pricing/:id', updateTicketPrice);
 apiRouter.get('/b2b/inventory/status', getInventory);
 apiRouter.put('/b2b/inventory/allocation', updateInventoryQuotas);
 
-// 5. Financeiro & Ledger PDT
+// 5. Financeiro & Ledger B2B
 apiRouter.get('/b2b/financial/ledger', getLedgerEntries);
 apiRouter.post('/b2b/financial/refund', processRefund);
 
@@ -131,7 +131,7 @@ apiRouter.post('/b2b/webhooks/dispatch', async (req, res) => {
   const { agencyId, webhookUrl, event, data } = req.body;
   const delivery = await webhookService.dispatchEvent({
     agencyId: agencyId || 'ag-01',
-    webhookUrl: webhookUrl || 'https://erp.agenciaturismo.com.br/webhooks/diskingressos',
+    webhookUrl: webhookUrl || 'https://erp.agenciaturismo.com.br/webhooks/parquejaimelerner',
     event: event || 'reserva.confirmada',
     data: data || { test: true }
   });
