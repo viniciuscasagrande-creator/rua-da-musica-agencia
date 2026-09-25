@@ -1,8 +1,9 @@
+import prisma from '../db/prisma.js';
+
 /**
  * Serviço de Reserva Temporária de Estoque (Holding com TTL)
  * Garante bloqueio temporário de vagas para excursões com liberação automática (anti-overselling).
  */
-
 export class InventoryHoldService {
   constructor() {
     this.holds = new Map();
@@ -11,7 +12,7 @@ export class InventoryHoldService {
   /**
    * Cria um holding temporário com expiração (TTL)
    */
-  createHold({ agencyId, attractionId, visitDate, quantity, ttlMinutes = 480 }) {
+  async createHold({ agencyId = 'ag-01', attractionId = 'PRQ-JLERNER-001', visitDate, quantity, ttlMinutes = 480 }) {
     const holdId = `HOLD-${Math.floor(100 + Math.random() * 900)}`;
     const now = new Date();
     const expiresAt = new Date(now.getTime() + ttlMinutes * 60 * 1000);
@@ -20,8 +21,8 @@ export class InventoryHoldService {
       id: holdId,
       agencyId,
       attractionId,
-      visitDate,
-      quantity,
+      visitDate: visitDate || now.toISOString().split('T')[0],
+      quantity: Number(quantity) || 10,
       status: 'HELD',
       createdAt: now.toISOString(),
       expiresAt: expiresAt.toISOString(),
@@ -29,13 +30,33 @@ export class InventoryHoldService {
     };
 
     this.holds.set(holdId, hold);
+
+    if (process.env.DATABASE_URL) {
+      try {
+        await prisma.inventoryHold.create({
+          data: {
+            id: holdId,
+            attractionId,
+            agencyId,
+            visitDate: new Date(hold.visitDate),
+            quantity: hold.quantity,
+            status: 'HELD',
+            expiresAt,
+            idempotencyKey: `HOLD-AUTO-${holdId}-${Date.now()}`
+          }
+        });
+      } catch (err) {
+        console.warn('[Prisma Inventory Hold Sync]:', err.message);
+      }
+    }
+
     return hold;
   }
 
   /**
    * Confirma a reserva do holding antes da expiração
    */
-  confirmHold(holdId) {
+  async confirmHold(holdId) {
     const hold = this.holds.get(holdId);
     if (!hold) {
       throw new Error(`Holding ${holdId} não encontrado.`);
@@ -48,6 +69,18 @@ export class InventoryHoldService {
 
     hold.status = 'CONFIRMED';
     hold.confirmedAt = new Date().toISOString();
+
+    if (process.env.DATABASE_URL) {
+      try {
+        await prisma.inventoryHold.update({
+          where: { id: holdId },
+          data: { status: 'CONFIRMED' }
+        });
+      } catch (err) {
+        console.warn('[Prisma Confirm Hold Sync]:', err.message);
+      }
+    }
+
     return hold;
   }
 

@@ -7,6 +7,8 @@
     "dev": "vite",
     "server": "node src/server/index.js",
     "build": "vite build",
+    "db:seed": "node prisma/seed.js",
+    "prisma:studio": "npx prisma studio",
     "lint": "oxlint",
     "preview": "vite preview"
   },

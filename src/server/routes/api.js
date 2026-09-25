@@ -104,9 +104,9 @@ apiRouter.post('/b2b/quote', (req, res) => {
 });
 
 // 8. Reservas Temporárias de Estoque (Holds com TTL)
-apiRouter.post('/b2b/holds', (req, res) => {
+apiRouter.post('/b2b/holds', async (req, res) => {
   const { agencyId, attractionId, visitDate, quantity, ttlMinutes } = req.body;
-  const hold = inventoryHoldService.createHold({
+  const hold = await inventoryHoldService.createHold({
     agencyId: agencyId || 'ag-01',
     attractionId: attractionId || 'PRQ-JLERNER-001',
     visitDate: visitDate || '2026-09-30',
@@ -117,9 +117,9 @@ apiRouter.post('/b2b/holds', (req, res) => {
   res.json({ success: true, data: hold });
 });
 
-apiRouter.post('/b2b/holds/:id/confirm', (req, res) => {
+apiRouter.post('/b2b/holds/:id/confirm', async (req, res) => {
   try {
-    const confirmed = inventoryHoldService.confirmHold(req.params.id);
+    const confirmed = await inventoryHoldService.confirmHold(req.params.id);
     res.json({ success: true, data: confirmed });
   } catch (err) {
     res.status(400).json({ success: false, error: err.message });
