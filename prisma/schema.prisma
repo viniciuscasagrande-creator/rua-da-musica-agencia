@@ -1,0 +1,174 @@
+// Schema incremental DiskIngressos - Equipe de Vendas & Distribuição B2B
+// Baseado na arquitetura unificada Node.js/TypeScript + PostgreSQL + Redis/BullMQ
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum SalesAgentStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum AgencyStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+}
+
+enum ReservationStatus {
+  HELD
+  CONFIRMED
+  EXPIRED
+  CANCELLED
+}
+
+enum CommissionEntryKind {
+  ACCRUAL
+  REVERSAL
+  SETTLEMENT
+}
+
+enum CommissionRecipientKind {
+  SALES_AGENT
+  AGENCY
+}
+
+model SalesAgent {
+  id         String           @id @default(cuid())
+  producerId String
+  userId     String?          // Vincular ao usuário existente, quando houver acesso ao portal
+  name       String
+  email      String?
+  phone      String?
+  status     SalesAgentStatus @default(ACTIVE)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  links      SalesLink[]
+  rules      CommissionRule[]
+
+  @@index([producerId, status])
+  @@unique([producerId, userId])
+}
+
+model Agency {
+  id          String       @id @default(cuid())
+  producerId  String
+  legalName   String
+  document    String       // CNPJ normalizado; aplicar validação e proteção no serviço
+  contactName String?
+  email       String?
+  status      AgencyStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  events      AgencyEvent[]
+  links       SalesLink[]
+  reservations GroupReservation[]
+  rules       CommissionRule[]
+
+  @@unique([producerId, document])
+  @@index([producerId, status])
+}
+
+model AgencyEvent {
+  id          String   @id @default(cuid())
+  agencyId    String
+  eventId     String
+  active      Boolean  @default(true)
+  feeBps      Int      @default(600) // Taxa administrativa contratada: 6% inicial (600 bps)
+  createdAt   DateTime @default(now())
+  agency      Agency   @relation(fields: [agencyId], references: [id])
+  reservations GroupReservation[]
+
+  @@unique([agencyId, eventId])
+  @@index([eventId, active])
+}
+
+model SalesLink {
+  id          String      @id @default(cuid())
+  eventId     String
+  code        String      @unique
+  agentId     String?
+  agencyId    String?
+  active      Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  agent       SalesAgent? @relation(fields: [agentId], references: [id])
+  agency      Agency?     @relation(fields: [agencyId], references: [id])
+  attributions SaleAttribution[]
+
+  @@index([eventId, active])
+}
+
+model GroupReservation {
+  id              String            @id @default(cuid())
+  agencyEventId   String
+  agencyId        String
+  ticketTypeId    String            // Mapear lote/tipo de ingresso existente
+  quantity        Int
+  status          ReservationStatus @default(HELD)
+  expiresAt       DateTime
+  orderId         String?           @unique
+  idempotencyKey  String            @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  agencyEvent     AgencyEvent       @relation(fields: [agencyEventId], references: [id])
+  agency          Agency            @relation(fields: [agencyId], references: [id])
+
+  @@index([agencyEventId, status, expiresAt])
+}
+
+model SaleAttribution {
+  id          String    @id @default(cuid())
+  orderId     String    @unique
+  eventId     String
+  salesLinkId String?
+  agentId     String?
+  agencyId    String?
+  createdAt   DateTime  @default(now())
+  salesLink   SalesLink? @relation(fields: [salesLinkId], references: [id])
+  entries     CommissionEntry[]
+
+  @@index([eventId, createdAt])
+}
+
+model CommissionRule {
+  id            String                  @id @default(cuid())
+  eventId       String
+  recipientKind CommissionRecipientKind
+  agentId       String?
+  agencyId      String?
+  rateBps       Int?                    // 1000 = 10%; preencher rateBps OU fixedCents
+  fixedCents    Int?
+  startsAt      DateTime                @default(now())
+  endsAt        DateTime?
+  createdAt     DateTime                @default(now())
+  agent         SalesAgent?             @relation(fields: [agentId], references: [id])
+  agency        Agency?                 @relation(fields: [agencyId], references: [id])
+  entries       CommissionEntry[]
+
+  @@index([eventId, recipientKind, startsAt])
+}
+
+model CommissionEntry {
+  id              String              @id @default(cuid())
+  attributionId   String
+  ruleId          String
+  kind            CommissionEntryKind
+  amountCents     Int                 // Reversão e liquidação como valores negativos
+  currency        String              @default("BRL")
+  sourceEventId   String              @unique // ID único do evento de pagamento/estorno/repasse
+  ledgerEntryId   String?             @unique // Referência ao Ledger existente
+  reversesEntryId String?
+  createdAt       DateTime            @default(now())
+  attribution     SaleAttribution     @relation(fields: [attributionId], references: [id])
+  rule            CommissionRule      @relation(fields: [ruleId], references: [id])
+
+  @@index([attributionId, createdAt])
+  // Append-only: proibido atualizar ou excluir lançamentos financeiros.
+}
