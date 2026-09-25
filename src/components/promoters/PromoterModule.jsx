@@ -22,14 +22,76 @@ import {
 
 export const PromoterModule = () => {
   const [activeTab, setActiveTab] = useState('promoters');
+  const [tableFilter, setTableFilter] = useState('Todos');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAddPromoterOpen, setIsAddPromoterOpen] = useState(false);
+  const [selectedPromoter, setSelectedPromoter] = useState(null);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [promotersList, setPromotersList] = useState([
+    { id: 1, name: 'João Silva', phone: '(41) 99999-1234', status: 'Ativo', type: 'Promoter', sales: 284, tickets: 312, revenue: 31400.00, target: 300, progress: 94, commission: 1570.00, conv: '8,6%', initials: 'JS', bg: 'bg-purple-600', link: 'parquejaimelerner.com.br/p/joao-silva' },
+    { id: 2, name: 'Maria Souza', phone: '(41) 98888-5678', status: 'Ativo', type: 'Promoter', sales: 241, tickets: 268, revenue: 27850.00, target: 300, progress: 80, commission: 1392.00, conv: '7,9%', initials: 'MS', bg: 'bg-indigo-600', link: 'parquejaimelerner.com.br/p/maria-souza' },
+    { id: 3, name: 'Pedro Lima', phone: '(41) 97777-9012', status: 'Ativo', type: 'Divulgador', sales: 198, tickets: 221, revenue: 22600.00, target: 250, progress: 79, commission: 1130.00, conv: '6,8%', initials: 'PL', bg: 'bg-blue-600', link: 'parquejaimelerner.com.br/p/pedro-lima' },
+    { id: 4, name: 'Ana Costa', phone: '(41) 96666-3456', status: 'Pausado', type: 'Promoter', sales: 156, tickets: 174, revenue: 18240.00, target: 200, progress: 78, commission: 912.00, conv: '6,1%', initials: 'AC', bg: 'bg-orange-500', link: 'parquejaimelerner.com.br/p/ana-costa' },
+    { id: 5, name: 'Lucas Ribeiro', phone: '(41) 95555-7890', status: 'Ativo', type: 'Divulgador', sales: 132, tickets: 148, revenue: 15380.00, target: 150, progress: 88, commission: 752.00, conv: '5,7%', initials: 'LR', bg: 'bg-purple-700', link: 'parquejaimelerner.com.br/p/lucas-ribeiro' },
+  ]);
 
-  const promotersData = [
-    { id: 1, name: 'João Silva', phone: '(41) 99999-1234', status: 'Ativo', type: 'Promoter', sales: 284, tickets: 312, revenue: 31400.00, target: 300, progress: 94, commission: 1570.00, conv: '8,6%', initials: 'JS', bg: 'bg-purple-600' },
-    { id: 2, name: 'Maria Souza', phone: '(41) 98888-5678', status: 'Ativo', type: 'Promoter', sales: 241, tickets: 268, revenue: 27850.00, target: 300, progress: 80, commission: 1392.00, conv: '7,9%', initials: 'MS', bg: 'bg-indigo-600' },
-    { id: 3, name: 'Pedro Lima', phone: '(41) 97777-9012', status: 'Ativo', type: 'Divulgador', sales: 198, tickets: 221, revenue: 22600.00, target: 250, progress: 79, commission: 1130.00, conv: '6,8%', initials: 'PL', bg: 'bg-blue-600' },
-    { id: 4, name: 'Ana Costa', phone: '(41) 96666-3456', status: 'Pausado', type: 'Promoter', sales: 156, tickets: 174, revenue: 18240.00, target: 200, progress: 78, commission: 912.00, conv: '6,1%', initials: 'AC', bg: 'bg-orange-500' },
-    { id: 5, name: 'Lucas Ribeiro', phone: '(41) 95555-7890', status: 'Ativo', type: 'Divulgador', sales: 132, tickets: 148, revenue: 15380.00, target: 150, progress: 88, commission: 752.00, conv: '5,7%', initials: 'LR', bg: 'bg-purple-700' },
-  ];
+  const notify = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
+
+  const handleCopyLink = (promoter) => {
+    const link = `https://${promoter.link || 'parquejaimelerner.com.br/p/' + promoter.name.toLowerCase().replace(/\s+/g, '-')}`;
+    navigator.clipboard?.writeText?.(link);
+    notify(`Link rastreável copiado: ${link}`);
+  };
+
+  const handleWhatsApp = (promoter) => {
+    const text = encodeURIComponent(`Olá ${promoter.name}! Segue o acompanhamento das suas vendas no Parque Jaime Lerner. Seu link de afiliado: https://${promoter.link}`);
+    window.open(`https://wa.me/55${promoter.phone.replace(/\D/g, '')}?text=${text}`, '_blank');
+  };
+
+  const handleCreatePromoter = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.promoterName.value;
+    const phone = form.promoterPhone.value;
+    const type = form.promoterType.value;
+    const target = Number(form.promoterTarget.value) || 200;
+
+    const newP = {
+      id: Date.now(),
+      name,
+      phone,
+      status: 'Ativo',
+      type,
+      sales: 0,
+      tickets: 0,
+      revenue: 0,
+      target,
+      progress: 0,
+      commission: 0,
+      conv: '0,0%',
+      initials: name.substring(0, 2).toUpperCase(),
+      bg: type === 'Promoter' ? 'bg-purple-600' : 'bg-blue-600',
+      link: `parquejaimelerner.com.br/p/${name.toLowerCase().replace(/\s+/g, '-')}`
+    };
+
+    setPromotersList(prev => [newP, ...prev]);
+    setIsAddPromoterOpen(false);
+    notify(`${type} "${name}" cadastrado com sucesso! Link rastreável ativado.`);
+  };
+
+  const filteredPromoters = promotersList.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          p.phone.includes(searchQuery);
+    if (tableFilter === 'Todos') return matchesSearch;
+    if (tableFilter === 'Promoters') return matchesSearch && p.type === 'Promoter';
+    if (tableFilter === 'Divulgadores') return matchesSearch && p.type === 'Divulgador';
+    if (tableFilter === 'Ativos') return matchesSearch && p.status === 'Ativo';
+    if (tableFilter === 'Pausados') return matchesSearch && p.status === 'Pausado';
+    return matchesSearch;
+  });
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-7xl mx-auto w-full">
@@ -53,11 +115,13 @@ export const PromoterModule = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 flex items-center gap-2">
-            <span>📅 01/09/2026 - 20/09/2026</span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+          <div className="bg-white border border-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 flex items-center gap-2 shadow-xs">
+            <span>📅 01/09/2026 - 30/09/2026</span>
           </div>
-          <button className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs">
+          <button
+            onClick={() => setIsAddPromoterOpen(true)}
+            className="flex items-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all shadow-xs cursor-pointer"
+          >
             <Plus className="w-4 h-4" />
             <span>Adicionar Promoter</span>
           </button>
@@ -247,13 +311,20 @@ export const PromoterModule = () => {
       {/* Promoters Table */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <button className="px-3 py-1.5 rounded-lg bg-blue-50 text-blue-700 font-bold text-xs">Promoters</button>
-            <button className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold text-xs">Divulgadores</button>
-            <button className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold text-xs">Links de Venda</button>
-            <button className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold text-xs">Cupons</button>
-            <button className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold text-xs">Metas</button>
-            <button className="px-3 py-1.5 rounded-lg text-slate-600 hover:bg-slate-50 font-semibold text-xs">Comissões</button>
+          <div className="flex flex-wrap items-center gap-2">
+            {['Todos', 'Promoters', 'Divulgadores', 'Ativos', 'Pausados'].map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setTableFilter(tab)}
+                className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all ${
+                  tableFilter === tab
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:bg-slate-100'
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
           </div>
 
           <div className="flex items-center gap-2">
@@ -261,8 +332,10 @@ export const PromoterModule = () => {
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
-                placeholder="Buscar promoter..."
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar promoter ou telefone..."
+                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           </div>
@@ -285,11 +358,11 @@ export const PromoterModule = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {promotersData.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50/60">
+              {filteredPromoters.map((p) => (
+                <tr key={p.id} className="hover:bg-slate-50/60 transition-colors">
                   <td className="py-3.5 px-5">
                     <div className="flex items-center gap-2.5">
-                      <div className={`w-8 h-8 rounded-lg ${p.bg} text-white font-bold text-xs flex items-center justify-center`}>
+                      <div className={`w-8 h-8 rounded-lg ${p.bg} text-white font-bold text-xs flex items-center justify-center shadow-xs`}>
                         {p.initials}
                       </div>
                       <div>
@@ -325,10 +398,28 @@ export const PromoterModule = () => {
                   </td>
                   <td className="py-3.5 px-4 text-center font-bold text-slate-700">{p.conv}</td>
                   <td className="py-3.5 px-5 text-center">
-                    <div className="flex items-center justify-center gap-1">
-                      <button className="p-1 hover:bg-slate-100 rounded text-slate-500"><Eye className="w-3.5 h-3.5" /></button>
-                      <button className="p-1 hover:bg-slate-100 rounded text-slate-500"><LinkIcon className="w-3.5 h-3.5" /></button>
-                      <button className="p-1 hover:bg-slate-100 rounded text-slate-500"><Send className="w-3.5 h-3.5" /></button>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <button
+                        onClick={() => setSelectedPromoter(p)}
+                        className="p-1.5 hover:bg-blue-50 text-slate-500 hover:text-blue-600 rounded-lg transition-colors"
+                        title="Ver Desempenho e Metas"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleCopyLink(p)}
+                        className="p-1.5 hover:bg-emerald-50 text-slate-500 hover:text-emerald-600 rounded-lg transition-colors"
+                        title="Copiar Link Rastreável"
+                      >
+                        <LinkIcon className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleWhatsApp(p)}
+                        className="p-1.5 hover:bg-emerald-50 text-slate-500 hover:text-emerald-600 rounded-lg transition-colors"
+                        title="Enviar no WhatsApp"
+                      >
+                        <Send className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -337,6 +428,185 @@ export const PromoterModule = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal: Adicionar Promoter */}
+      {isAddPromoterOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-slate-800 text-sm">Cadastrar Novo Membro da Equipe</h3>
+              </div>
+              <button
+                onClick={() => setIsAddPromoterOpen(false)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handleCreatePromoter} className="p-5 space-y-3.5 text-xs">
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Nome Completo *</label>
+                <input
+                  type="text"
+                  required
+                  name="promoterName"
+                  placeholder="Ex: Carlos Albuquerque"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">WhatsApp / Telefone *</label>
+                <input
+                  type="text"
+                  required
+                  name="promoterPhone"
+                  placeholder="(41) 99000-0000"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Categoria</label>
+                  <select
+                    name="promoterType"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="Promoter">Promoter</option>
+                    <option value="Divulgador">Divulgador</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Meta Mensal (Ingressos)</label>
+                  <input
+                    type="number"
+                    name="promoterTarget"
+                    defaultValue={200}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="p-3 bg-blue-50 rounded-xl text-blue-900 border border-blue-100 text-[11px] leading-relaxed">
+                Ao cadastrar, um link rastreável exclusivo será gerado automaticamente para atribuição direta de vendas e comissão.
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsAddPromoterOpen(false)}
+                  className="px-3.5 py-1.5 text-slate-600 hover:bg-slate-100 font-semibold rounded-lg text-xs"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs transition-colors shadow-xs"
+                >
+                  Salvar e Gerar Link
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: Detalhes do Promoter */}
+      {selectedPromoter && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl ${selectedPromoter.bg} text-white font-bold text-xs flex items-center justify-center shadow-xs`}>
+                  {selectedPromoter.initials}
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm">{selectedPromoter.name}</h3>
+                  <span className="text-[10px] text-slate-500">{selectedPromoter.type} • {selectedPromoter.phone}</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedPromoter(null)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4 text-xs">
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <span className="text-slate-400 text-[10px] block">Ingressos</span>
+                  <span className="font-black text-slate-800 text-base">{selectedPromoter.tickets}</span>
+                </div>
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <span className="text-slate-400 text-[10px] block">Receita</span>
+                  <span className="font-black text-slate-900 text-base">R$ {(selectedPromoter.revenue / 1000).toFixed(1)}k</span>
+                </div>
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <span className="text-slate-400 text-[10px] block">Comissão</span>
+                  <span className="font-black text-emerald-600 text-base">R$ {selectedPromoter.commission.toFixed(0)}</span>
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-slate-500">Progresso da Meta Mensal:</span>
+                  <span className="font-bold text-slate-800">{selectedPromoter.tickets} de {selectedPromoter.target} ingressos ({selectedPromoter.progress}%)</span>
+                </div>
+                <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                  <div className="bg-emerald-500 h-2 rounded-full" style={{ width: `${selectedPromoter.progress}%` }} />
+                </div>
+              </div>
+
+              <div>
+                <span className="font-semibold text-slate-700 block mb-1">Link de Divulgação:</span>
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="text"
+                    readOnly
+                    value={`https://${selectedPromoter.link}`}
+                    className="flex-1 px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 font-mono text-[11px]"
+                  />
+                  <button
+                    onClick={() => handleCopyLink(selectedPromoter)}
+                    className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs"
+                  >
+                    Copiar
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="px-5 py-3 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+              <button
+                onClick={() => handleWhatsApp(selectedPromoter)}
+                className="flex items-center gap-1.5 text-xs text-emerald-700 font-bold hover:underline"
+              >
+                <Send className="w-3.5 h-3.5" />
+                <span>Conversar no WhatsApp</span>
+              </button>
+              <button
+                onClick={() => setSelectedPromoter(null)}
+                className="px-3.5 py-1.5 bg-slate-800 text-white font-semibold rounded-lg text-xs hover:bg-slate-900"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Feedback */}
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 text-xs flex items-center gap-2.5 z-50 animate-in slide-in-from-bottom-5">
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
     </div>
   );

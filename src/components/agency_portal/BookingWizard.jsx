@@ -30,6 +30,15 @@ export const BookingWizard = ({ onBookingCreated }) => {
   const [selectedDay, setSelectedDay] = useState(18); // 18 de Setembro
   const [selectedTime, setSelectedTime] = useState('09:00');
   
+  const availableMonths = [
+    { name: 'Agosto 2026', offset: 6, days: 31 },
+    { name: 'Setembro 2026', offset: 2, days: 30 },
+    { name: 'Outubro 2026', offset: 4, days: 31 },
+    { name: 'Novembro 2026', offset: 0, days: 30 },
+    { name: 'Dezembro 2026', offset: 2, days: 31 }
+  ];
+  const [currentMonthIndex, setCurrentMonthIndex] = useState(1); // Setembro 2026
+  
   // Initial tickets matching screenshot 11_30_25 (20 Inteira, 10 Meia)
   const [quantities, setQuantities] = useState({
     'ing-inteira': 20,
@@ -210,11 +219,23 @@ export const BookingWizard = ({ onBookingCreated }) => {
                   {/* Calendar Widget */}
                   <div className="md:col-span-7 bg-slate-50/70 p-4 rounded-xl border border-slate-200/70">
                     <div className="flex items-center justify-between mb-3 text-xs font-bold text-slate-800">
-                      <button className="p-1 hover:bg-slate-200 rounded text-slate-500">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentMonthIndex(prev => Math.max(0, prev - 1))}
+                        disabled={currentMonthIndex === 0}
+                        className="p-1 hover:bg-slate-200 rounded text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Mês anterior"
+                      >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
-                      <span className="text-sm">Setembro 2026</span>
-                      <button className="p-1 hover:bg-slate-200 rounded text-slate-500">
+                      <span className="text-sm font-bold text-slate-800">{availableMonths[currentMonthIndex].name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setCurrentMonthIndex(prev => Math.min(availableMonths.length - 1, prev + 1))}
+                        disabled={currentMonthIndex === availableMonths.length - 1}
+                        className="p-1 hover:bg-slate-200 rounded text-slate-500 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Próximo mês"
+                      >
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -925,7 +946,14 @@ export const BookingWizard = ({ onBookingCreated }) => {
           </div>
         </div>
 
-        <button className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => {
+            setCurrentStep(1);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1 cursor-pointer transition-colors"
+        >
           <ChevronLeft className="w-4 h-4" />
           <span>Voltar ao mapa de produtos</span>
         </button>

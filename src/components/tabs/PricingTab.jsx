@@ -6,6 +6,13 @@ export const PricingTab = () => {
   const [feePercent, setFeePercent] = useState(6.0);
   const [catalog, setCatalog] = useState(TICKET_CATALOG);
   const [simBasePrice, setSimBasePrice] = useState(50.00);
+  const [isNewTypeModalOpen, setIsNewTypeModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const notify = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
+  };
 
   useEffect(() => {
     fetch('/api/b2b/pricing')
@@ -120,7 +127,10 @@ export const PricingTab = () => {
               <h4 className="font-bold text-slate-800 text-sm">Catálogo de Ingressos Ativos</h4>
               <p className="text-xs text-slate-500">Valores comercializados pelo Parque Jaime Lerner no canal B2B</p>
             </div>
-            <button className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors">
+            <button
+              onClick={() => setIsNewTypeModalOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors shadow-xs cursor-pointer"
+            >
               <Plus className="w-3.5 h-3.5" />
               <span>Novo Tipo</span>
             </button>
@@ -296,6 +306,110 @@ export const PricingTab = () => {
           </table>
         </div>
       </div>
+
+      {/* Modal: Novo Tipo de Ingresso B2B */}
+      {isNewTypeModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2">
+                <Tag className="w-5 h-5 text-blue-600" />
+                <h3 className="font-bold text-slate-800 text-sm">Criar Novo Tipo de Ingresso B2B</h3>
+              </div>
+              <button
+                onClick={() => setIsNewTypeModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 text-sm font-bold p-1 rounded-lg"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = e.target;
+                const name = form.ticketName.value;
+                const base = parseFloat(form.ticketBasePrice.value) || 0;
+                const fee = (base * feePercent) / 100;
+                const final = base + fee;
+
+                const newItem = {
+                  id: `ing-${Date.now()}`,
+                  name,
+                  basePrice: base,
+                  fee,
+                  finalPrice: final,
+                  status: 'Ativo'
+                };
+
+                setCatalog(prev => [...prev, newItem]);
+                setIsNewTypeModalOpen(false);
+                notify(`Ingresso "${name}" criado com sucesso! Preço B2B: R$ ${final.toFixed(2)}.`);
+              }}
+              className="p-5 space-y-4 text-xs"
+            >
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Nome do Ingresso *</label>
+                <input
+                  type="text"
+                  required
+                  name="ticketName"
+                  placeholder="Ex: Ingresso Excursão Melhor Idade"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Preço Base Operador (R$) *</label>
+                  <input
+                    type="number"
+                    step="0.50"
+                    required
+                    name="ticketBasePrice"
+                    defaultValue={35.00}
+                    id="new-ticket-base"
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-slate-700 mb-1">Taxa de Serviço B2B</label>
+                  <div className="px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-slate-600 font-bold">
+                    {feePercent}% (automática)
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3 bg-blue-50 rounded-xl border border-blue-100 text-blue-900 text-[11px] leading-relaxed">
+                O valor final comercializado às agências já incluirá a Taxa de Serviço B2B parametrizada para o Parque Jaime Lerner.
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button
+                  type="button"
+                  onClick={() => setIsNewTypeModalOpen(false)}
+                  className="px-3.5 py-1.5 text-slate-600 hover:bg-slate-100 font-semibold rounded-lg text-xs"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg text-xs transition-colors shadow-xs"
+                >
+                  Cadastrar Ingresso
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Feedback */}
+      {toastMessage && (
+        <div className="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 text-xs flex items-center gap-2.5 z-50 animate-in slide-in-from-bottom-5">
+          <span>{toastMessage}</span>
+        </div>
+      )}
 
     </div>
   );

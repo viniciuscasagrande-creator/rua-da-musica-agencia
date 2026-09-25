@@ -104,9 +104,11 @@ export const KPIStats = ({ kpis }) => {
                 <div className="flex items-center gap-1 mt-1 text-[11px] text-slate-500 relative">
                   <span>{card.subtext}</span>
                   <button
+                    onClick={() => setShowFeeInfo(!showFeeInfo)}
                     onMouseEnter={() => setShowFeeInfo(true)}
                     onMouseLeave={() => setShowFeeInfo(false)}
                     className="text-slate-400 hover:text-slate-600 focus:outline-none"
+                    title="Detalhes sobre comissões B2B"
                   >
                     <Info className="w-3 h-3" />
                   </button>

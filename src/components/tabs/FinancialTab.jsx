@@ -1,7 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DollarSign, ArrowDownRight, ArrowUpRight, ShieldCheck, Download, RefreshCw, AlertCircle } from 'lucide-react';
 
 export const FinancialTab = ({ kpis }) => {
+  const [toastMsg, setToastMsg] = useState(null);
+
+  const notify = (msg) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3000);
+  };
+
+  const handleExport = () => {
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + "ID Ledger,Data,Tipo,Origem / Agencia,Valor Bruto,Taxa B2B (6%),Liquido Operador,Status\n"
+      + transactions.map(t => `${t.id},${t.date},${t.type},${t.agency},${t.gross},${t.fee},${t.net},${t.status}`).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `conciliacao_b2b_parque_jaime_lerner_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    notify("Planilha de conciliação financeira (.csv) gerada e baixada com sucesso!");
+  };
   const transactions = [
     { id: 'LED-8921', date: '24/09/2026', type: 'Crédito Reserva', agency: 'Agência Turismo Brasil', gross: 667.80, fee: 37.80, net: 630.00, status: 'Conciliado' },
     { id: 'LED-8920', date: '23/09/2026', type: 'Crédito Reserva', agency: 'Mundo Brasil Turismo', gross: 1155.40, fee: 65.40, net: 1090.00, status: 'Conciliado' },
@@ -66,8 +86,11 @@ export const FinancialTab = ({ kpis }) => {
             <h4 className="font-bold text-slate-800 text-sm">Extrato de Movimentações B2B (Ledger Financeiro)</h4>
             <p className="text-xs text-slate-500">Conciliação em tempo real entre operadora, parceiros e parque</p>
           </div>
-          <button className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition-colors">
-            <Download className="w-3.5 h-3.5" />
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition-colors shadow-xs cursor-pointer"
+          >
+            <Download className="w-3.5 h-3.5 text-blue-600" />
             <span>Exportar Conciliação</span>
           </button>
         </div>
@@ -113,6 +136,13 @@ export const FinancialTab = ({ kpis }) => {
           </table>
         </div>
       </div>
+
+      {/* Toast Feedback */}
+      {toastMsg && (
+        <div className="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-2xl border border-slate-700 text-xs flex items-center gap-2.5 z-50 animate-in slide-in-from-bottom-5">
+          <span>{toastMsg}</span>
+        </div>
+      )}
 
     </div>
   );

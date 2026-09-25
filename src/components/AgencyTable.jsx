@@ -18,6 +18,9 @@ export const AgencyTable = ({ agencies, onSelectAgency, onOpenPortalLink }) => {
   const [statusFilter, setStatusFilter] = useState('Todos');
   const [stateFilter, setStateFilter] = useState('Todos');
   const [currentPage, setCurrentPage] = useState(1);
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [minQuota, setMinQuota] = useState(0);
+  const [onlyWithSales, setOnlyWithSales] = useState(false);
   const itemsPerPage = 5;
 
   // Filter agencies
@@ -29,8 +32,10 @@ export const AgencyTable = ({ agencies, onSelectAgency, onOpenPortalLink }) => {
 
     const matchesStatus = statusFilter === 'Todos' || agency.status === statusFilter;
     const matchesState = stateFilter === 'Todos' || agency.state === stateFilter;
+    const matchesQuota = agency.quotaLimit >= minQuota;
+    const matchesSales = !onlyWithSales || agency.reservationsCount > 0;
 
-    return matchesSearch && matchesStatus && matchesState;
+    return matchesSearch && matchesStatus && matchesState && matchesQuota && matchesSales;
   });
 
   const totalPages = Math.ceil(filteredAgencies.length / itemsPerPage) || 1;
@@ -130,12 +135,70 @@ export const AgencyTable = ({ agencies, onSelectAgency, onOpenPortalLink }) => {
           </div>
 
           {/* More Filters button */}
-          <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors">
-            <Filter className="w-3.5 h-3.5 text-slate-500" />
+          <button
+            onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+              showAdvancedFilters
+                ? 'bg-blue-600 text-white border-blue-600 shadow-xs'
+                : 'text-slate-600 bg-slate-50 hover:bg-slate-100 border-slate-200'
+            }`}
+          >
+            <Filter className={`w-3.5 h-3.5 ${showAdvancedFilters ? 'text-white' : 'text-slate-500'}`} />
             <span>Mais filtros</span>
           </button>
         </div>
       </div>
+
+      {/* Advanced Filters Expandable Drawer */}
+      {showAdvancedFilters && (
+        <div className="px-5 py-3.5 bg-slate-50/90 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs animate-in slide-in-from-top-2 duration-150">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-slate-600">Cota Mínima:</span>
+              <select
+                value={minQuota}
+                onChange={(e) => {
+                  setMinQuota(Number(e.target.value));
+                  setCurrentPage(1);
+                }}
+                className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-slate-800 text-xs font-medium"
+              >
+                <option value={0}>Todas as cotas</option>
+                <option value={500}>Acima de 500 ingressos</option>
+                <option value={1000}>Acima de 1.000 ingressos</option>
+                <option value={2000}>Acima de 2.000 ingressos</option>
+              </select>
+            </div>
+
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={onlyWithSales}
+                onChange={(e) => {
+                  setOnlyWithSales(e.target.checked);
+                  setCurrentPage(1);
+                }}
+                className="rounded text-blue-600 focus:ring-blue-500"
+              />
+              <span className="font-semibold text-slate-700">Apenas agências com reservas ativas</span>
+            </label>
+          </div>
+
+          <button
+            onClick={() => {
+              setSearchTerm('');
+              setStatusFilter('Todos');
+              setStateFilter('Todos');
+              setMinQuota(0);
+              setOnlyWithSales(false);
+              setCurrentPage(1);
+            }}
+            className="text-xs text-blue-600 hover:text-blue-800 font-semibold hover:underline"
+          >
+            Limpar todos os filtros
+          </button>
+        </div>
+      )}
 
       {/* Table Content */}
       <div className="overflow-x-auto">
