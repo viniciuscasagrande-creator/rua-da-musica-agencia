@@ -118,8 +118,8 @@ export const SalesTab = () => {
                   </td>
                   <td className="py-3.5 px-4 text-right">
                     <button
-                      onClick={() => alert(`Detalhes do pedido ${ord.id}:\nAgência: ${ord.agencyName}\nTitular: ${ord.buyerName}\nIngressos: ${ord.totalTickets}\nValor: R$ ${ord.totalAmount.toFixed(2)}`)}
-                      className="p-1.5 rounded-lg border border-slate-200 hover:bg-blue-50 text-slate-600 hover:text-blue-700 transition-colors"
+                      onClick={() => setSelectedOrder(ord)}
+                      className="p-1.5 rounded-lg border border-slate-200 hover:bg-blue-50 text-slate-600 hover:text-blue-700 transition-colors cursor-pointer"
                       title="Ver Detalhes do Pedido"
                     >
                       <Eye className="w-3.5 h-3.5" />
@@ -131,6 +131,111 @@ export const SalesTab = () => {
           </table>
         </div>
       </div>
+
+      {/* Order Details Modal */}
+      {selectedOrder && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in duration-150">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                  <ShoppingBag className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Pedido #{selectedOrder.id}
+                  </h3>
+                  <span className="text-[11px] text-slate-400">
+                    Emitido em {selectedOrder.date} • {selectedOrder.channel}
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedOrder(null)}
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100 transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs">
+              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Agência Parceira</span>
+                  <span className="font-bold text-slate-800 text-xs">{selectedOrder.agencyName}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Titular / Grupo</span>
+                  <span className="font-bold text-slate-800 text-xs">{selectedOrder.buyerName}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Produto Adquirido</span>
+                  <span className="font-semibold text-slate-700">{selectedOrder.product}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Status do Pagamento</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    {selectedOrder.paymentStatus}
+                  </span>
+                </div>
+              </div>
+
+              {/* Financial Breakdown */}
+              <div className="border border-slate-200 rounded-xl p-4 space-y-2 bg-white">
+                <span className="font-bold text-slate-900 block text-xs border-b border-slate-100 pb-1.5">
+                  Composição Financeira & Taxas B2B
+                </span>
+                <div className="flex justify-between text-slate-600">
+                  <span>Valor Bruto da Venda:</span>
+                  <span className="font-bold font-mono text-slate-900">R$ {selectedOrder.totalAmount.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-orange-700">
+                  <span>Taxa de Serviço B2B (6%):</span>
+                  <span className="font-bold font-mono">- R$ {(selectedOrder.totalAmount * 0.06).toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-emerald-700 border-t border-slate-100 pt-1.5 font-bold">
+                  <span>Repasse Líquido Parque Jaime Lerner:</span>
+                  <span className="font-mono text-sm">R$ {(selectedOrder.totalAmount * 0.94).toFixed(2)}</span>
+                </div>
+              </div>
+
+              {/* Access Progress */}
+              <div className="bg-blue-50/60 border border-blue-100 rounded-xl p-3.5 space-y-1.5">
+                <div className="flex justify-between text-xs font-semibold text-blue-900">
+                  <span>Utilização dos Ingressos na Catraca</span>
+                  <span>{selectedOrder.usedTickets ?? selectedOrder.totalTickets} de {selectedOrder.totalTickets} utilizados</span>
+                </div>
+                <div className="w-full bg-blue-200/60 h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-blue-600 h-full rounded-full"
+                    style={{
+                      width: `${Math.round(((selectedOrder.usedTickets ?? selectedOrder.totalTickets) / selectedOrder.totalTickets) * 100)}%`
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-slate-100">
+                <button
+                  onClick={() => setSelectedOrder(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold cursor-pointer"
+                >
+                  Fechar
+                </button>
+                <button
+                  onClick={() => {
+                    alert(`Comprovante do pedido ${selectedOrder.id} enviado para impressão.`);
+                  }}
+                  className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
+                >
+                  Imprimir Comprovante
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

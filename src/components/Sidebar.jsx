@@ -34,6 +34,7 @@ export const Sidebar = ({ activeTab, onTabChange, activeSubTab, onSubTabChange }
     { id: 'financeiro', label: 'Financeiro', icon: DollarSign },
     { id: 'relatorios', label: 'Relatórios', icon: FileSpreadsheet },
     { id: 'integracoes', label: 'Integrações', icon: Code },
+    { id: 'configuracoes', label: 'Configurações & Banco', icon: Settings },
   ];
 
   return (

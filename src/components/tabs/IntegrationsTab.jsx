@@ -12,7 +12,9 @@ import {
   RefreshCw,
   Terminal,
   ShieldAlert,
-  ExternalLink
+  ExternalLink,
+  Database,
+  Server
 } from 'lucide-react';
 import { B2B_API_ENDPOINTS, WEBHOOKS_LOG_DATA } from '../../data/mockData';
 
@@ -100,6 +102,54 @@ export const IntegrationsTab = () => {
           >
             🚀 Produção (Live)
           </button>
+        </div>
+      </div>
+
+      {/* Services & Live Database Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div className="bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <Server className="w-4 h-4 text-emerald-600" />
+            <div>
+              <span className="font-bold text-slate-800 block leading-tight">API REST B2B</span>
+              <span className="text-[10px] text-slate-400 font-mono">http://localhost:3001/api</span>
+            </div>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+            Online
+          </span>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <Database className="w-4 h-4 text-blue-600" />
+            <div>
+              <span className="font-bold text-slate-800 block leading-tight">Prisma SQLite</span>
+              <span className="text-[10px] text-slate-400 font-mono">prisma/dev.db</span>
+            </div>
+          </div>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+            Conectado
+          </span>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-xl p-3 flex items-center justify-between shadow-xs">
+          <div className="flex items-center gap-2">
+            <Code className="w-4 h-4 text-purple-600" />
+            <div>
+              <span className="font-bold text-slate-800 block leading-tight">Prisma Studio</span>
+              <span className="text-[10px] text-slate-400">Visualizador de Tabelas</span>
+            </div>
+          </div>
+          <a
+            href="http://localhost:5555"
+            target="_blank"
+            rel="noreferrer"
+            className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-lg border border-purple-200 transition-colors flex items-center gap-1"
+          >
+            <span>Abrir</span>
+            <ExternalLink className="w-3 h-3" />
+          </a>
         </div>
       </div>
 

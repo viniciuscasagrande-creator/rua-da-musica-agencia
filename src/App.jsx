@@ -118,6 +118,7 @@ export function App() {
     { id: 'financeiro', label: 'Financeiro' },
     { id: 'relatorios', label: 'Relatórios' },
     { id: 'integracoes', label: 'Integrações' },
+    { id: 'configuracoes', label: 'Configurações' },
   ];
 
   return (
@@ -341,8 +342,12 @@ export function App() {
               <ReportsTab />
             )}
 
-            {(operatorSubTab === 'integracoes' || operatorSubTab === 'configuracoes') && (
+            {operatorSubTab === 'integracoes' && (
               <IntegrationsTab />
+            )}
+
+            {operatorSubTab === 'configuracoes' && (
+              <SettingsTab />
             )}
 
           </main>
