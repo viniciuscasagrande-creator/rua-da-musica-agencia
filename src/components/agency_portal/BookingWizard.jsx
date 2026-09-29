@@ -24,9 +24,12 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { TICKET_CATALOG } from '../../data/mockData';
+import { generateVoucherPdf } from '../../services/voucherPdfService';
+import { PixPaymentModal } from './PixPaymentModal';
 
 export const BookingWizard = ({ onBookingCreated }) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isPixModalOpen, setIsPixModalOpen] = useState(false);
   const [selectedDay, setSelectedDay] = useState(18); // 18 de Setembro
   const [selectedTime, setSelectedTime] = useState('09:00');
   
@@ -697,14 +700,29 @@ export const BookingWizard = ({ onBookingCreated }) => {
                 </button>
                 <button
                   type="button"
-                  onClick={handleFinishBooking}
+                  onClick={() => {
+                    if (paymentMethod === 'pix') {
+                      setIsPixModalOpen(true);
+                    } else {
+                      handleFinishBooking();
+                    }
+                  }}
                   disabled={submitting || totalTickets === 0}
-                  className="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-xs font-bold hover:bg-blue-700 shadow-md transition-all flex items-center gap-2 disabled:opacity-75 disabled:cursor-wait cursor-pointer"
+                  className={`px-6 py-2.5 rounded-lg text-xs font-bold shadow-md transition-all flex items-center gap-2 disabled:opacity-75 disabled:cursor-wait cursor-pointer ${
+                    paymentMethod === 'pix'
+                      ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
                 >
                   {submitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
                       <span>Processando reserva...</span>
+                    </>
+                  ) : paymentMethod === 'pix' ? (
+                    <>
+                      <QrCode className="w-4 h-4" />
+                      <span>Pagar via PIX Instantâneo</span>
                     </>
                   ) : (
                     <>
@@ -792,11 +810,11 @@ export const BookingWizard = ({ onBookingCreated }) => {
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 <button
                   type="button"
-                  onClick={() => window.print()}
+                  onClick={() => generateVoucherPdf(confirmedBooking)}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 flex items-center gap-2 shadow-xs cursor-pointer transition-colors"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Baixar Lote de Vouchers (PDF)</span>
+                  <span>Baixar Voucher Master Oficial (PDF)</span>
                 </button>
                 <button
                   type="button"
@@ -1034,6 +1052,22 @@ export const BookingWizard = ({ onBookingCreated }) => {
           <span>Voltar ao mapa de produtos</span>
         </button>
       </div>
+
+      {/* Dynamic PIX Modal */}
+      <PixPaymentModal
+        isOpen={isPixModalOpen}
+        onClose={() => setIsPixModalOpen(false)}
+        amount={subtotal}
+        orderInfo={{
+          groupName: groupDetails.groupName,
+          totalTickets,
+          reservationCode: 'RES-B2B-' + Math.floor(1000 + Math.random() * 9000)
+        }}
+        onPaymentConfirmed={() => {
+          setIsPixModalOpen(false);
+          handleFinishBooking();
+        }}
+      />
 
     </div>
   );

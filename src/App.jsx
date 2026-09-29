@@ -24,6 +24,7 @@ import { PromoterModule } from './components/promoters/PromoterModule';
 import { NewAgencyModal } from './components/NewAgencyModal';
 import { AgencyDetailModal } from './components/AgencyDetailModal';
 import { VoucherModal } from './components/VoucherModal';
+import { LoginModal } from './components/auth/LoginModal';
 import {
   Calendar,
   Plus,
@@ -42,11 +43,31 @@ import {
 } from './data/mockData';
 
 export function App() {
+  // Session State
+  const [sessionUser, setSessionUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('b2b_session_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   // Navigation State
   // 'operator': Painel do Operador (Parque Jaime Lerner B2B)
   // 'agency': Portal da Agência (Agência Turismo Brasil)
   // 'promoter': Painel do Produtor (Equipe de Vendas)
-  const [currentView, setCurrentView] = useState('operator');
+  const [currentView, setCurrentView] = useState(() => {
+    try {
+      const saved = localStorage.getItem('b2b_session_user');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.view) return parsed.view;
+      }
+    } catch (e) {}
+    return 'operator';
+  });
   const [operatorSubTab, setOperatorSubTab] = useState('dashboard');
 
   // Data State
@@ -106,6 +127,13 @@ export function App() {
     showToast(`Check-in de visitantes da reserva ${bookingId} confirmado com sucesso!`);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('b2b_session_user');
+    setSessionUser(null);
+    showToast("Sessão B2B encerrada com sucesso.");
+    setIsLoginModalOpen(true);
+  };
+
   const operatorTabs = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'agencias', label: 'Agências' },
@@ -127,8 +155,18 @@ export function App() {
       {/* 1. Global Header Bar */}
       <Header
         currentView={currentView}
-        onViewChange={setCurrentView}
+        onViewChange={(view) => {
+          setCurrentView(view);
+          if (sessionUser && sessionUser.view !== view) {
+            const updated = { ...sessionUser, view };
+            setSessionUser(updated);
+            localStorage.setItem('b2b_session_user', JSON.stringify(updated));
+          }
+        }}
         operatorInfo={OPERATOR_INFO}
+        sessionUser={sessionUser}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
+        onLogout={handleLogout}
       />
 
       {/* Surface Quick-Toggle Banner (Visible on all screens) */}
@@ -509,6 +547,19 @@ export function App() {
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* Multi-Profile Login Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={(session) => {
+          setSessionUser(session);
+          if (session.view) {
+            setCurrentView(session.view);
+          }
+          showToast(`Conectado como ${session.name} (${session.badge || session.role})`);
+        }}
+      />
 
     </div>
   );

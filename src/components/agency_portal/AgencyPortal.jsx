@@ -27,6 +27,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { OPERATOR_INFO, BOOKINGS_LIST, GROUP_RESERVATIONS_WITH_MANIFEST } from '../../data/mockData';
+import { generateVoucherPdf } from '../../services/voucherPdfService';
 
 export const AgencyPortal = ({ onOpenVoucher }) => {
   const [activeTab, setActiveTab] = useState('comprar');
@@ -211,7 +212,15 @@ export const AgencyPortal = ({ onOpenVoucher }) => {
             ) : bookings.filter(b => b.qrCode && b.status !== 'Cancelado').map(b => (
               <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 border border-slate-200 rounded-xl p-4">
                 <div><p className="font-semibold text-sm text-slate-900">{b.groupName}</p><p className="text-xs text-slate-500">{b.id} · {b.visitDate} · {b.ticketsCount} ingressos</p></div>
-                <button onClick={() => onOpenVoucher?.(b)} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold hover:bg-blue-700 transition-colors cursor-pointer">Visualizar voucher de demonstração</button>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => onOpenVoucher?.(b)} className="border border-slate-200 bg-white text-slate-700 rounded-lg px-3 py-2 text-xs font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
+                    Visualizar
+                  </button>
+                  <button onClick={() => generateVoucherPdf(b)} className="bg-blue-600 text-white rounded-lg px-3.5 py-2 text-xs font-semibold hover:bg-blue-700 transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs">
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Baixar PDF</span>
+                  </button>
+                </div>
               </div>
             ))}
           </section>

@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Check
 } from 'lucide-react';
+import { generateVoucherPdf } from '../services/voucherPdfService';
 
 export const VoucherModal = ({ booking, isOpen, onClose, onSimulateCheckin }) => {
   const [checkinSuccess, setCheckinSuccess] = useState(false);
@@ -164,15 +165,23 @@ export const VoucherModal = ({ booking, isOpen, onClose, onSimulateCheckin }) =>
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() => generateVoucherPdf(booking)}
+              className="flex items-center gap-1.5 px-3 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 transition-colors shadow-xs cursor-pointer"
+              title="Baixar Voucher Master Oficial em formato PDF"
+            >
+              <Download className="w-4 h-4" />
+              <span>Baixar PDF</span>
+            </button>
+            <button
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 border border-slate-200 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>Imprimir</span>
             </button>
             <button
               onClick={onClose}
-              className="px-3.5 py-2 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-900 transition-colors"
+              className="px-3.5 py-2 bg-slate-800 text-white rounded-lg text-xs font-semibold hover:bg-slate-900 transition-colors cursor-pointer"
             >
               Fechar
             </button>

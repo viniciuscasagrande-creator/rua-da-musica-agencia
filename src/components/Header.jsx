@@ -24,7 +24,14 @@ import {
 } from 'lucide-react';
 import { ATTRACTIONS_LIST } from '../data/mockData';
 
-export const Header = ({ currentView, onViewChange, operatorInfo }) => {
+export const Header = ({
+  currentView,
+  onViewChange,
+  operatorInfo,
+  sessionUser,
+  onOpenLogin,
+  onLogout
+}) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -307,19 +314,19 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
                 setShowUserMenu(!showUserMenu);
                 setShowNotifications(false);
               }}
-              className="flex items-center gap-2.5 pl-2 pr-1 py-1 rounded-lg hover:bg-slate-100 transition-colors"
+              className="flex items-center gap-2.5 pl-2 pr-1 py-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
             >
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-xs ${
-                currentView === 'operator' ? 'bg-[#0252b4]' : 'bg-emerald-600'
+                sessionUser?.bg || (currentView === 'operator' ? 'bg-[#0252b4]' : currentView === 'promoter' ? 'bg-purple-600' : 'bg-emerald-600')
               }`}>
-                {currentView === 'operator' ? 'PL' : 'AT'}
+                {sessionUser?.initials || (currentView === 'operator' ? 'PL' : currentView === 'promoter' ? 'JS' : 'AT')}
               </div>
               <div className="hidden md:flex flex-col text-left">
                 <span className="text-xs font-semibold text-slate-800 leading-tight">
-                  {currentView === 'operator' ? 'Parque Jaime Lerner' : 'Agência Turismo Brasil'}
+                  {sessionUser?.name || (currentView === 'operator' ? 'Parque Jaime Lerner' : currentView === 'promoter' ? 'João Silva' : 'Agência Turismo Brasil')}
                 </span>
                 <span className="text-[11px] text-slate-500 leading-tight">
-                  {currentView === 'operator' ? 'Administrador' : 'Agência Parceira'}
+                  {sessionUser?.badge || (currentView === 'operator' ? 'Administrador Geral' : currentView === 'promoter' ? 'Equipe de Vendas' : 'Agência Parceira')}
                 </span>
               </div>
               <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
@@ -329,14 +336,25 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
               <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50">
                 <div className="px-4 py-2 border-b border-slate-100">
                   <p className="text-xs font-semibold text-slate-800">
-                    {currentView === 'operator' ? 'Parque Jaime Lerner - Operador' : 'Agência Turismo Brasil'}
+                    {sessionUser?.name || (currentView === 'operator' ? 'Parque Jaime Lerner - Operador' : currentView === 'promoter' ? 'João Silva' : 'Agência Turismo Brasil')}
                   </p>
                   <p className="text-[11px] text-slate-500 truncate">
-                    {currentView === 'operator' ? 'operacoes@parquejaimelerner.curitiba.br' : 'reservas@turismobrasil.com.br'}
+                    {sessionUser?.email || (currentView === 'operator' ? 'operacoes@parquejaimelerner.curitiba.br' : currentView === 'promoter' ? 'joao.silva@promoter.curitiba.br' : 'reservas@turismobrasil.com.br')}
                   </p>
                 </div>
-                
+
                 <div className="py-1">
+                  <button
+                    onClick={() => {
+                      setShowUserMenu(false);
+                      onOpenLogin && onOpenLogin();
+                    }}
+                    className="w-full text-left px-4 py-2 text-xs text-blue-600 font-bold hover:bg-blue-50 flex items-center gap-2 transition-colors cursor-pointer border-b border-slate-100"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    <span>Trocar Perfil / Autenticação B2B</span>
+                  </button>
+
                   <div className="px-3 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                     Alternar Modo
                   </div>
@@ -380,12 +398,16 @@ export const Header = ({ currentView, onViewChange, operatorInfo }) => {
                   <button
                     onClick={() => {
                       setShowUserMenu(false);
-                      triggerToast("Sessão B2B sincronizada e segura.");
+                      if (onLogout) {
+                        onLogout();
+                      } else {
+                        onOpenLogin && onOpenLogin();
+                      }
                     }}
                     className="w-full text-left px-4 py-1.5 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors cursor-pointer"
                   >
                     <LogOut className="w-3.5 h-3.5 text-red-500" />
-                    <span>Sair do Sistema</span>
+                    <span>Encerrar Sessão / Trocar Usuário</span>
                   </button>
                 </div>
               </div>

@@ -6,19 +6,23 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  RefreshCw
+  RefreshCw,
+  Camera
 } from 'lucide-react';
 import {
   AGENCY_SALES_VS_ACCESS_DATA,
   REAL_TIME_GATE_ACCESS_LOGS
 } from '../../data/mockData';
+import { QrScannerModal } from '../gate/QrScannerModal';
 
 export const AccessTab = () => {
   const [selectedAgency, setSelectedAgency] = useState(AGENCY_SALES_VS_ACCESS_DATA[0]);
   const [filterGate, setFilterGate] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [gateLogs, setGateLogs] = useState(REAL_TIME_GATE_ACCESS_LOGS);
 
-  const filteredLogs = REAL_TIME_GATE_ACCESS_LOGS.filter(log => {
+  const filteredLogs = gateLogs.filter(log => {
     const matchesGate = filterGate === 'ALL' || log.gate.includes(filterGate);
     const matchesSearch = log.ticketId.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           log.agencyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -45,6 +49,14 @@ export const AccessTab = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsScannerOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-xs cursor-pointer"
+          >
+            <Camera className="w-4 h-4" />
+            <span>📷 Bipar na Catraca (Scanner)</span>
+          </button>
+
           <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs">
             <span className="text-slate-400 block text-[10px] uppercase font-bold">Taxa Média de Utilização</span>
             <span className="text-base font-black text-emerald-600">82,4% de Comparecimento</span>
@@ -254,6 +266,13 @@ export const AccessTab = () => {
         <span>→</span>
         <span className="bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded border border-emerald-200">Acesso Validado na Catraca</span>
       </div>
+
+      {/* QR Code Camera Scanner Modal */}
+      <QrScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScanSuccess={(newLog) => setGateLogs(prev => [newLog, ...prev])}
+      />
 
     </div>
   );
