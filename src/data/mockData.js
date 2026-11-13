@@ -1,0 +1,456 @@
+export const OPERATOR_INFO = {
+  id: 'EVT-PJL-2026',
+  name: 'Parque Jaime Lerner',
+  subtitle: 'Rua da Música - Curitiba - PR',
+  tagline: 'Cultura, música e experiências inesquecíveis',
+  officialUrl: 'https://rua-da-musica-agencia.vercel.app/',
+  adminFeeBps: 600, // 6%
+  adminFeeRate: 0.06,
+  quotas: {
+    site: 1500,
+    boxOffice: 800,
+    agencies: 700,
+    totalDaily: 3000
+  },
+  contact: {
+    whatsapp: '(41) 99233-8800',
+    phone: '(41) 3039-2030',
+    email: 'agencias@parquejaimelerner.curitiba.br'
+  }
+};
+
+export const B2B_TICKET_TYPES = [
+  {
+    id: 'TKT-INTEIRA',
+    name: 'Inteira',
+    description: 'Público geral (12 anos ou mais)',
+    basePrice: 30.00,
+    diskFee: 1.80,
+    agencyPrice: 31.80,
+    status: 'Liberado',
+    iconType: 'user'
+  },
+  {
+    id: 'TKT-MEIA',
+    name: 'Meia-entrada',
+    description: 'Estudantes, idosos, PCD (conforme lei)',
+    basePrice: 15.00,
+    diskFee: 0.90,
+    agencyPrice: 15.90,
+    status: 'Liberado',
+    iconType: 'users'
+  },
+  {
+    id: 'TKT-TOUR',
+    name: 'Tour Guiado',
+    description: 'Visita guiada pelos principais espaços',
+    basePrice: 20.00,
+    diskFee: 1.20,
+    agencyPrice: 21.20,
+    status: 'Liberado',
+    iconType: 'compass'
+  },
+  {
+    id: 'TKT-EDUCATIVO',
+    name: 'Educativo (Escolas)',
+    description: 'Grupos escolares (mín. 15 pessoas)',
+    basePrice: 12.00,
+    diskFee: 0.72,
+    agencyPrice: 12.72,
+    status: 'Liberado',
+    iconType: 'graduation'
+  },
+  {
+    id: 'TKT-CORPORATIVO',
+    name: 'Grupo Corporativo',
+    description: 'Eventos, empresas e incentivos',
+    basePrice: 25.00,
+    diskFee: 1.50,
+    agencyPrice: 26.50,
+    status: 'Liberado',
+    iconType: 'briefcase'
+  }
+];
+
+export const BOOKINGS_LIST = [
+  {
+    id: 'RES-B2B-1049',
+    agencyId: 'AG-006',
+    agencyName: 'Agência Turismo Brasil',
+    groupName: 'Excursão Colégio Positivo 3º Ano',
+    coordinator: 'Cláudio Sampaio (Cadastrado 16/09/2026)',
+    visitDate: '2026-09-20',
+    visitTime: '09:00',
+    ticketsCount: 45,
+    baseAmount: 540.00,
+    diskFeeAmount: 32.40,
+    totalAmount: 657.80,
+    status: 'Voucher emitido',
+    qrCode: 'DISK-B2B-1049-PJL-2026',
+    originCity: 'Curitiba - PR',
+    transport: 'Ônibus Fretado (Placa BDF-4A21)',
+    items: [
+      { name: 'Educativo (Escolas)', qty: 40, unitPrice: 12.72 },
+      { name: 'Inteira (Coordenação)', qty: 5, unitPrice: 29.80 }
+    ]
+  },
+  {
+    id: 'RES-B2B-1048',
+    agencyId: 'AG-001',
+    agencyName: 'Mundo Brasil Turismo',
+    groupName: 'Turismo Cultural Melhor Idade - SP',
+    coordinator: 'Helena Toledo (Cadastrado 14/09/2026)',
+    visitDate: '2026-09-20',
+    visitTime: '14:00',
+    ticketsCount: 52,
+    baseAmount: 1090.00,
+    diskFeeAmount: 65.40,
+    totalAmount: 1155.40,
+    status: 'Confirmado',
+    qrCode: 'DISK-B2B-1048-PJL-2026',
+    originCity: 'São Paulo - SP',
+    transport: 'Rodoviário Executivo',
+    items: [
+      { name: 'Meia-entrada', qty: 32, unitPrice: 15.90 },
+      { name: 'Inteira', qty: 20, unitPrice: 31.80 }
+    ]
+  },
+  {
+    id: 'RES-B2B-1047',
+    agencyId: 'AG-003',
+    agencyName: 'Curitiba Tour',
+    groupName: 'City Tour Curitiba Cultural - Manhã',
+    coordinator: 'Marcos Viana (Guia CADASTUR)',
+    visitDate: '2026-09-18',
+    visitTime: '10:00',
+    ticketsCount: 28,
+    baseAmount: 840.00,
+    diskFeeAmount: 50.40,
+    totalAmount: 890.40,
+    status: 'Concluído',
+    qrCode: 'DISK-B2B-1047-PJL-2026',
+    originCity: 'Curitiba - PR',
+    transport: 'Van Executiva',
+    items: [
+      { name: 'Inteira', qty: 28, unitPrice: 31.80 }
+    ]
+  },
+  {
+    id: 'RES-B2B-1046',
+    agencyId: 'AG-002',
+    agencyName: 'Viva Viagens',
+    groupName: 'Incentivo Corporativo Farmacêutica',
+    coordinator: 'Patrícia Gomes',
+    visitDate: '2026-09-25',
+    visitTime: '16:00',
+    ticketsCount: 50,
+    baseAmount: 1250.00,
+    diskFeeAmount: 75.00,
+    totalAmount: 1325.00,
+    status: 'Pré-reservado',
+    qrCode: 'DISK-B2B-1046-PJL-2026',
+    originCity: 'Rio de Janeiro - RJ',
+    transport: 'Aéreo + Transfer Privativo',
+    items: [
+      { name: 'Grupo Corporativo', qty: 50, unitPrice: 26.50 }
+    ]
+  },
+  {
+    id: 'RES-B2B-1045',
+    agencyId: 'AG-006',
+    agencyName: 'Agência Turismo Brasil',
+    groupName: 'Roteiro Arquitetura & Música Curitiba',
+    coordinator: 'Roberto Almeida',
+    visitDate: '2026-09-18',
+    visitTime: '09:00',
+    ticketsCount: 30,
+    baseAmount: 750.00,
+    diskFeeAmount: 45.00,
+    totalAmount: 795.00,
+    status: 'Voucher emitido',
+    qrCode: 'DISK-B2B-1045-PJL-2026',
+    originCity: 'São Paulo - SP',
+    transport: 'Ônibus Executivo',
+    items: [
+      { name: 'Inteira', qty: 20, unitPrice: 31.80 },
+      { name: 'Meia-entrada', qty: 10, unitPrice: 15.90 }
+    ]
+  }
+];
+
+export const AGENCIES_LIST = [
+  {
+    id: 'AG-001',
+    name: 'Mundo Brasil Turismo',
+    cnpj: '14.528.910/0001-42',
+    cityUf: 'São Paulo - SP',
+    state: 'SP',
+    status: 'Ativa',
+    quotaLimit: 2000,
+    bookingsCount: 320,
+    ticketsSold: 1480,
+    revenue: 46464.00,
+    packagesCount: 6,
+    contactName: 'Carlos Eduardo',
+    email: 'operacoes@mundobrasilturismo.com.br'
+  },
+  {
+    id: 'AG-002',
+    name: 'Viva Viagens',
+    cnpj: '21.849.002/0001-18',
+    cityUf: 'Rio de Janeiro - RJ',
+    state: 'RJ',
+    status: 'Ativa',
+    quotaLimit: 1500,
+    bookingsCount: 218,
+    ticketsSold: 980,
+    revenue: 30828.00,
+    packagesCount: 5,
+    contactName: 'Fernanda Lima',
+    email: 'b2b@vivaviagens.com.br'
+  },
+  {
+    id: 'AG-003',
+    name: 'Curitiba Tour',
+    cnpj: '08.312.744/0001-90',
+    cityUf: 'Curitiba - PR',
+    state: 'PR',
+    status: 'Ativa',
+    quotaLimit: 1000,
+    bookingsCount: 185,
+    ticketsSold: 860,
+    revenue: 27048.00,
+    packagesCount: 4,
+    contactName: 'Marcos Viana',
+    email: 'reservas@curitibatour.com.br'
+  },
+  {
+    id: 'AG-004',
+    name: 'Sul Turismo',
+    cnpj: '33.109.455/0001-05',
+    cityUf: 'Florianópolis - SC',
+    state: 'SC',
+    status: 'Ativa',
+    quotaLimit: 800,
+    bookingsCount: 142,
+    ticketsSold: 640,
+    revenue: 20352.00,
+    packagesCount: 4,
+    contactName: 'Juliana Becker',
+    email: 'grupos@sulturismo.com.br'
+  },
+  {
+    id: 'AG-005',
+    name: 'Experiências BR',
+    cnpj: '41.902.311/0001-77',
+    cityUf: 'Belo Horizonte - MG',
+    state: 'MG',
+    status: 'Pendente',
+    quotaLimit: 500,
+    bookingsCount: 96,
+    ticketsSold: 420,
+    revenue: 13356.00,
+    packagesCount: 3,
+    contactName: 'Gustavo Mendes',
+    email: 'contato@experienciasbr.tur.br'
+  }
+];
+
+export const STATE_ORIGIN_DATA = [
+  { state: 'Paraná', uf: 'PR', share: 28, color: '#2563eb' },
+  { state: 'São Paulo', uf: 'SP', share: 18, color: '#10b981' },
+  { state: 'Santa Catarina', uf: 'SC', share: 12, color: '#f59e0b' },
+  { state: 'Rio de Janeiro', uf: 'RJ', share: 10, color: '#8b5cf6' },
+  { state: 'Minas Gerais', uf: 'MG', share: 8, color: '#ec4899' },
+  { state: 'Outros Estados', uf: 'BR', share: 24, color: '#94a3b8' }
+];
+
+export const SALES_TEAM_LIST = [
+  {
+    id: 'PRM-01',
+    initials: 'JS',
+    avatarBg: 'bg-blue-600',
+    name: 'João Silva',
+    phone: '(41) 99999-1234',
+    email: 'joao.silva@promoter.com.br',
+    document: '084.312.990-12',
+    pixKey: 'joao.silva@promoter.com.br',
+    status: 'Ativo',
+    role: 'Promoter',
+    salesCount: 284,
+    ticketsCount: 312,
+    revenue: 31400.00,
+    goalTarget: 300,
+    goalPct: 94,
+    goalColor: 'bg-emerald-500',
+    commission: 1570.00,
+    commissionPaid: 1120.00,
+    commissionPending: 450.00,
+    commissionModel: 'Percentual (5%)',
+    conversion: 8.6,
+    linkCode: 'joao-silva-3822',
+    couponCode: 'JOAO10',
+    clicks: 3290,
+    sessions: 2610,
+    permissions: ['Vender ingressos', 'Criar link', 'Utilizar cupom', 'Consultar comissão', 'Solicitar pagamento']
+  },
+  {
+    id: 'PRM-02',
+    initials: 'MS',
+    avatarBg: 'bg-purple-600',
+    name: 'Maria Souza',
+    phone: '(41) 98888-5678',
+    email: 'maria.souza@promoter.com.br',
+    document: '102.441.889-40',
+    pixKey: '(41) 98888-5678',
+    status: 'Ativo',
+    role: 'Promoter',
+    salesCount: 241,
+    ticketsCount: 268,
+    revenue: 27850.00,
+    goalTarget: 300,
+    goalPct: 80,
+    goalColor: 'bg-blue-500',
+    commission: 1392.00,
+    commissionPaid: 1000.00,
+    commissionPending: 392.00,
+    commissionModel: 'Percentual (5%)',
+    conversion: 7.9,
+    linkCode: 'maria-souza-3822',
+    couponCode: 'MARIAVIP',
+    clicks: 3050,
+    sessions: 2410,
+    permissions: ['Vender ingressos', 'Emitir cortesias', 'Criar link', 'Utilizar cupom', 'Consultar comissão']
+  },
+  {
+    id: 'PRM-03',
+    initials: 'PL',
+    avatarBg: 'bg-sky-500',
+    name: 'Pedro Lima',
+    phone: '(41) 97777-9012',
+    email: 'pedro.lima@divulgador.com.br',
+    document: '095.882.119-05',
+    pixKey: '095.882.119-05',
+    status: 'Ativo',
+    role: 'Divulgador',
+    salesCount: 198,
+    ticketsCount: 221,
+    revenue: 22600.00,
+    goalTarget: 250,
+    goalPct: 79,
+    goalColor: 'bg-blue-500',
+    commission: 1130.00,
+    commissionPaid: 850.00,
+    commissionPending: 280.00,
+    commissionModel: 'Por Ingresso (Pista R$ 3 / VIP R$ 7)',
+    conversion: 6.8,
+    linkCode: 'pedro-lima-utm',
+    couponCode: 'PEDRO5',
+    clicks: 2911,
+    sessions: 2190,
+    permissions: ['Visualizar suas vendas', 'Criar link', 'Utilizar cupom', 'Consultar comissão']
+  },
+  {
+    id: 'PRM-04',
+    initials: 'AC',
+    avatarBg: 'bg-orange-500',
+    name: 'Ana Costa',
+    phone: '(41) 96666-3456',
+    email: 'ana.costa@promoter.com.br',
+    document: '118.209.334-88',
+    pixKey: 'ana.costa@promoter.com.br',
+    status: 'Pausado',
+    role: 'Promoter',
+    salesCount: 156,
+    ticketsCount: 174,
+    revenue: 18240.00,
+    goalTarget: 200,
+    goalPct: 78,
+    goalColor: 'bg-orange-500',
+    commission: 912.00,
+    commissionPaid: 912.00,
+    commissionPending: 0.00,
+    commissionModel: 'Valor Fixo (R$ 4,00/ing)',
+    conversion: 6.1,
+    linkCode: 'ana-costa-3822',
+    couponCode: 'ANACOSTA',
+    clicks: 2557,
+    sessions: 1890,
+    permissions: ['Vender ingressos', 'Criar link', 'Consultar comissão']
+  },
+  {
+    id: 'PRM-05',
+    initials: 'LR',
+    avatarBg: 'bg-indigo-500',
+    name: 'Lucas Ribeiro',
+    phone: '(41) 95555-7890',
+    email: 'lucas.ribeiro@divulgador.com.br',
+    document: '077.512.609-31',
+    pixKey: '(41) 95555-7890',
+    status: 'Ativo',
+    role: 'Divulgador',
+    salesCount: 132,
+    ticketsCount: 148,
+    revenue: 15380.00,
+    goalTarget: 150,
+    goalPct: 88,
+    goalColor: 'bg-blue-500',
+    commission: 752.00,
+    commissionPaid: 500.00,
+    commissionPending: 252.00,
+    commissionModel: 'Progressiva (3% a 10%)',
+    conversion: 5.7,
+    linkCode: 'lucas-ribeiro-ig',
+    couponCode: 'LUCAS10',
+    clicks: 2315,
+    sessions: 1740,
+    permissions: ['Visualizar suas vendas', 'Criar link', 'Utilizar cupom', 'Consultar comissão']
+  }
+];
+
+export const COMMISSION_LEDGER_ENTRIES = [
+  {
+    id: 'CE-9901',
+    orderId: 'PED-884120',
+    promoterName: 'João Silva',
+    kind: 'ACCRUAL',
+    label: 'VENDA CONFIRMADA (Link #joao-silva-3822)',
+    ticketType: '2x VIP + 1x Pista',
+    amount: 24.40,
+    status: 'Disponível',
+    createdAt: '20/09/2026 14:22'
+  },
+  {
+    id: 'CE-9902',
+    orderId: 'PED-883910',
+    promoterName: 'Maria Souza',
+    kind: 'ACCRUAL',
+    label: 'VENDA CONFIRMADA (Cupom MARIAVIP)',
+    ticketType: '2x Camarote',
+    amount: 35.00,
+    status: 'Disponível',
+    createdAt: '19/09/2026 21:10'
+  },
+  {
+    id: 'CE-9903',
+    orderId: 'PED-883910',
+    promoterName: 'Maria Souza',
+    kind: 'REVERSAL',
+    label: 'ESTORNO DE PEDIDO (Reversão Append-Only ref. CE-9902)',
+    ticketType: '2x Camarote (Cancelado)',
+    amount: -35.00,
+    status: 'Revertido',
+    createdAt: '20/09/2026 09:05'
+  },
+  {
+    id: 'CE-9904',
+    orderId: 'REP-2026-09',
+    promoterName: 'João Silva',
+    kind: 'SETTLEMENT',
+    label: 'LIQUIDAÇÃO PIX (Comissão paga e conciliada no Ledger)',
+    ticketType: 'Lote Semanal #37',
+    amount: -520.00,
+    status: 'Pago',
+    createdAt: '18/09/2026 17:00'
+  }
+];

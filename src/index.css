@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+html {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  font-optical-sizing: auto;
+  font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1, "tnum" 1;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  -moz-osx-font-smoothing: auto !important;
+  text-rendering: geometricPrecision;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+/* Nitidez máxima para números, valores monetários, percentuais e tabelas */
+table,
+td,
+th,
+input,
+select,
+button,
+.tabular-nums,
+.font-mono {
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: "tnum" 1, "cv11" 1 !important;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', 'Cascadia Mono', 'Consolas', monospace !important;
+  letter-spacing: -0.02em;
+}
+
+/* Impede que font-black (900) feche o olho dos dígitos (0, 6, 8, 9) e deixe números borrados */
+.font-black,
+.font-extrabold {
+  font-weight: 700 !important;
+  letter-spacing: -0.015em !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+/* Aumenta a nitidez e tamanho mínimo de textos pequenos de telemetria */
+.text-\[9px\],
+.text-\[10px\] {
+  font-size: 0.75rem !important; /* 12px nítido */
+  line-height: 1.15rem !important;
+  font-weight: 600 !important;
+}
+
+.text-\[11px\] {
+  font-size: 0.8125rem !important; /* 13px nítido */
+  line-height: 1.25rem !important;
+}
+
+.text-xs {
+  font-size: 0.84375rem !important; /* 13.5px nítido */
+  line-height: 1.3rem !important;
+}
+
+/* Aumenta o contraste de textos secundários que pareciam esmaecidos/borrados */
+.text-slate-400 {
+  color: #475569 !important; /* slate-600 */
+}
+
+.text-slate-500 {
+  color: #334155 !important; /* slate-700 */
+}
+
+/* Bordas em tom de azul nos cards de toda a aplicação */
+.card-blue,
+main .rounded-2xl.border,
+main .rounded-xl.border,
+aside .rounded-xl.border {
+  border-color: #93c5fd !important; /* blue-300 */
+  border-width: 1.5px !important;
+  box-shadow: 0 2px 8px -2px rgba(37, 99, 235, 0.08), 0 1px 3px 0 rgba(37, 99, 235, 0.06) !important;
+}
+
+main .rounded-2xl.border:hover,
+main .rounded-xl.border:hover {
+  border-color: #60a5fa !important; /* blue-400 */
+}

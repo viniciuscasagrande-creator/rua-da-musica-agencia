@@ -1,0 +1,1 @@
+Extraia e copie src/components/agency_portal/AgencyPortal.jsx para a mesma pasta do projeto original.
