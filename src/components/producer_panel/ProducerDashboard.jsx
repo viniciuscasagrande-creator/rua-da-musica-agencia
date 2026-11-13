@@ -48,8 +48,62 @@ export const ProducerDashboard = ({
   const agenciesList = propAgencies || AGENCIES_LIST;
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('Todos');
+  const [periodStart, setPeriodStart] = useState('2026-09-01');
+  const [periodEnd, setPeriodEnd] = useState('2026-09-20');
   const [copiedCode, setCopiedCode] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  // ---------- Métricas reais do Painel do Produtor (a partir de salesTeam e agencies) ----------
+  const DAY = 86400000;
+  const toTs = (iso) => new Date(`${iso}T00:00:00`).getTime();
+  const brl = (n) => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const brNum = (n) => Number(n || 0).toLocaleString('pt-BR');
+  const fmtDay = (ts) => new Date(ts).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
+  const startTs = toTs(periodStart);
+  const endTs = toTs(periodEnd);
+  const validPeriod = !Number.isNaN(startTs) && !Number.isNaN(endTs) && endTs >= startTs;
+  const spanDays = validPeriod ? Math.max(1, Math.round((endTs - startTs) / DAY) + 1) : 20;
+  const periodRatio = Math.min(1.5, Math.max(0.15, spanDays / 20));
+
+  const totalSales = Math.round(
+    members.reduce((acc, m) => acc + Number(m.salesCount || 0), 0) * periodRatio
+  );
+  const totalTickets = Math.round(
+    members.reduce((acc, m) => acc + Number(m.ticketsCount || 0), 0) * periodRatio
+  );
+  const totalRevenue = members.reduce((acc, m) => acc + Number(m.revenue || 0), 0) * periodRatio;
+  const totalCommission =
+    members.reduce((acc, m) => acc + Number(m.commission || 0), 0) * periodRatio;
+  const activeMembers = members.filter((m) => m.status === 'Ativo');
+  const avgConversion = members.length
+    ? (members.reduce((acc, m) => acc + Number(m.conversion || 0), 0) / members.length).toFixed(1).replace('.', ',')
+    : '0,0';
+  const avgTicket = totalSales > 0 ? totalRevenue / totalSales : 0;
+
+  // Evolução em 5 faixas dentro do período selecionado
+  const baseWeights = [0.15, 0.18, 0.2, 0.22, 0.25];
+  const prodEvolution = Array.from({ length: 5 }, (_, i) => {
+    const bucketSales = Math.round(totalSales * baseWeights[i]);
+    return {
+      d: validPeriod ? fmtDay(startTs + Math.floor((i * spanDays) / 5) * DAY) : `0${i * 4 + 1}/09`,
+      v: Math.min(100, Math.max(18, Math.round(baseWeights[i] * 380))),
+      r: Math.min(100, Math.max(15, Math.round(baseWeights[i] * 340))),
+      val: brNum(bucketSales)
+    };
+  });
+
+  // Métricas reais da aba Parcerias > Agências de Turismo
+  const activePartnerAgencies = agenciesList.filter((a) => a.status === 'Ativa');
+  const totalPackages = agenciesList.reduce((acc, a) => acc + Number(a.packagesCount || 0), 0);
+  const totalAgencyTickets = Math.round(
+    agenciesList.reduce((acc, a) => acc + Number(a.ticketsSold || 0), 0) * periodRatio
+  );
+  const totalAgencyRevenue =
+    agenciesList.reduce((acc, a) => acc + Number(a.revenue || 0), 0) * periodRatio;
+  const totalAgencyBookings = Math.round(
+    agenciesList.reduce((acc, a) => acc + Number(a.bookingsCount || 0), 0) * periodRatio
+  );
   const [newMember, setNewMember] = useState({
     name: '',
     phone: '(41) 99111-2233',
@@ -252,7 +306,7 @@ export const ProducerDashboard = ({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-6 space-y-6 max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 p-4 md:p-5 space-y-4 max-w-[1700px] mx-auto w-full">
         {section === 'equipe' ? (
           <>
             {/* Top Header */}
@@ -287,8 +341,25 @@ export const ProducerDashboard = ({
                   )}
                 </button>
 
-                <div className={`px-3.5 py-2 rounded-xl border text-xs font-semibold ${cardClass}`}>
-                  📅 01/09/2026 - 20/09/2026
+                <div
+                  className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 ${cardClass}`}
+                >
+                  <span>📅</span>
+                  <input
+                    type="date"
+                    value={periodStart}
+                    max={periodEnd}
+                    onChange={(e) => setPeriodStart(e.target.value)}
+                    className="bg-transparent focus:outline-none font-mono text-[11px] cursor-pointer"
+                  />
+                  <span className={mutedText}>até</span>
+                  <input
+                    type="date"
+                    value={periodEnd}
+                    min={periodStart}
+                    onChange={(e) => setPeriodEnd(e.target.value)}
+                    className="bg-transparent focus:outline-none font-mono text-[11px] cursor-pointer"
+                  />
                 </div>
 
                 <button
@@ -301,47 +372,47 @@ export const ProducerDashboard = ({
               </div>
             </div>
 
-            {/* 6 KPI Cards — Crisp Telemetry */}
+            {/* 6 KPI Cards — Compact 128px Standard */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 auto-rows-fr">
               {[
                 {
                   title: 'Vendas da Equipe',
-                  value: '1.482',
-                  badge: '↑ +18%',
-                  sub: 'Ingressos',
+                  value: brNum(totalSales),
+                  badge: `${brNum(totalTickets)} ing.`,
+                  sub: 'Confirmados',
                   iconBg: 'bg-emerald-600'
                 },
                 {
                   title: 'Receita Gerada',
-                  value: 'R$ 184.320,00',
+                  value: brl(totalRevenue),
                   badge: '↑ +22%',
                   sub: 'Volume total',
                   iconBg: 'bg-blue-600'
                 },
                 {
                   title: 'Promoters Ativos',
-                  value: '23',
-                  badge: '↑ +9%',
-                  sub: 'de 28 tot.',
+                  value: brNum(activeMembers.length),
+                  badge: `${members.length} total`,
+                  sub: 'Cadastrados',
                   iconBg: 'bg-purple-600'
                 },
                 {
-                  title: 'Conversão',
-                  value: '8,4%',
+                  title: 'Conversão Média',
+                  value: `${avgConversion}%`,
                   badge: '↑ +2,1%',
                   sub: 'Cliques → vendas',
                   iconBg: 'bg-orange-500'
                 },
                 {
                   title: 'Ticket Médio',
-                  value: 'R$ 124,40',
+                  value: brl(avgTicket),
                   badge: '↑ +6%',
-                  sub: 'Por pedido',
+                  sub: 'Por venda',
                   iconBg: 'bg-amber-500'
                 },
                 {
                   title: 'Comissões',
-                  value: 'R$ 9.216,00',
+                  value: brl(totalCommission),
                   badge: '↑ +18%',
                   sub: 'Total devido',
                   iconBg: 'bg-rose-600'
@@ -351,8 +422,8 @@ export const ProducerDashboard = ({
                   key={i}
                   className={`rounded-2xl border p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[128px] overflow-hidden ${cardClass}`}
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <span className={`text-xs font-semibold ${mutedText}`}>{kpi.title}</span>
+                  <div className="flex items-center justify-between gap-2 h-9">
+                    <span className={`text-xs font-bold leading-tight ${mutedText}`}>{kpi.title}</span>
                     <span
                       className={`w-7 h-7 rounded-lg ${kpi.iconBg} text-white font-mono text-xs font-bold flex items-center justify-center shrink-0`}
                     >
@@ -362,11 +433,11 @@ export const ProducerDashboard = ({
                   <div className="text-lg font-mono font-bold tabular-nums tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
                     {kpi.value}
                   </div>
-                  <div className="flex items-center justify-between gap-1 pt-1 border-t border-slate-500/15 text-[11px]">
-                    <span className="text-emerald-500 font-bold tabular-nums bg-emerald-500/10 px-1.5 py-0.5 rounded">
+                  <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-500/15 text-[11px] h-7">
+                    <span className="text-emerald-500 font-bold tabular-nums bg-emerald-500/10 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
                       {kpi.badge}
                     </span>
-                    <span className={`font-medium truncate ${mutedText}`}>{kpi.sub}</span>
+                    <span className={`font-medium truncate text-right ${mutedText}`}>{kpi.sub}</span>
                   </div>
                 </div>
               ))}
@@ -375,14 +446,14 @@ export const ProducerDashboard = ({
             {/* 3 Charts Row: Vendas por Promoter (Top 5) | Evolução de Vendas | Distribuição por Tipo de Ingresso */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch lg:auto-rows-[300px]">
               {/* Top 5 Promoters */}
-              <div className={`lg:col-span-4 rounded-2xl border p-5 shadow-xs space-y-3.5 ${cardClass}`}>
+              <div className={`lg:col-span-4 rounded-2xl border p-5 shadow-xs flex flex-col justify-between ${cardClass}`}>
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wide">
                     Vendas por Promoter (Top 5)
                   </h3>
                   <span className={`text-[11px] font-semibold ${mutedText}`}>Ingressos</span>
                 </div>
-                <div className="space-y-3 text-xs">
+                <div className="space-y-3 text-xs my-auto">
                   {members.slice(0, 5).map((m, idx) => (
                     <div key={m.id} className="space-y-1.5">
                       <div className="flex items-center justify-between">
@@ -393,9 +464,9 @@ export const ProducerDashboard = ({
                           <span>{m.name}</span>
                         </span>
                         <span className="font-mono font-bold tabular-nums">
-                          {m.salesCount}{' '}
+                          {Math.round(m.salesCount * periodRatio)}{' '}
                           <span className={`text-[11px] font-medium ${mutedText}`}>
-                            (R$ {m.revenue.toLocaleString('pt-BR')})
+                            (R$ {Math.round(m.revenue * periodRatio).toLocaleString('pt-BR')})
                           </span>
                         </span>
                       </div>
@@ -416,17 +487,13 @@ export const ProducerDashboard = ({
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wide">Evolução de Vendas</h3>
-                  <span className={`text-[11px] font-semibold ${mutedText}`}>Últimos 30 dias</span>
+                  <span className={`text-[11px] font-semibold ${mutedText}`}>
+                    {spanDays} {spanDays === 1 ? 'dia' : 'dias'}
+                  </span>
                 </div>
                 <div className="my-4 h-36 flex items-end justify-between gap-2 pt-4 px-2 border-b border-slate-500/15">
-                  {[
-                    { d: '01/09', v: 40, r: 32, val: '210' },
-                    { d: '05/09', v: 55, r: 46, val: '265' },
-                    { d: '10/09', v: 68, r: 58, val: '310' },
-                    { d: '15/09', v: 82, r: 74, val: '342' },
-                    { d: '20/09', v: 95, r: 88, val: '355' }
-                  ].map((pt) => (
-                    <div key={pt.d} className="flex-1 flex flex-col items-center gap-1.5">
+                  {prodEvolution.map((pt, idx) => (
+                    <div key={`${pt.d}-${idx}`} className="flex-1 flex flex-col items-center gap-1.5">
                       <span className="font-mono text-[10px] font-bold tabular-nums">
                         {pt.val}
                       </span>
@@ -474,7 +541,7 @@ export const ProducerDashboard = ({
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="font-mono text-sm font-bold tabular-nums leading-none">
-                        1.482
+                        {brNum(totalSales)}
                       </span>
                       <span className={`text-[10px] font-semibold mt-0.5 ${mutedText}`}>
                         vendas
@@ -732,7 +799,7 @@ export const ProducerDashboard = ({
           </>
         ) : (
           /* SECTION 2: PARCERIAS > AGÊNCIAS DE TURISMO (Exact replica of 10_53_03.png) */
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className={`text-[11px] ${mutedText}`}>
@@ -745,26 +812,95 @@ export const ProducerDashboard = ({
                   com o seu evento.
                 </p>
               </div>
+
+              <div
+                className={`px-2.5 py-1.5 rounded-xl border text-xs font-semibold flex items-center gap-1.5 self-start sm:self-auto ${cardClass}`}
+              >
+                <span>📅</span>
+                <input
+                  type="date"
+                  value={periodStart}
+                  max={periodEnd}
+                  onChange={(e) => setPeriodStart(e.target.value)}
+                  className="bg-transparent focus:outline-none font-mono text-[11px] cursor-pointer"
+                />
+                <span className={mutedText}>até</span>
+                <input
+                  type="date"
+                  value={periodEnd}
+                  min={periodStart}
+                  onChange={(e) => setPeriodEnd(e.target.value)}
+                  className="bg-transparent focus:outline-none font-mono text-[11px] cursor-pointer"
+                />
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 auto-rows-fr">
               {[
-                { label: 'Agências Parceiras', value: '12', sub: '↑ +20% vs. ant.' },
-                { label: 'Pacotes Ativos', value: '28', sub: '↑ +33% vs. ant.' },
-                { label: 'Ingressos via Agências', value: '1.842', sub: '↑ +27% vs. ant.' },
-                { label: 'Receita Gerada', value: 'R$ 184.320,00', sub: '↑ +31% vs. ant.' },
-                { label: 'Turistas Estimados', value: '2.640', sub: '↑ +26% vs. ant.' },
-                { label: 'Taxa de Conversão', value: '8,4%', sub: '↑ +2,1% vs. ant.' }
+                {
+                  label: 'Agências Parceiras',
+                  value: brNum(activePartnerAgencies.length),
+                  badge: `${agenciesList.length} total`,
+                  sub: 'Credenciadas',
+                  color: 'bg-blue-600'
+                },
+                {
+                  label: 'Pacotes Ativos',
+                  value: brNum(totalPackages),
+                  badge: '↑ +33%',
+                  sub: 'vs. período ant.',
+                  color: 'bg-emerald-600'
+                },
+                {
+                  label: 'Ingressos via Agências',
+                  value: brNum(totalAgencyTickets),
+                  badge: `${brNum(totalAgencyBookings)} res.`,
+                  sub: 'Emitidos',
+                  color: 'bg-purple-600'
+                },
+                {
+                  label: 'Receita Gerada',
+                  value: brl(totalAgencyRevenue),
+                  badge: '↑ +31%',
+                  sub: 'vs. período ant.',
+                  color: 'bg-amber-500'
+                },
+                {
+                  label: 'Turistas Estimados',
+                  value: brNum(Math.round(totalAgencyTickets * 1.15)),
+                  badge: '↑ +26%',
+                  sub: 'Excursões B2B',
+                  color: 'bg-teal-600'
+                },
+                {
+                  label: 'Taxa de Conversão',
+                  value: '8,4%',
+                  badge: '↑ +2,1%',
+                  sub: 'Cota → venda',
+                  color: 'bg-rose-600'
+                }
               ].map((k, i) => (
                 <div
                   key={i}
-                  className={`rounded-2xl border p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[112px] overflow-hidden ${cardClass}`}
+                  className={`rounded-2xl border p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[128px] overflow-hidden ${cardClass}`}
                 >
-                  <span className={`text-xs font-semibold ${mutedText}`}>{k.label}</span>
-                  <div className="text-lg font-bold tabular-nums tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
+                  <div className="flex items-center justify-between gap-2 h-9">
+                    <span className={`text-xs font-bold leading-tight ${mutedText}`}>{k.label}</span>
+                    <span
+                      className={`w-7 h-7 rounded-lg ${k.color} text-white font-mono text-xs font-bold flex items-center justify-center shrink-0`}
+                    >
+                      0{i + 1}
+                    </span>
+                  </div>
+                  <div className="text-lg font-mono font-bold tabular-nums tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
                     {k.value}
                   </div>
-                  <div className="text-[11px] text-emerald-500 font-bold tabular-nums">{k.sub}</div>
+                  <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-500/15 text-[11px] h-7">
+                    <span className="text-emerald-500 font-bold tabular-nums bg-emerald-500/10 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
+                      {k.badge}
+                    </span>
+                    <span className={`font-medium truncate text-right ${mutedText}`}>{k.sub}</span>
+                  </div>
                 </div>
               ))}
             </div>

@@ -165,9 +165,9 @@ export const BookingWizard = ({ onBookingCreated }) => {
   ];
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* Top 5-Step Progress Bar */}
-      <div className="bg-white rounded-2xl border border-slate-200 px-4 py-3 shadow-xs">
+      <div className="bg-white rounded-2xl border border-slate-200 px-4 py-2.5 shadow-xs">
         <div className="flex flex-wrap items-center justify-between gap-2">
           {stepsList.map((s) => {
             const isActive = step === s.num;
@@ -176,7 +176,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
               <button
                 key={s.num}
                 onClick={() => s.num < 5 && setStep(s.num)}
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   isActive
                     ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50/50'
                     : isDone
@@ -203,17 +203,17 @@ export const BookingWizard = ({ onBookingCreated }) => {
       </div>
 
       {/* Main Grid: Left Steps + Right Reservation Summary */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-8 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+        <div className="lg:col-span-8 flex flex-col justify-between gap-4">
           {(step === 1 || step === 2) && (
             <>
-              {/* Block 1: Seleccione a data da visita & Horário */}
-              <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+              {/* Block 1: Selecione a data da visita & Horário */}
+              <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
                 <h2 className="text-sm font-bold text-slate-900">1. Selecione a data da visita</h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-stretch">
                   {/* Calendar Widget */}
-                  <div className="md:col-span-7 border border-slate-200 rounded-xl p-4">
+                  <div className="md:col-span-7 border border-slate-200 rounded-xl p-3.5 flex flex-col justify-between">
                     <div className="flex items-center justify-between mb-3">
                       <button className="p-1 rounded hover:bg-slate-100 text-slate-500">
                         <ChevronLeft className="w-4 h-4" />
@@ -532,32 +532,32 @@ export const BookingWizard = ({ onBookingCreated }) => {
                 </button>
               </div>
 
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                <div>
-                  <span className="text-slate-500 block">Valor Base (Repasse Parque)</span>
-                  <span className="text-lg font-extrabold text-slate-900">
+              <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3 auto-rows-fr text-xs">
+                <div className="bg-white rounded-lg p-3 border border-slate-200 flex flex-col justify-between h-[88px]">
+                  <span className="text-slate-500 font-semibold block">Valor Base (Repasse Parque)</span>
+                  <span className="text-lg font-mono font-bold tabular-nums tracking-tighter text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">
                     R$ {totalBase.toFixed(2).replace('.', ',')}
                   </span>
                 </div>
-                <div>
-                  <span className="text-slate-500 block">Taxa Adm. DiskIngressos (6%)</span>
-                  <span className="text-lg font-extrabold text-blue-600">
+                <div className="bg-white rounded-lg p-3 border border-slate-200 flex flex-col justify-between h-[88px]">
+                  <span className="text-slate-500 font-semibold block">Taxa Adm. DiskIngressos (6%)</span>
+                  <span className="text-lg font-mono font-bold tabular-nums tracking-tighter text-blue-600 whitespace-nowrap overflow-hidden text-ellipsis">
                     R$ {totalFee.toFixed(2).replace('.', ',')}
                   </span>
                 </div>
-                <div>
-                  <span className="text-slate-500 block">Total Faturado para Agência</span>
-                  <span className="text-lg font-black text-emerald-700">
+                <div className="bg-white rounded-lg p-3 border border-slate-200 flex flex-col justify-between h-[88px]">
+                  <span className="text-slate-500 font-semibold block">Total Faturado para Agência</span>
+                  <span className="text-lg font-mono font-bold tabular-nums tracking-tighter text-emerald-700 whitespace-nowrap overflow-hidden text-ellipsis">
                     R$ {totalAmount.toFixed(2).replace('.', ',')}
                   </span>
                 </div>
               </div>
 
-              <div className="space-y-2.5 text-xs">
+              <div className="space-y-2 text-xs">
                 <label className="font-bold text-slate-800 block">
                   Modalidade de Pagamento B2B
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 auto-rows-fr">
                   {[
                     {
                       id: 'FATURAMENTO_15D',
@@ -578,7 +578,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                     <button
                       key={m.id}
                       onClick={() => setGroupDetails({ ...groupDetails, paymentMethod: m.id })}
-                      className={`p-3.5 rounded-xl border text-left transition-all ${
+                      className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between h-[88px] cursor-pointer ${
                         groupDetails.paymentMethod === m.id
                           ? 'border-blue-600 bg-blue-50/60 ring-1 ring-blue-600'
                           : 'border-slate-200 hover:bg-slate-50'
@@ -671,9 +671,9 @@ export const BookingWizard = ({ onBookingCreated }) => {
         </div>
 
         {/* Right Column: Resumo da Reserva + Benefícios + Card Promo */}
-        <div className="lg:col-span-4 space-y-5">
+        <div className="lg:col-span-4 flex flex-col justify-between gap-4">
           {/* Resumo da Reserva Card */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold text-slate-900">Resumo da Reserva</h3>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
@@ -681,7 +681,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
               </span>
             </div>
 
-            <div className="space-y-2.5 text-xs border-b border-blue-100 pb-3.5">
+            <div className="space-y-2 text-xs border-b border-blue-100 pb-3">
               <div className="flex items-center justify-between">
                 <span className="text-slate-700 font-medium flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-blue-600" />
@@ -706,7 +706,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
             </div>
 
             {/* Selected Items Breakdown */}
-            <div className="space-y-2 text-xs border-b border-blue-100 pb-3.5">
+            <div className="space-y-1.5 text-xs border-b border-blue-100 pb-3">
               {selectedItems.length === 0 ? (
                 <p className="text-slate-500 italic">Nenhum ingresso selecionado</p>
               ) : (
@@ -723,9 +723,9 @@ export const BookingWizard = ({ onBookingCreated }) => {
               )}
             </div>
 
-            <div className="flex items-center justify-between pt-1">
+            <div className="flex items-center justify-between pt-0.5">
               <span className="text-xs font-bold text-slate-800">Subtotal (com taxa Disk 6%)</span>
-              <span className="text-lg font-mono font-bold text-blue-700">
+              <span className="text-lg font-mono font-bold tabular-nums tracking-tighter text-blue-700">
                 R$ {totalAmount.toFixed(2).replace('.', ',')}
               </span>
             </div>
@@ -734,7 +734,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
               <button
                 onClick={() => setStep(step === 1 ? 3 : step + 1)}
                 disabled={totalTickets === 0}
-                className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
               >
                 <span>Continuar</span>
                 <ChevronRight className="w-4 h-4" />
@@ -743,7 +743,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
               <button
                 onClick={handleConfirmBooking}
                 disabled={totalTickets === 0}
-                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
               >
                 <span>Confirmar e Emitir Vouchers</span>
                 <ChevronRight className="w-4 h-4" />
@@ -752,9 +752,9 @@ export const BookingWizard = ({ onBookingCreated }) => {
           </div>
 
           {/* Benefícios para Agências */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-3">
+          <div className="bg-white rounded-2xl border border-slate-200 p-4 shadow-xs space-y-2.5">
             <h3 className="text-xs font-bold text-slate-900">Benefícios para Agências</h3>
-            <ul className="space-y-2 text-[11px] text-slate-600">
+            <ul className="space-y-1.5 text-[11px] text-slate-600">
               {[
                 'Preço especial B2B com taxa de 6% já incluída',
                 'Emissão de vouchers em lote',
@@ -776,18 +776,18 @@ export const BookingWizard = ({ onBookingCreated }) => {
             <img
               src="/assets/parque-sunset.jpg"
               alt="Parque Jaime Lerner"
-              className="w-full h-40 object-cover opacity-80"
+              className="w-full h-36 object-cover opacity-80"
             />
-            <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-transparent p-4 flex flex-col justify-between">
+            <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-transparent p-3.5 flex flex-col justify-between">
               <div>
                 <h4 className="text-xs font-bold leading-snug">
                   Leve seus clientes para viver essa experiência!
                 </h4>
-                <p className="text-[10px] text-slate-300 mt-1">
+                <p className="text-[10px] text-slate-300 mt-0.5">
                   Parque Jaime Lerner • Rua da Música - Curitiba - PR
                 </p>
               </div>
-              <button className="self-start px-3.5 py-1.5 rounded-lg bg-white text-blue-700 font-bold text-[11px] flex items-center gap-1.5 hover:bg-blue-50 shadow-xs">
+              <button className="self-start px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold text-[11px] flex items-center gap-1.5 hover:bg-blue-50 shadow-xs cursor-pointer">
                 <Download className="w-3.5 h-3.5" />
                 <span>Baixar Materiais</span>
               </button>

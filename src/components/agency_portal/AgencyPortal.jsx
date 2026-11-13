@@ -30,6 +30,22 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
     ? allBookings.filter(b => b.agencyName.includes('Turismo Brasil') || b.agencyId === 'AG-006')
     : localBookings;
 
+  const brl = (n) => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const brNum = (n) => Number(n || 0).toLocaleString('pt-BR');
+
+  const activeBookings = bookings.filter((b) => b.status !== 'Cancelado');
+  const totalTicketsIssued = activeBookings.reduce((acc, b) => acc + Number(b.ticketsCount || 0), 0);
+  const totalB2BAmount = activeBookings.reduce((acc, b) => acc + Number(b.totalAmount || 0), 0);
+  const totalDiskFee = activeBookings.reduce(
+    (acc, b) => acc + Number(b.diskFeeAmount || Number(b.totalAmount || 0) * 0.06),
+    0
+  );
+  const quotaLimit = 1200;
+  const usedQuota = Math.min(quotaLimit, 560 + totalTicketsIssued);
+  const usedQuotaPct = Math.round((usedQuota / quotaLimit) * 100);
+  const creditLimit = 50000;
+  const availableCredit = Math.max(0, creditLimit - (18000 + totalB2BAmount));
+
   const handleBookingCreated = (newBooking) => {
     if (onCreateBooking) {
       onCreateBooking(newBooking);
@@ -45,19 +61,19 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
       <AgencySidebar activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Main Agency Content Area */}
-      <main className="flex-1 p-4 md:p-6 space-y-6 max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 p-4 md:p-5 space-y-4 max-w-[1700px] mx-auto w-full">
         
         {/* Top Attraction Panoramic Banner (Exact replica of 11_30_25) */}
         <div className="relative rounded-2xl overflow-hidden shadow-xs border border-slate-200">
           <img
             src="/assets/parque-banner.jpg"
             alt="Parque Jaime Lerner - Curitiba"
-            className="w-full h-44 sm:h-52 object-cover"
+            className="w-full h-40 sm:h-44 object-cover"
           />
           <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
 
           {/* Banner Contents */}
-          <div className="absolute inset-0 p-6 flex flex-col justify-between text-white">
+          <div className="absolute inset-0 p-5 flex flex-col justify-between text-white">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <span className="text-[11px] font-bold tracking-widest text-blue-300 uppercase">
@@ -66,7 +82,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                 <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-0.5">
                   Parque Jaime Lerner
                 </h1>
-                <p className="text-xs sm:text-sm text-slate-200 mt-1">
+                <p className="text-xs sm:text-sm text-slate-200 mt-0.5">
                   Rua da Música - Curitiba - PR
                 </p>
                 <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 border border-white/20 text-slate-100">
@@ -75,7 +91,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
               </div>
 
               {/* Tag Highlights on Top Right */}
-              <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-2 text-xs bg-slate-900/75 p-3.5 rounded-xl border border-white/15 self-start">
+              <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-2 text-xs bg-slate-900/75 p-3 rounded-xl border border-white/15 self-start">
                 <div className="flex items-center gap-2">
                   <Leaf className="w-4 h-4 text-emerald-400" />
                   <span className="text-slate-200">Natureza e lazer</span>
@@ -95,6 +111,77 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
               </div>
             </div>
           </div>
+        </div>
+
+        {/* 6 KPI Cards da Agência — Mesmo padrão compacto 128px */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 auto-rows-fr">
+          {[
+            {
+              label: 'Reservas da Agência',
+              value: brNum(activeBookings.length),
+              badge: 'Ativas',
+              sub: 'No período',
+              color: 'bg-blue-600'
+            },
+            {
+              label: 'Ingressos Emitidos',
+              value: brNum(totalTicketsIssued),
+              badge: 'Lote B2B',
+              sub: 'Excursões',
+              color: 'bg-emerald-600'
+            },
+            {
+              label: 'Volume B2B Faturado',
+              value: brl(totalB2BAmount),
+              badge: 'Faturado',
+              sub: 'Agência',
+              color: 'bg-purple-600'
+            },
+            {
+              label: 'Cota Mensal Usada',
+              value: `${brNum(usedQuota)} / ${brNum(quotaLimit)}`,
+              badge: `${usedQuotaPct}% uso`,
+              sub: 'Ingressos',
+              color: 'bg-amber-500'
+            },
+            {
+              label: 'Crédito Disponível',
+              value: brl(availableCredit),
+              badge: 'Faturamento 15d',
+              sub: 'Limite B2B',
+              color: 'bg-teal-600'
+            },
+            {
+              label: 'Taxa Adm. Disk (6%)',
+              value: brl(totalDiskFee),
+              badge: '6% incluída',
+              sub: 'Tarifário B2B',
+              color: 'bg-rose-600'
+            }
+          ].map((kpi, idx) => (
+            <div
+              key={idx}
+              className="bg-white rounded-2xl border border-blue-300 ring-1 ring-blue-100 p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[128px] overflow-hidden"
+            >
+              <div className="flex items-center gap-2 h-9">
+                <div
+                  className={`w-7 h-7 rounded-lg ${kpi.color} text-white flex items-center justify-center font-mono font-bold text-xs shrink-0`}
+                >
+                  0{idx + 1}
+                </div>
+                <span className="text-xs font-bold text-slate-800 leading-tight">{kpi.label}</span>
+              </div>
+              <div className="text-lg font-mono font-bold tabular-nums tracking-tighter text-slate-950 whitespace-nowrap overflow-hidden text-ellipsis">
+                {kpi.value}
+              </div>
+              <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100 text-[11px] h-7">
+                <span className="font-bold tabular-nums text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
+                  {kpi.badge}
+                </span>
+                <span className="text-slate-600 font-medium truncate text-right">{kpi.sub}</span>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Dynamic Tab Body */}
@@ -243,60 +330,66 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
 
         {/* Tab: Materiais de Divulgação */}
         {activeTab === 'materiais' && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-4">
             <div>
               <h3 className="font-bold text-base text-slate-900">Kit de Mídia & Materiais Promocionais</h3>
               <p className="text-xs text-slate-500">Recursos visuais autorizados para promoção de pacotes turísticos do Parque Jaime Lerner</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-              <div className="border border-slate-200 rounded-xl overflow-hidden group">
-                <div className="h-32 bg-slate-100 overflow-hidden relative">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 auto-rows-fr">
+              <div className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between">
+                <div className="h-32 bg-slate-100 overflow-hidden relative shrink-0">
                   <img
                     src="/assets/parque-banner.jpg"
                     alt="Fotos HD"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
                 </div>
-                <div className="p-3 text-xs">
-                  <span className="font-bold text-slate-800 block">Fotos Oficiais em Alta Definição (4K)</span>
-                  <span className="text-slate-400 text-[11px]">28 imagens • 45 MB</span>
-                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5">
+                <div className="p-3 text-xs flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className="font-bold text-slate-800 block">Fotos Oficiais em Alta Definição (4K)</span>
+                    <span className="text-slate-400 text-[11px]">28 imagens • 45 MB</span>
+                  </div>
+                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5 cursor-pointer">
                     <Download className="w-3.5 h-3.5" />
                     <span>Baixar Pacote</span>
                   </button>
                 </div>
               </div>
 
-              <div className="border border-slate-200 rounded-xl overflow-hidden group">
-                <div className="h-32 bg-slate-100 overflow-hidden relative">
+              <div className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between">
+                <div className="h-32 bg-slate-100 overflow-hidden relative shrink-0">
                   <img
                     src="/assets/parque-sunset.jpg"
                     alt="Folders"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
                 </div>
-                <div className="p-3 text-xs">
-                  <span className="font-bold text-slate-800 block">Folders & Folhetos Digitais Editáveis</span>
-                  <span className="text-slate-400 text-[11px]">Formatos PDF, PSD e Canva</span>
-                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5">
+                <div className="p-3 text-xs flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className="font-bold text-slate-800 block">Folders & Folhetos Digitais Editáveis</span>
+                    <span className="text-slate-400 text-[11px]">Formatos PDF, PSD e Canva</span>
+                  </div>
+                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5 cursor-pointer">
                     <Download className="w-3.5 h-3.5" />
                     <span>Baixar Pacote</span>
                   </button>
                 </div>
               </div>
 
-              <div className="border border-slate-200 rounded-xl overflow-hidden group">
-                <div className="h-32 bg-slate-800 flex items-center justify-center text-white text-center p-3">
+              <div className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between">
+                <div className="h-32 bg-slate-800 flex items-center justify-center text-white text-center p-3 shrink-0">
                   <div>
                     <Music className="w-8 h-8 text-blue-400 mx-auto mb-1" />
                     <span className="text-xs font-bold block">Vídeos Promocionais (Reels/Stories)</span>
                   </div>
                 </div>
-                <div className="p-3 text-xs">
-                  <span className="font-bold text-slate-800 block">Vídeos Curtos para Redes Sociais</span>
-                  <span className="text-slate-400 text-[11px]">Formato 9:16 vertical com áudio</span>
-                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5">
+                <div className="p-3 text-xs flex-1 flex flex-col justify-between">
+                  <div>
+                    <span className="font-bold text-slate-800 block">Vídeos Curtos para Redes Sociais</span>
+                    <span className="text-slate-400 text-[11px]">Formato 9:16 vertical com áudio</span>
+                  </div>
+                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5 cursor-pointer">
                     <Download className="w-3.5 h-3.5" />
                     <span>Baixar Pacote</span>
                   </button>
