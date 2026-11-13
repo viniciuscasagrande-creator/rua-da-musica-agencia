@@ -42,6 +42,7 @@ export const OperatorDashboard = ({
   const bookingsList = propBookings || BOOKINGS_LIST;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Todos');
+  const [periodRange, setPeriodRange] = useState('30d');
   const [simBasePrice, setSimBasePrice] = useState(30);
   const [feeBps, setFeeBps] = useState(600); // 6.0%
   const [showNewAgencyModal, setShowNewAgencyModal] = useState(false);
@@ -51,6 +52,106 @@ export const OperatorDashboard = ({
     cityUf: 'Curitiba - PR',
     quotaLimit: 500
   });
+
+  // Integração dos KPIs e Gráficos com dados de /api/b2b + filtro de período
+  const extraAgencies = Math.max(0, agencies.length - AGENCIES_LIST.length);
+  const extraBookings = Math.max(0, bookingsList.length - BOOKINGS_LIST.length);
+  const extraTickets = bookingsList
+    .slice(0, extraBookings)
+    .reduce((acc, b) => acc + (Number(b.totalQty) || 0), 0);
+  const extraRevenue = bookingsList
+    .slice(0, extraBookings)
+    .reduce((acc, b) => acc + (Number(b.totalAmount) || 0), 0);
+  const extraFee = bookingsList
+    .slice(0, extraBookings)
+    .reduce((acc, b) => acc + (Number(b.feeAmount) || Number(b.totalAmount || 0) * 0.06), 0);
+
+  const periodPresets = {
+    '30d': {
+      label: '01/09/2026 - 30/09/2026',
+      shortLabel: 'Últimos 30 dias',
+      mult: 1,
+      statesCount: 18,
+      bars: [
+        { d: '01/09', r: 35, i: 50, val: '180' },
+        { d: '07/09', r: 48, i: 64, val: '245' },
+        { d: '14/09', r: 62, i: 78, val: '312' },
+        { d: '21/09', r: 85, i: 95, val: '420' },
+        { d: '30/09', r: 76, i: 88, val: String(385 + extraTickets) }
+      ],
+      states: STATE_ORIGIN_DATA
+    },
+    '15d': {
+      label: '15/09/2026 - 30/09/2026',
+      shortLabel: 'Últimos 15 dias',
+      mult: 0.54,
+      statesCount: 15,
+      bars: [
+        { d: '15/09', r: 52, i: 68, val: '142' },
+        { d: '19/09', r: 64, i: 79, val: '176' },
+        { d: '23/09', r: 78, i: 90, val: '215' },
+        { d: '27/09', r: 82, i: 94, val: '230' },
+        { d: '30/09', r: 74, i: 86, val: String(198 + extraTickets) }
+      ],
+      states: [
+        { uf: 'PR', state: 'Paraná', share: 31, color: '#2563eb' },
+        { uf: 'SP', state: 'São Paulo', share: 20, color: '#3b82f6' },
+        { uf: 'SC', state: 'Santa Catarina', share: 13, color: '#60a5fa' },
+        { uf: 'RJ', state: 'Rio de Janeiro', share: 9, color: '#93c5fd' },
+        { uf: 'MG', state: 'Minas Gerais', share: 7, color: '#bfdbfe' },
+        { uf: 'OUT', state: 'Outros (10 UFs)', share: 20, color: '#cbd5e1' }
+      ]
+    },
+    '7d': {
+      label: '24/09/2026 - 30/09/2026',
+      shortLabel: 'Últimos 7 dias',
+      mult: 0.26,
+      statesCount: 12,
+      bars: [
+        { d: '24/09', r: 45, i: 60, val: '78' },
+        { d: '26/09', r: 62, i: 75, val: '96' },
+        { d: '28/09', r: 88, i: 96, val: '134' },
+        { d: '29/09', r: 72, i: 84, val: '112' },
+        { d: '30/09', r: 80, i: 91, val: String(125 + extraTickets) }
+      ],
+      states: [
+        { uf: 'PR', state: 'Paraná', share: 34, color: '#2563eb' },
+        { uf: 'SP', state: 'São Paulo', share: 19, color: '#3b82f6' },
+        { uf: 'SC', state: 'Santa Catarina', share: 14, color: '#60a5fa' },
+        { uf: 'RJ', state: 'Rio de Janeiro', share: 8, color: '#93c5fd' },
+        { uf: 'MG', state: 'Minas Gerais', share: 7, color: '#bfdbfe' },
+        { uf: 'OUT', state: 'Outros (7 UFs)', share: 18, color: '#cbd5e1' }
+      ]
+    },
+    q3: {
+      label: '01/07/2026 - 30/09/2026',
+      shortLabel: 'Trimestre Q3',
+      mult: 2.75,
+      statesCount: 22,
+      bars: [
+        { d: 'Jul/S1', r: 42, i: 56, val: '890' },
+        { d: 'Jul/S2', r: 58, i: 72, val: '1.140' },
+        { d: 'Ago/S1', r: 67, i: 81, val: '1.380' },
+        { d: 'Ago/S2', r: 79, i: 90, val: '1.620' },
+        { d: 'Set/26', r: 92, i: 98, val: String(1842 + extraTickets) }
+      ],
+      states: [
+        { uf: 'PR', state: 'Paraná', share: 26, color: '#2563eb' },
+        { uf: 'SP', state: 'São Paulo', share: 19, color: '#3b82f6' },
+        { uf: 'SC', state: 'Santa Catarina', share: 12, color: '#60a5fa' },
+        { uf: 'RJ', state: 'Rio de Janeiro', share: 11, color: '#93c5fd' },
+        { uf: 'MG', state: 'Minas Gerais', share: 9, color: '#bfdbfe' },
+        { uf: 'OUT', state: 'Outros (17 UFs)', share: 23, color: '#cbd5e1' }
+      ]
+    }
+  };
+
+  const currentPeriod = periodPresets[periodRange] || periodPresets['30d'];
+  const activeAgenciesCount = 42 + extraAgencies;
+  const totalBookingsCount = Math.round(1248 * currentPeriod.mult) + extraBookings;
+  const totalTicketsCount = Math.round(6842 * currentPeriod.mult) + extraTickets;
+  const totalGrossRevenue = 214320 * currentPeriod.mult + extraRevenue;
+  const totalDiskFee = 12859.2 * currentPeriod.mult + extraFee;
 
   const feePct = feeBps / 100;
   const simFeeAmount = (Number(simBasePrice || 0) * feePct) / 100;
@@ -196,9 +297,17 @@ export const OperatorDashboard = ({
           </div>
 
           <div className="flex items-center gap-2.5">
-            <div className="px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700">
-              📅 01/09/2026 - 30/09/2026
-            </div>
+            <select
+              value={periodRange}
+              onChange={(e) => setPeriodRange(e.target.value)}
+              aria-label="Selecionar período"
+              className="px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer focus:outline-none"
+            >
+              <option value="30d">📅 01/09/2026 - 30/09/2026</option>
+              <option value="15d">📅 15/09/2026 - 30/09/2026 (15d)</option>
+              <option value="7d">📅 24/09/2026 - 30/09/2026 (7d)</option>
+              <option value="q3">📅 01/07/2026 - 30/09/2026 (Q3)</option>
+            </select>
             <button
               onClick={() => setShowNewAgencyModal(true)}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer"
@@ -234,42 +343,42 @@ export const OperatorDashboard = ({
               {[
                 {
                   label: 'Agências Ativas',
-                  value: '42',
+                  value: String(activeAgenciesCount),
                   change: '↑ +16%',
                   sub: 'vs. mês ant.',
                   color: 'bg-blue-600'
                 },
                 {
                   label: 'Estados Atendidos',
-                  value: '18',
+                  value: String(currentPeriod.statesCount),
                   change: '↑ +12%',
                   sub: 'vs. mês ant.',
                   color: 'bg-emerald-600'
                 },
                 {
                   label: 'Reservas B2B',
-                  value: '1.248',
+                  value: totalBookingsCount.toLocaleString('pt-BR'),
                   change: '↑ +28%',
                   sub: 'vs. mês ant.',
                   color: 'bg-purple-600'
                 },
                 {
                   label: 'Ingressos Distribuídos',
-                  value: '6.842',
+                  value: totalTicketsCount.toLocaleString('pt-BR'),
                   change: '↑ +32%',
                   sub: 'vs. mês ant.',
                   color: 'bg-amber-500'
                 },
                 {
                   label: 'Receita Bruta',
-                  value: 'R$ 214.320,00',
+                  value: `R$ ${totalGrossRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                   change: '↑ +30%',
                   sub: 'vs. mês ant.',
                   color: 'bg-teal-600'
                 },
                 {
                   label: 'Taxas DiskIngressos',
-                  value: 'R$ 12.859,20',
+                  value: `R$ ${totalDiskFee.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                   change: '6% contratado',
                   sub: 'Repasse PDT',
                   color: 'bg-rose-600'
@@ -315,7 +424,7 @@ export const OperatorDashboard = ({
                   </span>
                 </div>
                 <div className="space-y-3 text-xs">
-                  {STATE_ORIGIN_DATA.map((st) => (
+                  {currentPeriod.states.map((st) => (
                     <div key={st.uf} className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="flex items-center gap-2 text-slate-800 font-semibold">
@@ -331,7 +440,7 @@ export const OperatorDashboard = ({
                       </div>
                       <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full"
+                          className="h-full rounded-full transition-all duration-300"
                           style={{ width: `${st.share}%`, backgroundColor: st.color }}
                         />
                       </div>
@@ -346,29 +455,25 @@ export const OperatorDashboard = ({
                   <h3 className="text-xs font-bold text-slate-950 uppercase tracking-wide">
                     Evolução B2B
                   </h3>
-                  <span className="text-[11px] font-medium text-slate-600">Últimos 30 dias</span>
+                  <span className="text-[11px] font-medium text-slate-600">
+                    {currentPeriod.shortLabel}
+                  </span>
                 </div>
 
                 <div className="my-4 h-36 flex items-end justify-between gap-2 pt-4 px-2 border-b border-slate-200">
-                  {[
-                    { d: '01/09', r: 35, i: 50, val: '180' },
-                    { d: '07/09', r: 48, i: 64, val: '245' },
-                    { d: '14/09', r: 62, i: 78, val: '312' },
-                    { d: '21/09', r: 85, i: 95, val: '420' },
-                    { d: '30/09', r: 76, i: 88, val: '385' }
-                  ].map((bar) => (
+                  {currentPeriod.bars.map((bar) => (
                     <div key={bar.d} className="flex-1 flex flex-col items-center gap-1.5">
                       <span className="font-mono text-[10px] font-bold tabular-nums text-slate-700">
                         {bar.val}
                       </span>
                       <div className="w-full flex items-end justify-center gap-1 h-24">
                         <div
-                          className="w-3 bg-blue-600 rounded-t-xs"
+                          className="w-3 bg-blue-600 rounded-t-xs transition-all duration-300"
                           style={{ height: `${bar.r}%` }}
                           title="Reservas"
                         />
                         <div
-                          className="w-3 bg-amber-500 rounded-t-xs"
+                          className="w-3 bg-amber-500 rounded-t-xs transition-all duration-300"
                           style={{ height: `${bar.i}%` }}
                           title="Ingressos"
                         />
@@ -399,14 +504,50 @@ export const OperatorDashboard = ({
                   <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 36 36" className="w-28 h-28 -rotate-90">
                       <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="4.5" />
-                      <circle cx="18" cy="18" r="14" fill="none" stroke="#2563eb" strokeWidth="4.5" strokeDasharray="25 75" strokeDashoffset="0" />
-                      <circle cx="18" cy="18" r="14" fill="none" stroke="#10b981" strokeWidth="4.5" strokeDasharray="18 82" strokeDashoffset="-25" />
-                      <circle cx="18" cy="18" r="14" fill="none" stroke="#f59e0b" strokeWidth="4.5" strokeDasharray="14 86" strokeDashoffset="-43" />
-                      <circle cx="18" cy="18" r="14" fill="none" stroke="#8b5cf6" strokeWidth="4.5" strokeDasharray="15 85" strokeDashoffset="-57" />
+                      <circle
+                        cx="18"
+                        cy="18"
+                        r="14"
+                        fill="none"
+                        stroke="#2563eb"
+                        strokeWidth="4.5"
+                        strokeDasharray={`${currentPeriod.states[0].share} ${100 - currentPeriod.states[0].share}`}
+                        strokeDashoffset="0"
+                      />
+                      <circle
+                        cx="18"
+                        cy="18"
+                        r="14"
+                        fill="none"
+                        stroke="#10b981"
+                        strokeWidth="4.5"
+                        strokeDasharray={`${currentPeriod.states[1].share} ${100 - currentPeriod.states[1].share}`}
+                        strokeDashoffset={`-${currentPeriod.states[0].share}`}
+                      />
+                      <circle
+                        cx="18"
+                        cy="18"
+                        r="14"
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth="4.5"
+                        strokeDasharray={`${currentPeriod.states[2].share} ${100 - currentPeriod.states[2].share}`}
+                        strokeDashoffset={`-${currentPeriod.states[0].share + currentPeriod.states[1].share}`}
+                      />
+                      <circle
+                        cx="18"
+                        cy="18"
+                        r="14"
+                        fill="none"
+                        stroke="#8b5cf6"
+                        strokeWidth="4.5"
+                        strokeDasharray={`${currentPeriod.states[3].share} ${100 - currentPeriod.states[3].share}`}
+                        strokeDashoffset={`-${currentPeriod.states[0].share + currentPeriod.states[1].share + currentPeriod.states[2].share}`}
+                      />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="font-mono text-sm font-bold tabular-nums text-slate-950 leading-none">
-                        6.842
+                        {totalTicketsCount.toLocaleString('pt-BR')}
                       </span>
                       <span className="text-[10px] font-semibold text-slate-600 mt-0.5">
                         ingressos
@@ -414,7 +555,7 @@ export const OperatorDashboard = ({
                     </div>
                   </div>
                   <div className="space-y-1.5 text-xs flex-1">
-                    {STATE_ORIGIN_DATA.map((st) => (
+                    {currentPeriod.states.map((st) => (
                       <div key={st.uf} className="flex items-center justify-between">
                         <span className="text-slate-700 font-semibold flex items-center gap-1.5">
                           <span
@@ -431,7 +572,10 @@ export const OperatorDashboard = ({
                   </div>
                 </div>
                 <div className="text-xs text-center bg-blue-50 border border-blue-200/70 text-blue-800 rounded-lg py-1.5 font-semibold">
-                  Principal emissor: <strong className="font-bold">Paraná (28%)</strong>
+                  Principal emissor:{' '}
+                  <strong className="font-bold">
+                    {currentPeriod.states[0].state} ({currentPeriod.states[0].share}%)
+                  </strong>
                 </div>
               </div>
 

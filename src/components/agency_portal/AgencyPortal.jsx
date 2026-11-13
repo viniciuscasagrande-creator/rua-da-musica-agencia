@@ -214,26 +214,28 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-6 space-y-6">
             <h3 className="font-bold text-base text-slate-900">Extrato Financeiro & Limite de Cota B2B</h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <span className="text-xs text-slate-500 block">Cota de Ingressos do Mês</span>
-                <span className="text-2xl font-black text-slate-900">1.200 ingressos</span>
-                <div className="w-full bg-slate-200 h-2 rounded-full mt-2 overflow-hidden">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '49%' }} />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 auto-rows-fr">
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[128px]">
+                <span className="text-xs font-semibold text-slate-600 block">Cota de Ingressos do Mês</span>
+                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">1.200 ingressos</span>
+                <div>
+                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '49%' }} />
+                  </div>
+                  <span className="text-[11px] text-slate-500 mt-1 block">590 utilizados (49%)</span>
                 </div>
-                <span className="text-[11px] text-slate-400 mt-1 block">590 utilizados (49%)</span>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <span className="text-xs text-slate-500 block">Limite de Faturamento B2B</span>
-                <span className="text-2xl font-black text-slate-900">R$ 50.000,00</span>
-                <span className="text-[11px] text-emerald-600 font-semibold mt-1 block">R$ 31.238,00 disponível</span>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[128px]">
+                <span className="text-xs font-semibold text-slate-600 block">Limite de Faturamento B2B</span>
+                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">R$ 50.000,00</span>
+                <span className="text-[11px] text-emerald-600 font-semibold block">R$ 31.238,00 disponível</span>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <span className="text-xs text-slate-500 block">Próximo Vencimento</span>
-                <span className="text-2xl font-black text-slate-900">10/10/2026</span>
-                <span className="text-[11px] text-slate-400 mt-1 block">Fatura quinzenal automatizada</span>
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[128px]">
+                <span className="text-xs font-semibold text-slate-600 block">Próximo Vencimento</span>
+                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">10/10/2026</span>
+                <span className="text-[11px] text-slate-500 block">Fatura quinzenal automatizada</span>
               </div>
             </div>
           </div>

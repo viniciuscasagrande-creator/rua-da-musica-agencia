@@ -48,8 +48,53 @@ export const ProducerDashboard = ({
   const agenciesList = propAgencies || AGENCIES_LIST;
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState('Todos');
+  const [periodRange, setPeriodRange] = useState('20d');
   const [copiedCode, setCopiedCode] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+
+  const extraPromoters = Math.max(0, members.length - SALES_TEAM_LIST.length);
+  const extraAgencies = Math.max(0, agenciesList.length - AGENCIES_LIST.length);
+  const periodMap = {
+    '20d': {
+      mult: 1,
+      shortLabel: 'Últimos 20 dias',
+      bars: [
+        { d: '01/09', v: 40, r: 32, val: '210' },
+        { d: '05/09', v: 55, r: 46, val: '265' },
+        { d: '10/09', v: 68, r: 58, val: '310' },
+        { d: '15/09', v: 82, r: 74, val: '342' },
+        { d: '20/09', v: 95, r: 88, val: '355' }
+      ]
+    },
+    '10d': {
+      mult: 0.56,
+      shortLabel: 'Últimos 10 dias',
+      bars: [
+        { d: '10/09', v: 58, r: 48, val: '145' },
+        { d: '13/09', v: 66, r: 56, val: '162' },
+        { d: '16/09', v: 78, r: 68, val: '180' },
+        { d: '18/09', v: 86, r: 78, val: '195' },
+        { d: '20/09', v: 92, r: 85, val: '210' }
+      ]
+    },
+    '7d': {
+      mult: 0.38,
+      shortLabel: 'Últimos 7 dias',
+      bars: [
+        { d: '14/09', v: 50, r: 42, val: '95' },
+        { d: '16/09', v: 64, r: 54, val: '108' },
+        { d: '18/09', v: 79, r: 70, val: '124' },
+        { d: '19/09', v: 84, r: 76, val: '132' },
+        { d: '20/09', v: 91, r: 84, val: '142' }
+      ]
+    }
+  };
+  const currentProdPeriod = periodMap[periodRange] || periodMap['20d'];
+  const teamSalesCount = Math.round(1482 * currentProdPeriod.mult);
+  const teamRevenueAmount = 184320 * currentProdPeriod.mult;
+  const teamCommissionAmount = 9216 * currentProdPeriod.mult;
+  const activePromotersCount = 23 + extraPromoters;
+  const totalPromotersCount = 28 + extraPromoters;
   const [newMember, setNewMember] = useState({
     name: '',
     phone: '(41) 99111-2233',
@@ -287,9 +332,16 @@ export const ProducerDashboard = ({
                   )}
                 </button>
 
-                <div className={`px-3.5 py-2 rounded-xl border text-xs font-semibold ${cardClass}`}>
-                  📅 01/09/2026 - 20/09/2026
-                </div>
+                <select
+                  value={periodRange}
+                  onChange={(e) => setPeriodRange(e.target.value)}
+                  aria-label="Selecionar período do evento"
+                  className={`px-3.5 py-2 rounded-xl border text-xs font-semibold cursor-pointer focus:outline-none ${cardClass}`}
+                >
+                  <option value="20d">📅 01/09/2026 - 20/09/2026</option>
+                  <option value="10d">📅 10/09/2026 - 20/09/2026 (10d)</option>
+                  <option value="7d">📅 14/09/2026 - 20/09/2026 (7d)</option>
+                </select>
 
                 <button
                   onClick={() => setShowAddModal(true)}
@@ -301,28 +353,28 @@ export const ProducerDashboard = ({
               </div>
             </div>
 
-            {/* 6 KPI Cards — Crisp Telemetry */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-stretch">
+            {/* 6 KPI Cards — Compact 128px Standard */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 auto-rows-fr">
               {[
                 {
                   title: 'Vendas da Equipe',
-                  value: '1.482',
+                  value: teamSalesCount.toLocaleString('pt-BR'),
                   badge: '↑ +18%',
                   sub: 'Ingressos',
                   iconBg: 'bg-emerald-600'
                 },
                 {
                   title: 'Receita Gerada',
-                  value: 'R$ 184.320,00',
+                  value: `R$ ${teamRevenueAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                   badge: '↑ +22%',
                   sub: 'Volume total',
                   iconBg: 'bg-blue-600'
                 },
                 {
                   title: 'Promoters Ativos',
-                  value: '23',
+                  value: String(activePromotersCount),
                   badge: '↑ +9%',
-                  sub: 'de 28 tot.',
+                  sub: `de ${totalPromotersCount} tot.`,
                   iconBg: 'bg-purple-600'
                 },
                 {
@@ -341,7 +393,7 @@ export const ProducerDashboard = ({
                 },
                 {
                   title: 'Comissões',
-                  value: 'R$ 9.216,00',
+                  value: `R$ ${teamCommissionAmount.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                   badge: '↑ +18%',
                   sub: 'Total devido',
                   iconBg: 'bg-rose-600'
@@ -349,9 +401,9 @@ export const ProducerDashboard = ({
               ].map((kpi, i) => (
                 <div
                   key={i}
-                  className={`rounded-2xl border p-3.5 shadow-xs flex flex-col justify-between gap-2 min-w-0 h-full ${cardClass}`}
+                  className={`rounded-2xl border p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[128px] overflow-hidden ${cardClass}`}
                 >
-                  <div className="flex items-center justify-between gap-2 min-h-[2.5rem]">
+                  <div className="flex items-center justify-between gap-2 h-9">
                     <span className={`text-xs font-semibold leading-tight ${mutedText}`}>{kpi.title}</span>
                     <span
                       className={`w-7 h-7 rounded-lg ${kpi.iconBg} text-white font-mono text-xs font-bold flex items-center justify-center shrink-0`}
@@ -359,10 +411,10 @@ export const ProducerDashboard = ({
                       0{i + 1}
                     </span>
                   </div>
-                  <div className="text-lg xl:text-[1.15rem] 2xl:text-xl font-mono font-bold tabular-nums tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
+                  <div className="text-lg font-mono font-bold tabular-nums tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
                     {kpi.value}
                   </div>
-                  <div className="flex items-center justify-between gap-1 pt-1.5 border-t border-slate-500/15 text-[11px] min-h-[2rem]">
+                  <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-500/15 text-[11px] h-7">
                     <span className="text-emerald-500 font-bold tabular-nums bg-emerald-500/10 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
                       {kpi.badge}
                     </span>
@@ -373,7 +425,7 @@ export const ProducerDashboard = ({
             </div>
 
             {/* 3 Charts Row: Vendas por Promoter (Top 5) | Evolução de Vendas | Distribuição por Tipo de Ingresso */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch lg:auto-rows-[300px]">
               {/* Top 5 Promoters */}
               <div className={`lg:col-span-4 rounded-2xl border p-5 shadow-xs space-y-3.5 ${cardClass}`}>
                 <div className="flex items-center justify-between">
@@ -416,27 +468,23 @@ export const ProducerDashboard = ({
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wide">Evolução de Vendas</h3>
-                  <span className={`text-[11px] font-semibold ${mutedText}`}>Últimos 30 dias</span>
+                  <span className={`text-[11px] font-semibold ${mutedText}`}>
+                    {currentProdPeriod.shortLabel}
+                  </span>
                 </div>
                 <div className="my-4 h-36 flex items-end justify-between gap-2 pt-4 px-2 border-b border-slate-500/15">
-                  {[
-                    { d: '01/09', v: 40, r: 32, val: '210' },
-                    { d: '05/09', v: 55, r: 46, val: '265' },
-                    { d: '10/09', v: 68, r: 58, val: '310' },
-                    { d: '15/09', v: 82, r: 74, val: '342' },
-                    { d: '20/09', v: 95, r: 88, val: '355' }
-                  ].map((pt) => (
+                  {currentProdPeriod.bars.map((pt) => (
                     <div key={pt.d} className="flex-1 flex flex-col items-center gap-1.5">
                       <span className="font-mono text-[10px] font-bold tabular-nums">
                         {pt.val}
                       </span>
                       <div className="w-full flex items-end justify-center gap-1 h-24">
                         <div
-                          className="w-3 bg-blue-600 rounded-t-xs"
+                          className="w-3 bg-blue-600 rounded-t-xs transition-all duration-300"
                           style={{ height: `${pt.v}%` }}
                         />
                         <div
-                          className="w-3 bg-orange-500 rounded-t-xs"
+                          className="w-3 bg-orange-500 rounded-t-xs transition-all duration-300"
                           style={{ height: `${pt.r}%` }}
                         />
                       </div>
@@ -474,7 +522,7 @@ export const ProducerDashboard = ({
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="font-mono text-sm font-bold tabular-nums leading-none">
-                        1.482
+                        {teamSalesCount.toLocaleString('pt-BR')}
                       </span>
                       <span className={`text-[10px] font-semibold mt-0.5 ${mutedText}`}>
                         vendas
@@ -747,9 +795,9 @@ export const ProducerDashboard = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 auto-rows-fr">
               {[
-                { label: 'Agências Parceiras', value: '12', sub: '↑ +20% vs. ant.' },
+                { label: 'Agências Parceiras', value: String(12 + extraAgencies), sub: '↑ +20% vs. ant.' },
                 { label: 'Pacotes Ativos', value: '28', sub: '↑ +33% vs. ant.' },
                 { label: 'Ingressos via Agências', value: '1.842', sub: '↑ +27% vs. ant.' },
                 { label: 'Receita Gerada', value: 'R$ 184.320,00', sub: '↑ +31% vs. ant.' },
@@ -758,15 +806,15 @@ export const ProducerDashboard = ({
               ].map((k, i) => (
                 <div
                   key={i}
-                  className={`rounded-2xl border p-3.5 shadow-xs flex flex-col justify-between gap-2 min-w-0 h-full ${cardClass}`}
+                  className={`rounded-2xl border p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[128px] overflow-hidden ${cardClass}`}
                 >
-                  <span className={`text-xs font-semibold leading-tight min-h-[2.25rem] flex items-center ${mutedText}`}>
+                  <span className={`text-xs font-semibold leading-tight h-9 flex items-center ${mutedText}`}>
                     {k.label}
                   </span>
-                  <div className="text-lg xl:text-[1.15rem] 2xl:text-xl font-mono font-bold tabular-nums tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
+                  <div className="text-lg font-mono font-bold tabular-nums tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis">
                     {k.value}
                   </div>
-                  <div className="text-[11px] text-emerald-500 font-bold tabular-nums pt-1 border-t border-slate-500/15">
+                  <div className="text-[11px] text-emerald-500 font-bold tabular-nums pt-1.5 border-t border-slate-500/15 h-7 flex items-center">
                     {k.sub}
                   </div>
                 </div>
