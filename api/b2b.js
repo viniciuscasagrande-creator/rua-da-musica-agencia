@@ -1,9 +1,5 @@
 import { neon } from '@neondatabase/serverless';
 
-const DEFAULT_DB_URL =
-  process.env.DATABASE_URL ||
-  'postgresql://disk:npg_W7aEi2XjFAZz@ep-polished-dew-b6duonq6-pooler.c-2.sa-east-1.aws.neon.tech/disk_operational?sslmode=require';
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
@@ -13,7 +9,12 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  const sql = neon(DEFAULT_DB_URL);
+  const dbUrl = process.env.DATABASE_URL;
+  if (!dbUrl) {
+    return res.status(500).json({ ok: false, error: 'DATABASE_URL ausente nas variáveis de ambiente' });
+  }
+
+  const sql = neon(dbUrl);
 
   try {
     if (req.method === 'GET') {

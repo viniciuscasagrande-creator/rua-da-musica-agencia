@@ -42,10 +42,11 @@ export const OperatorDashboard = ({
   const bookingsList = propBookings || BOOKINGS_LIST;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Todos');
-  const [periodRange, setPeriodRange] = useState('30d');
   const [simBasePrice, setSimBasePrice] = useState(30);
   const [feeBps, setFeeBps] = useState(600); // 6.0%
   const [showNewAgencyModal, setShowNewAgencyModal] = useState(false);
+  const [periodStart, setPeriodStart] = useState('2026-09-01');
+  const [periodEnd, setPeriodEnd] = useState('2026-09-30');
   const [newAgencyForm, setNewAgencyForm] = useState({
     name: '',
     cnpj: '',
@@ -53,109 +54,127 @@ export const OperatorDashboard = ({
     quotaLimit: 500
   });
 
-  // Integração dos KPIs e Gráficos com dados de /api/b2b + filtro de período
-  const extraAgencies = Math.max(0, agencies.length - AGENCIES_LIST.length);
-  const extraBookings = Math.max(0, bookingsList.length - BOOKINGS_LIST.length);
-  const extraTickets = bookingsList
-    .slice(0, extraBookings)
-    .reduce((acc, b) => acc + (Number(b.totalQty) || 0), 0);
-  const extraRevenue = bookingsList
-    .slice(0, extraBookings)
-    .reduce((acc, b) => acc + (Number(b.totalAmount) || 0), 0);
-  const extraFee = bookingsList
-    .slice(0, extraBookings)
-    .reduce((acc, b) => acc + (Number(b.feeAmount) || Number(b.totalAmount || 0) * 0.06), 0);
-
-  const periodPresets = {
-    '30d': {
-      label: '01/09/2026 - 30/09/2026',
-      shortLabel: 'Últimos 30 dias',
-      mult: 1,
-      statesCount: 18,
-      bars: [
-        { d: '01/09', r: 35, i: 50, val: '180' },
-        { d: '07/09', r: 48, i: 64, val: '245' },
-        { d: '14/09', r: 62, i: 78, val: '312' },
-        { d: '21/09', r: 85, i: 95, val: '420' },
-        { d: '30/09', r: 76, i: 88, val: String(385 + extraTickets) }
-      ],
-      states: STATE_ORIGIN_DATA
-    },
-    '15d': {
-      label: '15/09/2026 - 30/09/2026',
-      shortLabel: 'Últimos 15 dias',
-      mult: 0.54,
-      statesCount: 15,
-      bars: [
-        { d: '15/09', r: 52, i: 68, val: '142' },
-        { d: '19/09', r: 64, i: 79, val: '176' },
-        { d: '23/09', r: 78, i: 90, val: '215' },
-        { d: '27/09', r: 82, i: 94, val: '230' },
-        { d: '30/09', r: 74, i: 86, val: String(198 + extraTickets) }
-      ],
-      states: [
-        { uf: 'PR', state: 'Paraná', share: 31, color: '#2563eb' },
-        { uf: 'SP', state: 'São Paulo', share: 20, color: '#3b82f6' },
-        { uf: 'SC', state: 'Santa Catarina', share: 13, color: '#60a5fa' },
-        { uf: 'RJ', state: 'Rio de Janeiro', share: 9, color: '#93c5fd' },
-        { uf: 'MG', state: 'Minas Gerais', share: 7, color: '#bfdbfe' },
-        { uf: 'OUT', state: 'Outros (10 UFs)', share: 20, color: '#cbd5e1' }
-      ]
-    },
-    '7d': {
-      label: '24/09/2026 - 30/09/2026',
-      shortLabel: 'Últimos 7 dias',
-      mult: 0.26,
-      statesCount: 12,
-      bars: [
-        { d: '24/09', r: 45, i: 60, val: '78' },
-        { d: '26/09', r: 62, i: 75, val: '96' },
-        { d: '28/09', r: 88, i: 96, val: '134' },
-        { d: '29/09', r: 72, i: 84, val: '112' },
-        { d: '30/09', r: 80, i: 91, val: String(125 + extraTickets) }
-      ],
-      states: [
-        { uf: 'PR', state: 'Paraná', share: 34, color: '#2563eb' },
-        { uf: 'SP', state: 'São Paulo', share: 19, color: '#3b82f6' },
-        { uf: 'SC', state: 'Santa Catarina', share: 14, color: '#60a5fa' },
-        { uf: 'RJ', state: 'Rio de Janeiro', share: 8, color: '#93c5fd' },
-        { uf: 'MG', state: 'Minas Gerais', share: 7, color: '#bfdbfe' },
-        { uf: 'OUT', state: 'Outros (7 UFs)', share: 18, color: '#cbd5e1' }
-      ]
-    },
-    q3: {
-      label: '01/07/2026 - 30/09/2026',
-      shortLabel: 'Trimestre Q3',
-      mult: 2.75,
-      statesCount: 22,
-      bars: [
-        { d: 'Jul/S1', r: 42, i: 56, val: '890' },
-        { d: 'Jul/S2', r: 58, i: 72, val: '1.140' },
-        { d: 'Ago/S1', r: 67, i: 81, val: '1.380' },
-        { d: 'Ago/S2', r: 79, i: 90, val: '1.620' },
-        { d: 'Set/26', r: 92, i: 98, val: String(1842 + extraTickets) }
-      ],
-      states: [
-        { uf: 'PR', state: 'Paraná', share: 26, color: '#2563eb' },
-        { uf: 'SP', state: 'São Paulo', share: 19, color: '#3b82f6' },
-        { uf: 'SC', state: 'Santa Catarina', share: 12, color: '#60a5fa' },
-        { uf: 'RJ', state: 'Rio de Janeiro', share: 11, color: '#93c5fd' },
-        { uf: 'MG', state: 'Minas Gerais', share: 9, color: '#bfdbfe' },
-        { uf: 'OUT', state: 'Outros (17 UFs)', share: 23, color: '#cbd5e1' }
-      ]
-    }
-  };
-
-  const currentPeriod = periodPresets[periodRange] || periodPresets['30d'];
-  const activeAgenciesCount = 42 + extraAgencies;
-  const totalBookingsCount = Math.round(1248 * currentPeriod.mult) + extraBookings;
-  const totalTicketsCount = Math.round(6842 * currentPeriod.mult) + extraTickets;
-  const totalGrossRevenue = 214320 * currentPeriod.mult + extraRevenue;
-  const totalDiskFee = 12859.2 * currentPeriod.mult + extraFee;
-
   const feePct = feeBps / 100;
   const simFeeAmount = (Number(simBasePrice || 0) * feePct) / 100;
   const simFinalPrice = Number(simBasePrice || 0) + simFeeAmount;
+
+
+  // ---------- Métricas reais (a partir de agências e reservas) no período selecionado ----------
+  const DAY = 86400000;
+  const dateOf = (b) => String(b.visitDate || '').slice(0, 10);
+  const toTs = (iso) => new Date(`${iso}T00:00:00`).getTime();
+  const brl = (n) => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const brNum = (n) => Number(n || 0).toLocaleString('pt-BR');
+  const fmtDay = (ts) => new Date(ts).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+
+  const startTs = toTs(periodStart);
+  const endTs = toTs(periodEnd);
+  const validPeriod = !Number.isNaN(startTs) && !Number.isNaN(endTs) && endTs >= startTs;
+  const spanDays = validPeriod ? Math.round((endTs - startTs) / DAY) + 1 : 30;
+  const prevEndTs = startTs - DAY;
+  const prevStartTs = prevEndTs - (spanDays - 1) * DAY;
+
+  const bookingsBetween = (from, to) =>
+    validPeriod
+      ? bookingsList.filter((b) => {
+          const t = toTs(dateOf(b));
+          return t >= from && t <= to;
+        })
+      : [];
+  const curBookings = bookingsBetween(startTs, endTs);
+  const prevBookings = bookingsBetween(prevStartTs, prevEndTs);
+
+  const sumBy = (arr, key) => arr.reduce((acc, b) => acc + Number(b[key] || 0), 0);
+  const totalsOf = (arr) => ({
+    reservas: arr.length,
+    ingressos: sumBy(arr, 'ticketsCount'),
+    receita: sumBy(arr, 'totalAmount'),
+    taxas: sumBy(arr, 'diskFeeAmount')
+  });
+  const cur = totalsOf(curBookings);
+  const prev = totalsOf(prevBookings);
+
+  const deltaOf = (c, p) => {
+    if (!p) return { change: '—', sub: 'sem período ant.', tone: 'neutral' };
+    const pct = Math.round(((c - p) / p) * 100);
+    return {
+      change: `${pct >= 0 ? '↑ +' : '↓ '}${pct}%`,
+      sub: 'vs. período ant.',
+      tone: pct >= 0 ? 'up' : 'down'
+    };
+  };
+
+  const activeAgencies = agencies.filter((a) => a.status === 'Ativa');
+  const statesServed = new Set(activeAgencies.map((a) => a.state).filter(Boolean)).size;
+
+  const kpis = [
+    { label: 'Agências Ativas', value: brNum(activeAgencies.length), change: `${agencies.length} total`, sub: 'cadastradas', tone: 'neutral', color: 'bg-blue-600' },
+    { label: 'Estados Atendidos', value: brNum(statesServed), change: `${statesServed} de 27`, sub: 'UFs', tone: 'neutral', color: 'bg-emerald-600' },
+    { label: 'Reservas B2B', value: brNum(cur.reservas), ...deltaOf(cur.reservas, prev.reservas), color: 'bg-purple-600' },
+    { label: 'Ingressos Distribuídos', value: brNum(cur.ingressos), ...deltaOf(cur.ingressos, prev.ingressos), color: 'bg-amber-500' },
+    { label: 'Receita Bruta', value: brl(cur.receita), ...deltaOf(cur.receita, prev.receita), color: 'bg-teal-600' },
+    { label: 'Taxas DiskIngressos', value: brl(cur.taxas), change: `${feePct}% contratado`, sub: 'Repasse PDT', tone: 'neutral', color: 'bg-rose-600' }
+  ];
+  const toneClass = {
+    up: 'text-emerald-700 bg-emerald-50 border-emerald-200/70',
+    down: 'text-rose-700 bg-rose-50 border-rose-200/70',
+    neutral: 'text-slate-700 bg-slate-50 border-slate-200'
+  };
+
+  // Origem dos turistas (UF extraída de originCity, ponderada por ingressos)
+  const UF_NAMES = { AC: 'Acre', AL: 'Alagoas', AP: 'Amapá', AM: 'Amazonas', BA: 'Bahia', CE: 'Ceará', DF: 'Distrito Federal', ES: 'Espírito Santo', GO: 'Goiás', MA: 'Maranhão', MT: 'Mato Grosso', MS: 'Mato Grosso do Sul', MG: 'Minas Gerais', PA: 'Pará', PB: 'Paraíba', PR: 'Paraná', PE: 'Pernambuco', PI: 'Piauí', RJ: 'Rio de Janeiro', RN: 'Rio Grande do Norte', RS: 'Rio Grande do Sul', RO: 'Rondônia', RR: 'Roraima', SC: 'Santa Catarina', SP: 'São Paulo', SE: 'Sergipe', TO: 'Tocantins' };
+  const FALLBACK_COLORS = ['#2563eb', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+  const ufOf = (b) => {
+    const city = String(b.originCity || '');
+    return city.includes('-') ? city.split('-').pop().trim().toUpperCase().slice(0, 2) : '';
+  };
+  const ufTotals = {};
+  curBookings.forEach((b) => {
+    const uf = ufOf(b);
+    if (uf) ufTotals[uf] = (ufTotals[uf] || 0) + Number(b.ticketsCount || 0);
+  });
+  const ufTotal = Object.values(ufTotals).reduce((a, b) => a + b, 0);
+  const ufSorted = Object.entries(ufTotals).sort((a, b) => b[1] - a[1]);
+  const stateStats = ufSorted.slice(0, 5).map(([uf, qty], i) => {
+    const ref = STATE_ORIGIN_DATA.find((s) => s.uf === uf);
+    return {
+      uf,
+      state: UF_NAMES[uf] || uf,
+      share: Math.round((qty / ufTotal) * 100),
+      color: ref?.color || FALLBACK_COLORS[i % FALLBACK_COLORS.length]
+    };
+  });
+  const othersQty = ufSorted.slice(5).reduce((a, [, q]) => a + q, 0);
+  if (othersQty > 0) {
+    stateStats.push({ uf: 'BR', state: 'Outros Estados', share: Math.round((othersQty / ufTotal) * 100), color: '#94a3b8' });
+  }
+  let donutOffset = 0;
+  const donutSegments = stateStats.map((st) => {
+    const seg = { ...st, offset: -donutOffset };
+    donutOffset += st.share;
+    return seg;
+  });
+
+  // Evolução: 5 faixas iguais dentro do período
+  const evoBuckets = Array.from({ length: 5 }, (_, i) => ({
+    d: fmtDay(startTs + Math.floor((i * spanDays) / 5) * DAY),
+    reservas: 0,
+    ingressos: 0
+  }));
+  curBookings.forEach((b) => {
+    const dayIdx = Math.round((toTs(dateOf(b)) - startTs) / DAY);
+    const idx = Math.min(4, Math.floor((dayIdx * 5) / spanDays));
+    evoBuckets[idx].reservas += 1;
+    evoBuckets[idx].ingressos += Number(b.ticketsCount || 0);
+  });
+  const maxReservas = Math.max(1, ...evoBuckets.map((x) => x.reservas));
+  const maxIngressos = Math.max(1, ...evoBuckets.map((x) => x.ingressos));
+  const evolution = evoBuckets.map((x) => ({
+    d: x.d,
+    r: x.reservas ? Math.max(8, Math.round((x.reservas / maxReservas) * 100)) : 0,
+    i: x.ingressos ? Math.max(8, Math.round((x.ingressos / maxIngressos) * 100)) : 0,
+    val: brNum(x.ingressos)
+  }));
 
   const filteredAgencies = agencies.filter((ag) => {
     const matchesSearch =
@@ -297,17 +316,24 @@ export const OperatorDashboard = ({
           </div>
 
           <div className="flex items-center gap-2.5">
-            <select
-              value={periodRange}
-              onChange={(e) => setPeriodRange(e.target.value)}
-              aria-label="Selecionar período"
-              className="px-3.5 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 cursor-pointer focus:outline-none"
-            >
-              <option value="30d">📅 01/09/2026 - 30/09/2026</option>
-              <option value="15d">📅 15/09/2026 - 30/09/2026 (15d)</option>
-              <option value="7d">📅 24/09/2026 - 30/09/2026 (7d)</option>
-              <option value="q3">📅 01/07/2026 - 30/09/2026 (Q3)</option>
-            </select>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700">
+              <span>📅</span>
+              <input
+                type="date"
+                value={periodStart}
+                max={periodEnd}
+                onChange={(e) => setPeriodStart(e.target.value)}
+                className="bg-transparent focus:outline-none cursor-pointer"
+              />
+              <span>-</span>
+              <input
+                type="date"
+                value={periodEnd}
+                min={periodStart}
+                onChange={(e) => setPeriodEnd(e.target.value)}
+                className="bg-transparent focus:outline-none cursor-pointer"
+              />
+            </div>
             <button
               onClick={() => setShowNewAgencyModal(true)}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs cursor-pointer"
@@ -338,52 +364,9 @@ export const OperatorDashboard = ({
         {/* TAB 1: VISÃO GERAL (Exact replica of 11_26_17.png) */}
         {activeTab === 'visao-geral' && (
           <div className="space-y-4">
-            {/* 6 KPI Cards — Crisp Telemetry */}
+            {/* 6 KPI Cards — dados reais do período selecionado */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 auto-rows-fr">
-              {[
-                {
-                  label: 'Agências Ativas',
-                  value: String(activeAgenciesCount),
-                  change: '↑ +16%',
-                  sub: 'vs. mês ant.',
-                  color: 'bg-blue-600'
-                },
-                {
-                  label: 'Estados Atendidos',
-                  value: String(currentPeriod.statesCount),
-                  change: '↑ +12%',
-                  sub: 'vs. mês ant.',
-                  color: 'bg-emerald-600'
-                },
-                {
-                  label: 'Reservas B2B',
-                  value: totalBookingsCount.toLocaleString('pt-BR'),
-                  change: '↑ +28%',
-                  sub: 'vs. mês ant.',
-                  color: 'bg-purple-600'
-                },
-                {
-                  label: 'Ingressos Distribuídos',
-                  value: totalTicketsCount.toLocaleString('pt-BR'),
-                  change: '↑ +32%',
-                  sub: 'vs. mês ant.',
-                  color: 'bg-amber-500'
-                },
-                {
-                  label: 'Receita Bruta',
-                  value: `R$ ${totalGrossRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-                  change: '↑ +30%',
-                  sub: 'vs. mês ant.',
-                  color: 'bg-teal-600'
-                },
-                {
-                  label: 'Taxas DiskIngressos',
-                  value: `R$ ${totalDiskFee.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-                  change: '6% contratado',
-                  sub: 'Repasse PDT',
-                  color: 'bg-rose-600'
-                }
-              ].map((kpi, idx) => (
+              {kpis.map((kpi, idx) => (
                 <div
                   key={idx}
                   className="bg-white rounded-2xl border border-blue-300 ring-1 ring-blue-100 p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[128px] overflow-hidden"
@@ -394,15 +377,13 @@ export const OperatorDashboard = ({
                     >
                       0{idx + 1}
                     </div>
-                    <span className="text-xs font-bold text-slate-800 leading-tight">
-                      {kpi.label}
-                    </span>
+                    <span className="text-xs font-bold text-slate-800 leading-tight">{kpi.label}</span>
                   </div>
                   <div className="text-lg font-mono font-bold tabular-nums tracking-tighter text-slate-950 whitespace-nowrap overflow-hidden text-ellipsis">
                     {kpi.value}
                   </div>
                   <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100 text-[11px] h-7">
-                    <span className="font-bold tabular-nums text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
+                    <span className={`font-bold tabular-nums border px-1.5 py-0.5 rounded whitespace-nowrap shrink-0 ${toneClass[kpi.tone]}`}>
                       {kpi.change}
                     </span>
                     <span className="text-slate-600 font-medium truncate text-right">{kpi.sub}</span>
@@ -424,7 +405,7 @@ export const OperatorDashboard = ({
                   </span>
                 </div>
                 <div className="space-y-3 text-xs">
-                  {currentPeriod.states.map((st) => (
+                  {stateStats.map((st) => (
                     <div key={st.uf} className="space-y-1.5">
                       <div className="flex items-center justify-between">
                         <span className="flex items-center gap-2 text-slate-800 font-semibold">
@@ -440,7 +421,7 @@ export const OperatorDashboard = ({
                       </div>
                       <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all duration-300"
+                          className="h-full rounded-full"
                           style={{ width: `${st.share}%`, backgroundColor: st.color }}
                         />
                       </div>
@@ -455,25 +436,23 @@ export const OperatorDashboard = ({
                   <h3 className="text-xs font-bold text-slate-950 uppercase tracking-wide">
                     Evolução B2B
                   </h3>
-                  <span className="text-[11px] font-medium text-slate-600">
-                    {currentPeriod.shortLabel}
-                  </span>
+                  <span className="text-[11px] font-medium text-slate-600">{spanDays} dias no período</span>
                 </div>
 
                 <div className="my-4 h-36 flex items-end justify-between gap-2 pt-4 px-2 border-b border-slate-200">
-                  {currentPeriod.bars.map((bar) => (
-                    <div key={bar.d} className="flex-1 flex flex-col items-center gap-1.5">
+                  {evolution.map((bar, bi) => (
+                    <div key={bi} className="flex-1 flex flex-col items-center gap-1.5">
                       <span className="font-mono text-[10px] font-bold tabular-nums text-slate-700">
                         {bar.val}
                       </span>
                       <div className="w-full flex items-end justify-center gap-1 h-24">
                         <div
-                          className="w-3 bg-blue-600 rounded-t-xs transition-all duration-300"
+                          className="w-3 bg-blue-600 rounded-t-xs"
                           style={{ height: `${bar.r}%` }}
                           title="Reservas"
                         />
                         <div
-                          className="w-3 bg-amber-500 rounded-t-xs transition-all duration-300"
+                          className="w-3 bg-amber-500 rounded-t-xs"
                           style={{ height: `${bar.i}%` }}
                           title="Ingressos"
                         />
@@ -504,50 +483,24 @@ export const OperatorDashboard = ({
                   <div className="relative w-28 h-28 flex items-center justify-center shrink-0">
                     <svg viewBox="0 0 36 36" className="w-28 h-28 -rotate-90">
                       <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="4.5" />
-                      <circle
-                        cx="18"
-                        cy="18"
-                        r="14"
-                        fill="none"
-                        stroke="#2563eb"
-                        strokeWidth="4.5"
-                        strokeDasharray={`${currentPeriod.states[0].share} ${100 - currentPeriod.states[0].share}`}
-                        strokeDashoffset="0"
-                      />
-                      <circle
-                        cx="18"
-                        cy="18"
-                        r="14"
-                        fill="none"
-                        stroke="#10b981"
-                        strokeWidth="4.5"
-                        strokeDasharray={`${currentPeriod.states[1].share} ${100 - currentPeriod.states[1].share}`}
-                        strokeDashoffset={`-${currentPeriod.states[0].share}`}
-                      />
-                      <circle
-                        cx="18"
-                        cy="18"
-                        r="14"
-                        fill="none"
-                        stroke="#f59e0b"
-                        strokeWidth="4.5"
-                        strokeDasharray={`${currentPeriod.states[2].share} ${100 - currentPeriod.states[2].share}`}
-                        strokeDashoffset={`-${currentPeriod.states[0].share + currentPeriod.states[1].share}`}
-                      />
-                      <circle
-                        cx="18"
-                        cy="18"
-                        r="14"
-                        fill="none"
-                        stroke="#8b5cf6"
-                        strokeWidth="4.5"
-                        strokeDasharray={`${currentPeriod.states[3].share} ${100 - currentPeriod.states[3].share}`}
-                        strokeDashoffset={`-${currentPeriod.states[0].share + currentPeriod.states[1].share + currentPeriod.states[2].share}`}
-                      />
+                      {donutSegments.map((seg) => (
+                        <circle
+                          key={seg.uf}
+                          cx="18"
+                          cy="18"
+                          r="14"
+                          fill="none"
+                          stroke={seg.color}
+                          strokeWidth="4.5"
+                          pathLength="100"
+                          strokeDasharray={`${seg.share} ${100 - seg.share}`}
+                          strokeDashoffset={seg.offset}
+                        />
+                      ))}
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
                       <span className="font-mono text-sm font-bold tabular-nums text-slate-950 leading-none">
-                        {totalTicketsCount.toLocaleString('pt-BR')}
+                        {brNum(cur.ingressos)}
                       </span>
                       <span className="text-[10px] font-semibold text-slate-600 mt-0.5">
                         ingressos
@@ -555,7 +508,7 @@ export const OperatorDashboard = ({
                     </div>
                   </div>
                   <div className="space-y-1.5 text-xs flex-1">
-                    {currentPeriod.states.map((st) => (
+                    {stateStats.map((st) => (
                       <div key={st.uf} className="flex items-center justify-between">
                         <span className="text-slate-700 font-semibold flex items-center gap-1.5">
                           <span
@@ -572,10 +525,7 @@ export const OperatorDashboard = ({
                   </div>
                 </div>
                 <div className="text-xs text-center bg-blue-50 border border-blue-200/70 text-blue-800 rounded-lg py-1.5 font-semibold">
-                  Principal emissor:{' '}
-                  <strong className="font-bold">
-                    {currentPeriod.states[0].state} ({currentPeriod.states[0].share}%)
-                  </strong>
+                  Principal emissor: <strong className="font-bold">{stateStats[0] ? `${stateStats[0].state} (${stateStats[0].share}%)` : 'sem dados no período'}</strong>
                 </div>
               </div>
 

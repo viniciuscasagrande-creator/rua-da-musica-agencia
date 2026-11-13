@@ -6,8 +6,8 @@ html {
   font-optical-sizing: auto;
   font-feature-settings: "cv02" 1, "cv03" 1, "cv04" 1, "cv11" 1, "tnum" 1;
   font-variant-numeric: tabular-nums;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  -moz-osx-font-smoothing: auto !important;
   text-rendering: geometricPrecision;
 }
 
@@ -35,12 +35,39 @@ button,
   letter-spacing: -0.02em;
 }
 
-/* Impede que font-black (900) feche o olho dos dígitos (0, 6, 8, 9) */
+/* Impede que font-black (900) feche o olho dos dígitos (0, 6, 8, 9) e deixe números borrados */
 .font-black,
 .font-extrabold {
   font-weight: 700 !important;
   letter-spacing: -0.015em !important;
   font-variant-numeric: tabular-nums !important;
+}
+
+/* Aumenta a nitidez e tamanho mínimo de textos pequenos de telemetria */
+.text-\[9px\],
+.text-\[10px\] {
+  font-size: 0.6875rem !important; /* 11px */
+  line-height: 1rem !important;
+  font-weight: 600 !important;
+}
+
+.text-\[11px\] {
+  font-size: 0.75rem !important; /* 12px */
+  line-height: 1.1rem !important;
+}
+
+.text-xs {
+  font-size: 0.78125rem !important; /* 12.5px */
+  line-height: 1.2rem !important;
+}
+
+/* Aumenta o contraste de textos secundários que pareciam esmaecidos/borrados */
+.text-slate-400 {
+  color: #475569 !important; /* slate-600 */
+}
+
+.text-slate-500 {
+  color: #334155 !important; /* slate-700 */
 }
 
 /* Bordas em tom de azul nos cards de toda a aplicação */

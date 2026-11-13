@@ -1,8 +1,13 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import b2bHandler from './api/b2b.js';
 import healthHandler from './api/health.js';
+
+const env = loadEnv('development', process.cwd(), '');
+if (env.DATABASE_URL && !process.env.DATABASE_URL) {
+  process.env.DATABASE_URL = env.DATABASE_URL;
+}
 
 function vercelApiLocalPlugin() {
   return {
