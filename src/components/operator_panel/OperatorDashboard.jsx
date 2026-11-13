@@ -179,7 +179,7 @@ export const OperatorDashboard = ({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-6 space-y-6 max-w-7xl mx-auto w-full">
+      <main className="flex-1 min-w-0 p-4 md:p-5 space-y-4 max-w-[1700px] mx-auto w-full">
         {/* Top Title + Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
@@ -228,9 +228,9 @@ export const OperatorDashboard = ({
 
         {/* TAB 1: VISÃO GERAL (Exact replica of 11_26_17.png) */}
         {activeTab === 'visao-geral' && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             {/* 6 KPI Cards — Crisp Telemetry */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 auto-rows-fr">
               {[
                 {
                   label: 'Agências Ativas',
@@ -277,11 +277,11 @@ export const OperatorDashboard = ({
               ].map((kpi, idx) => (
                 <div
                   key={idx}
-                  className="bg-white rounded-2xl border border-blue-300 ring-1 ring-blue-100 p-3.5 shadow-xs flex flex-col justify-between gap-2 min-w-0 h-full"
+                  className="bg-white rounded-2xl border border-blue-300 ring-1 ring-blue-100 p-3 shadow-xs flex flex-col justify-between gap-1.5 min-w-0 h-[128px] overflow-hidden"
                 >
-                  <div className="flex items-center gap-2 min-h-[2.5rem]">
+                  <div className="flex items-center gap-2 h-9">
                     <div
-                      className={`w-8 h-8 rounded-lg ${kpi.color} text-white flex items-center justify-center font-mono font-bold text-xs shrink-0`}
+                      className={`w-7 h-7 rounded-lg ${kpi.color} text-white flex items-center justify-center font-mono font-bold text-xs shrink-0`}
                     >
                       0{idx + 1}
                     </div>
@@ -289,10 +289,10 @@ export const OperatorDashboard = ({
                       {kpi.label}
                     </span>
                   </div>
-                  <div className="text-lg xl:text-[1.15rem] 2xl:text-xl font-mono font-bold tabular-nums tracking-tighter text-slate-950 whitespace-nowrap overflow-hidden text-ellipsis">
+                  <div className="text-lg font-mono font-bold tabular-nums tracking-tighter text-slate-950 whitespace-nowrap overflow-hidden text-ellipsis">
                     {kpi.value}
                   </div>
-                  <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100 text-[11px] min-h-[2rem]">
+                  <div className="flex items-center justify-between gap-1.5 pt-1.5 border-t border-slate-100 text-[11px] h-7">
                     <span className="font-bold tabular-nums text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-1.5 py-0.5 rounded whitespace-nowrap shrink-0">
                       {kpi.change}
                     </span>
@@ -303,7 +303,7 @@ export const OperatorDashboard = ({
             </div>
 
             {/* Middle Charts + Right Price Composition */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-stretch lg:auto-rows-[300px]">
               {/* Vendas por Estado */}
               <div className="lg:col-span-3 bg-white rounded-2xl border border-slate-200 p-5 shadow-xs space-y-4">
                 <div className="flex items-center justify-between">
