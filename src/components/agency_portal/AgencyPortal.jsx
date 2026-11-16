@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AgencySidebar } from './AgencySidebar';
 import { BookingWizard } from './BookingWizard';
 import {
@@ -20,8 +20,43 @@ import {
 } from 'lucide-react';
 import { OPERATOR_INFO, BOOKINGS_LIST } from '../../data/mockData';
 
+const HERO_SLIDES = [
+  {
+    src: '/assets/vale-palco-flutuante.jpg',
+    caption: 'Palco Flutuante #VALEDAMÚSICA no lago da Ópera de Arame'
+  },
+  {
+    src: '/assets/vale-musica-ao-vivo.jpg',
+    caption: 'Apresentações instrumentais ao vivo todos os dias'
+  },
+  {
+    src: '/assets/vale-opera-interior.jpg',
+    caption: 'Arquitetura tubular icônica da Ópera de Arame'
+  },
+  {
+    src: '/assets/vale-bosque-passeio.jpg',
+    caption: 'Passeio imersivo pela mata nativa e Rua da Música'
+  },
+  {
+    src: '/assets/vale-espetaculo-palco.jpg',
+    caption: 'Espetáculos culturais e experiências para grupos e excursões'
+  },
+  {
+    src: '/assets/vale-natureza-neon.jpg',
+    caption: 'Instalações artísticas integradas à natureza de Curitiba'
+  }
+];
+
 export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVoucher }) => {
   const [activeTab, setActiveTab] = useState('comprar');
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 10000);
+    return () => clearInterval(timer);
+  }, []);
   const [localBookings, setLocalBookings] = useState(
     BOOKINGS_LIST.filter(b => b.agencyName.includes('Turismo Brasil'))
   );
@@ -63,17 +98,22 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
       {/* Main Agency Content Area */}
       <main className="flex-1 min-w-0 p-4 md:p-5 space-y-4 max-w-[1700px] mx-auto w-full">
         
-        {/* Top Attraction Panoramic Banner (Identidade Oficial Vale da Música) */}
-        <div className="relative rounded-2xl overflow-hidden shadow-xs border border-slate-200 bg-slate-950">
-          <img
-            src="/assets/vale-palco-flutuante.jpg"
-            alt="Parque Jaime Lerner • Vale da Música - Curitiba"
-            className="w-full h-44 sm:h-48 object-cover object-center opacity-90"
-          />
+        {/* Top Attraction Panoramic Banner (Carrossel Automático a cada 10s - Vale da Música) */}
+        <div className="relative rounded-2xl overflow-hidden shadow-xs border border-slate-200 bg-slate-950 h-44 sm:h-48">
+          {HERO_SLIDES.map((slide, idx) => (
+            <img
+              key={slide.src}
+              src={slide.src}
+              alt={slide.caption}
+              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ${
+                idx === heroIndex ? 'opacity-90' : 'opacity-0 pointer-events-none'
+              }`}
+            />
+          ))}
           <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-slate-950/20" />
 
           {/* Banner Contents */}
-          <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between text-white">
+          <div className="relative z-10 h-full p-4 sm:p-5 flex flex-col justify-between text-white">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <div className="flex flex-wrap items-center gap-2.5 mb-1">
@@ -95,27 +135,46 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                   Ópera de Arame & Rua da Música — Curitiba - PR
                 </p>
                 <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 border border-white/20 text-slate-100">
-                  <span>Cultura, música ao vivo no palco flutuante e experiências inesquecíveis</span>
+                  <span>{HERO_SLIDES[heroIndex].caption}</span>
                 </div>
               </div>
 
               {/* Tag Highlights on Top Right */}
-              <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-2 text-xs bg-slate-900/80 backdrop-blur-xs p-3.5 rounded-xl border border-white/15 self-start">
-                <div className="flex items-center gap-2">
-                  <Leaf className="w-4 h-4 text-emerald-400" />
-                  <span className="text-slate-200">Natureza e lazer</span>
+              <div className="hidden lg:flex flex-col items-end justify-between self-stretch">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs bg-slate-900/80 backdrop-blur-xs p-3.5 rounded-xl border border-white/15">
+                  <div className="flex items-center gap-2">
+                    <Leaf className="w-4 h-4 text-emerald-400" />
+                    <span className="text-slate-200">Natureza e lazer</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Music className="w-4 h-4 text-blue-400" />
+                    <span className="text-slate-200">Palco Flutuante & Música</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Camera className="w-4 h-4 text-amber-400" />
+                    <span className="text-slate-200">Arquitetura icônica</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Users className="w-4 h-4 text-purple-400" />
+                    <span className="text-slate-200">Ideal para grupos e excursões</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Music className="w-4 h-4 text-blue-400" />
-                  <span className="text-slate-200">Palco Flutuante & Música</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Camera className="w-4 h-4 text-amber-400" />
-                  <span className="text-slate-200">Arquitetura icônica</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-purple-400" />
-                  <span className="text-slate-200">Ideal para grupos e excursões</span>
+
+                {/* Slide Indicators (10s rotation) */}
+                <div className="flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/15">
+                  {HERO_SLIDES.map((s, idx) => (
+                    <button
+                      key={s.src}
+                      type="button"
+                      onClick={() => setHeroIndex(idx)}
+                      title={s.caption}
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                        idx === heroIndex
+                          ? 'w-5 bg-blue-400'
+                          : 'w-1.5 bg-white/40 hover:bg-white/70'
+                      }`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
