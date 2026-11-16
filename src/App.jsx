@@ -298,6 +298,7 @@ export default function App() {
       {selectedVoucherBooking && (
         <VoucherModal
           booking={selectedVoucherBooking}
+          hideDiskFee={activeSurface === 'agency'}
           onCheckin={handleCheckinVoucher}
           onClose={() => setSelectedVoucherBooking(null)}
         />

@@ -378,10 +378,10 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
               color: 'bg-teal-600'
             },
             {
-              label: 'Taxa Adm. Disk (6%)',
-              value: brl(totalDiskFee),
-              badge: '6% incluída',
-              sub: 'Tarifário B2B',
+              label: 'Ticket Médio / Grupo',
+              value: brl(activeBookings.length > 0 ? totalB2BAmount / activeBookings.length : 0),
+              badge: 'Tarifário B2B',
+              sub: 'Por reserva',
               color: 'bg-rose-600'
             }
           ].map((kpi, idx) => (
@@ -479,8 +479,8 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                 <span className="font-bold text-slate-900 mt-0.5 block">b2b@turismobrasil.com.br</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="text-slate-500 block">Taxa Administrativa Contratada</span>
-                <span className="font-mono font-bold text-blue-700 mt-0.5 block">6,0% (600 bps)</span>
+                <span className="text-slate-500 block">Modalidade de Faturamento</span>
+                <span className="font-mono font-bold text-blue-700 mt-0.5 block">Faturamento B2B (15d) / PIX</span>
               </div>
             </div>
           </section>
@@ -593,7 +593,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                   {brl(totalB2BAmount)}
                 </span>
                 <span className="text-[11px] text-slate-500 block">
-                  Inclui {brl(totalDiskFee)} de taxa adm. Disk (6%)
+                  Referente a {brNum(activeBookings.length)} reservas ativas no período
                 </span>
               </div>
             </div>

@@ -336,9 +336,7 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
                       <tr className="border-b border-slate-200 text-slate-500 font-semibold">
                         <th className="py-2.5 px-3">Tipo de Ingresso</th>
                         <th className="py-2.5 px-3">Descrição</th>
-                        <th className="py-2.5 px-3">Preço Base</th>
-                        <th className="py-2.5 px-3">Taxa Disk (6%)</th>
-                        <th className="py-2.5 px-3">Preço para Agência</th>
+                        <th className="py-2.5 px-3">Valor Unitário B2B</th>
                         <th className="py-2.5 px-3 text-center">Quantidade</th>
                       </tr>
                     </thead>
@@ -362,12 +360,6 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
                             </td>
                             <td className="py-3.5 px-3 text-slate-700 font-semibold">
                               {t.description}
-                            </td>
-                            <td className="py-3.5 px-3 font-mono font-bold text-slate-900">
-                              R$ {t.basePrice.toFixed(2).replace('.', ',')}
-                            </td>
-                            <td className="py-3.5 px-3 font-mono font-semibold text-blue-700">
-                              R$ {t.diskFee.toFixed(2).replace('.', ',')}
                             </td>
                             <td className="py-3.5 px-3 font-mono font-bold text-sm text-slate-950">
                               R$ {t.agencyPrice.toFixed(2).replace('.', ',')}
@@ -401,7 +393,7 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
                 <div className="bg-blue-50/90 border border-blue-100 rounded-xl px-4 py-2.5 flex items-center gap-2.5 text-xs text-blue-900">
                   <Info className="w-4 h-4 text-blue-600 shrink-0" />
                   <span>
-                    A taxa administrativa DiskIngressos de 6% já está incluída no valor final para a agência.
+                    Tarifário oficial exclusivo para agências credenciadas com emissão imediata de vouchers em lote.
                   </span>
                 </div>
               </div>
@@ -538,7 +530,7 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
                     4. Revisão Financeira B2B & Forma de Liquidação
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Conciliação integrada ao Ledger DiskIngressos com transparência de preço-base e taxa administrativa (6%)
+                    Confira o resumo do lote selecionado e escolha a modalidade de pagamento B2B da agência
                   </p>
                 </div>
                 <button
@@ -551,15 +543,15 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
 
               <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 grid grid-cols-1 sm:grid-cols-3 gap-3 auto-rows-fr text-xs">
                 <div className="bg-white rounded-lg p-3 border border-slate-200 flex flex-col justify-between h-[88px]">
-                  <span className="text-slate-500 font-semibold block">Valor Base (Repasse Parque)</span>
-                  <span className="text-lg font-mono font-bold tabular-nums tracking-tighter text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">
-                    R$ {totalBase.toFixed(2).replace('.', ',')}
+                  <span className="text-slate-500 font-semibold block">Data & Horário da Visita</span>
+                  <span className="text-base font-mono font-bold tabular-nums tracking-tight text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">
+                    {formattedDate} • {selectedTime}
                   </span>
                 </div>
                 <div className="bg-white rounded-lg p-3 border border-slate-200 flex flex-col justify-between h-[88px]">
-                  <span className="text-slate-500 font-semibold block">Taxa Adm. DiskIngressos (6%)</span>
+                  <span className="text-slate-500 font-semibold block">Quantidade Total do Lote</span>
                   <span className="text-lg font-mono font-bold tabular-nums tracking-tighter text-blue-600 whitespace-nowrap overflow-hidden text-ellipsis">
-                    R$ {totalFee.toFixed(2).replace('.', ',')}
+                    {totalTickets} ingressos
                   </span>
                 </div>
                 <div className="bg-white rounded-lg p-3 border border-slate-200 flex flex-col justify-between h-[88px]">
@@ -668,7 +660,7 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
                   </span>
                 </div>
                 <div>
-                  <span className="text-slate-400 block">Total B2B (c/ 6%)</span>
+                  <span className="text-slate-400 block">Valor Total B2B</span>
                   <span className="font-black text-emerald-700">
                     R$ {createdReservation.totalAmount.toFixed(2).replace('.', ',')}
                   </span>
@@ -741,7 +733,7 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
             </div>
 
             <div className="flex items-center justify-between pt-0.5">
-              <span className="text-xs font-bold text-slate-800">Subtotal (com taxa Disk 6%)</span>
+              <span className="text-xs font-bold text-slate-800">Valor Total da Reserva</span>
               <span className="text-lg font-mono font-bold tabular-nums tracking-tighter text-blue-700">
                 R$ {totalAmount.toFixed(2).replace('.', ',')}
               </span>
@@ -773,7 +765,7 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
             <h3 className="text-xs font-bold text-slate-900">Benefícios para Agências</h3>
             <ul className="space-y-1.5 text-[11px] text-slate-600">
               {[
-                'Preço especial B2B com taxa de 6% já incluída',
+                'Tarifário especial exclusivo para agências credenciadas',
                 'Emissão de vouchers em lote',
                 'Facilidade para grupos e excursões',
                 'Suporte dedicado DiskIngressos',

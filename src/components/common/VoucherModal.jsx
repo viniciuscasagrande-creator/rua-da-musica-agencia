@@ -12,7 +12,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
-export const VoucherModal = ({ booking, onCheckin, onClose }) => {
+export const VoucherModal = ({ booking, hideDiskFee = false, onCheckin, onClose }) => {
   const [checkedIn, setCheckedIn] = useState(booking?.status === 'Concluído');
 
   if (!booking) return null;
@@ -103,28 +103,32 @@ export const VoucherModal = ({ booking, onCheckin, onClose }) => {
           {/* Financial Composition */}
           <div className="border border-slate-200 rounded-xl p-3.5 text-xs space-y-1.5">
             <div className="font-bold text-slate-800 mb-1">
-              Composição Financeira (Ledger PDT)
+              {hideDiskFee ? 'Resumo Financeiro da Reserva B2B' : 'Composição Financeira (Ledger PDT)'}
             </div>
-            <div className="flex justify-between text-slate-600">
-              <span>Valor Base Operador (Parque Jaime Lerner)</span>
-              <span>
-                R${' '}
-                {(booking.baseAmount || booking.totalAmount / 1.06).toFixed(2).replace('.', ',')}
-              </span>
-            </div>
-            <div className="flex justify-between text-slate-600">
-              <span>Taxa Administrativa DiskIngressos (6%)</span>
-              <span>
-                R${' '}
-                {(
-                  booking.diskFeeAmount ||
-                  booking.totalAmount - booking.totalAmount / 1.06
-                )
-                  .toFixed(2)
-                  .replace('.', ',')}
-              </span>
-            </div>
-            <div className="flex justify-between font-black text-slate-900 pt-1.5 border-t border-slate-100">
+            {!hideDiskFee && (
+              <>
+                <div className="flex justify-between text-slate-600">
+                  <span>Valor Base Operador (Parque Jaime Lerner)</span>
+                  <span>
+                    R${' '}
+                    {(booking.baseAmount || booking.totalAmount / 1.06).toFixed(2).replace('.', ',')}
+                  </span>
+                </div>
+                <div className="flex justify-between text-slate-600">
+                  <span>Taxa Administrativa DiskIngressos (6%)</span>
+                  <span>
+                    R${' '}
+                    {(
+                      booking.diskFeeAmount ||
+                      booking.totalAmount - booking.totalAmount / 1.06
+                    )
+                      .toFixed(2)
+                      .replace('.', ',')}
+                  </span>
+                </div>
+              </>
+            )}
+            <div className={`flex justify-between font-black text-slate-900 ${!hideDiskFee ? 'pt-1.5 border-t border-slate-100' : ''}`}>
               <span>Valor Total B2B</span>
               <span>R$ {booking.totalAmount.toFixed(2).replace('.', ',')}</span>
             </div>
