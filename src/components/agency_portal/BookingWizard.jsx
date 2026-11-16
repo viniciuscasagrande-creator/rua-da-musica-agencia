@@ -60,7 +60,15 @@ const CALENDAR_DAYS = [
   { day: 30, status: 'few' }
 ];
 
-export const BookingWizard = ({ onBookingCreated, availableCredit = 31238 }) => {
+const TICKET_THUMBNAILS = {
+  'TKT-INTEIRA': '/assets/vale-palco-flutuante.jpg',
+  'TKT-MEIA': '/assets/vale-musica-ao-vivo.jpg',
+  'TKT-TOUR': '/assets/vale-bosque-passeio.jpg',
+  'TKT-EDUCATIVO': '/assets/vale-oficina-educativa.jpg',
+  'TKT-CORPORATIVO': '/assets/vale-opera-interior.jpg'
+};
+
+export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNavigateTab }) => {
   const [step, setStep] = useState(1);
   const [selectedDay, setSelectedDay] = useState(18);
   const [selectedTime, setSelectedTime] = useState('09:00');
@@ -341,7 +349,12 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238 }) => 
                           <tr key={t.id} className="hover:bg-slate-50/70">
                             <td className="py-3.5 px-3">
                               <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                                <img
+                                  src={TICKET_THUMBNAILS[t.id] || '/assets/vale-palco-flutuante.jpg'}
+                                  alt={t.name}
+                                  className="w-10 h-10 rounded-lg object-cover shrink-0 border border-slate-200"
+                                />
+                                <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
                                   {renderTicketIcon(t.iconType)}
                                 </div>
                                 <span className="font-bold text-slate-900">{t.name}</span>
@@ -778,20 +791,31 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238 }) => 
           {/* Promotional Media Download Banner */}
           <div className="rounded-2xl overflow-hidden relative border border-slate-200 shadow-xs bg-slate-900 text-white">
             <img
-              src="/assets/parque-sunset.jpg"
-              alt="Parque Jaime Lerner"
-              className="w-full h-36 object-cover opacity-80"
+              src="/assets/vale-musica-ao-vivo.jpg"
+              alt="Parque Jaime Lerner • Vale da Música"
+              className="w-full h-40 object-cover object-center opacity-85"
             />
-            <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-transparent p-3.5 flex flex-col justify-between">
+            <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/65 to-transparent p-3.5 flex flex-col justify-between">
               <div>
+                <div className="bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded inline-flex items-center mb-1.5">
+                  <img
+                    src="/assets/logo-vale-color-h.png"
+                    alt="Vale da Música"
+                    className="h-3.5 w-auto object-contain"
+                  />
+                </div>
                 <h4 className="text-xs font-bold leading-snug">
                   Leve seus clientes para viver essa experiência!
                 </h4>
                 <p className="text-[10px] text-slate-300 mt-0.5">
-                  Parque Jaime Lerner • Rua da Música - Curitiba - PR
+                  Parque Jaime Lerner • Vale da Música — Curitiba - PR
                 </p>
               </div>
-              <button className="self-start px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold text-[11px] flex items-center gap-1.5 hover:bg-blue-50 shadow-xs cursor-pointer">
+              <button
+                type="button"
+                onClick={() => onNavigateTab && onNavigateTab('materiais')}
+                className="self-start px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold text-[11px] flex items-center gap-1.5 hover:bg-blue-50 shadow-xs cursor-pointer"
+              >
                 <Download className="w-3.5 h-3.5" />
                 <span>Baixar Materiais</span>
               </button>

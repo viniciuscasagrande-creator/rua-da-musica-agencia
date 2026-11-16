@@ -29,20 +29,36 @@ export const VoucherModal = ({ booking, onCheckin, onClose }) => {
     <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-200">
         {/* Top Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
-          <div>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
-              VOUCHER OFICIAL DE GRUPO B2B • DISKINGRESSOS
-            </span>
-            <h3 className="text-lg font-extrabold mt-0.5">Parque Jaime Lerner — Rua da Música</h3>
-            <p className="text-xs text-slate-300">Curitiba - PR • Validação Integrada na Catraca</p>
+        <div className="bg-slate-900 text-white p-5 relative overflow-hidden">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-2 mb-1.5">
+                <div className="bg-white px-2 py-0.5 rounded shadow-xs">
+                  <img
+                    src="/assets/logo-vale-color-h.png"
+                    alt="Vale da Música"
+                    className="h-4 w-auto object-contain"
+                  />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
+                  VOUCHER OFICIAL B2B • DISKINGRESSOS
+                </span>
+              </div>
+              <h3 className="text-lg font-extrabold">Parque Jaime Lerner — Vale da Música</h3>
+              <p className="text-xs text-slate-300">Ópera de Arame & Rua da Música • Curitiba - PR</p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <img
+            src="/assets/logo-vale-ondas.png"
+            alt="Ondas Vale da Música"
+            className="h-3 w-48 object-contain object-left mt-2.5 opacity-90"
+          />
         </div>
 
         {/* Body */}

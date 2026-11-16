@@ -63,42 +63,51 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
       {/* Main Agency Content Area */}
       <main className="flex-1 min-w-0 p-4 md:p-5 space-y-4 max-w-[1700px] mx-auto w-full">
         
-        {/* Top Attraction Panoramic Banner (Exact replica of 11_30_25) */}
-        <div className="relative rounded-2xl overflow-hidden shadow-xs border border-slate-200">
+        {/* Top Attraction Panoramic Banner (Identidade Oficial Vale da Música) */}
+        <div className="relative rounded-2xl overflow-hidden shadow-xs border border-slate-200 bg-slate-950">
           <img
-            src="/assets/parque-banner.jpg"
-            alt="Parque Jaime Lerner - Curitiba"
-            className="w-full h-40 sm:h-44 object-cover"
+            src="/assets/vale-palco-flutuante.jpg"
+            alt="Parque Jaime Lerner • Vale da Música - Curitiba"
+            className="w-full h-44 sm:h-48 object-cover object-center opacity-90"
           />
-          <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-slate-950/20" />
 
           {/* Banner Contents */}
-          <div className="absolute inset-0 p-5 flex flex-col justify-between text-white">
+          <div className="absolute inset-0 p-4 sm:p-5 flex flex-col justify-between text-white">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
-                <span className="text-[11px] font-bold tracking-widest text-blue-300 uppercase">
-                  ATRAÇÃO CULTURAL & PARQUE
-                </span>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mt-0.5">
-                  Parque Jaime Lerner
+                <div className="flex flex-wrap items-center gap-2.5 mb-1">
+                  <div className="bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-lg shadow-xs inline-flex items-center">
+                    <img
+                      src="/assets/logo-vale-color-h.png"
+                      alt="Vale da Música"
+                      className="h-5 sm:h-6 w-auto object-contain"
+                    />
+                  </div>
+                  <span className="text-[11px] font-bold tracking-widest text-blue-300 uppercase">
+                    ATRAÇÃO CULTURAL & PARQUE
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                  Parque Jaime Lerner • Vale da Música
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-200 mt-0.5">
-                  Rua da Música - Curitiba - PR
+                  Ópera de Arame & Rua da Música — Curitiba - PR
                 </p>
-                <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 border border-white/20 text-slate-100">
-                  Cultura, música e experiências inesquecíveis
+                <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 border border-white/20 text-slate-100">
+                  <span>Cultura, música ao vivo no palco flutuante e experiências inesquecíveis</span>
                 </div>
               </div>
 
               {/* Tag Highlights on Top Right */}
-              <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-2 text-xs bg-slate-900/75 p-3 rounded-xl border border-white/15 self-start">
+              <div className="hidden lg:grid grid-cols-2 gap-x-4 gap-y-2 text-xs bg-slate-900/80 backdrop-blur-xs p-3.5 rounded-xl border border-white/15 self-start">
                 <div className="flex items-center gap-2">
                   <Leaf className="w-4 h-4 text-emerald-400" />
                   <span className="text-slate-200">Natureza e lazer</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Music className="w-4 h-4 text-blue-400" />
-                  <span className="text-slate-200">Música e cultura</span>
+                  <span className="text-slate-200">Palco Flutuante & Música</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Camera className="w-4 h-4 text-amber-400" />
@@ -192,6 +201,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
           <BookingWizard
             onBookingCreated={handleBookingCreated}
             availableCredit={availableCredit}
+            onNavigateTab={setActiveTab}
           />
         )}
 
@@ -375,70 +385,184 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
 
         {/* Tab: Materiais de Divulgação */}
         {activeTab === 'materiais' && (
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-4">
-            <div>
-              <h3 className="font-bold text-base text-slate-900">Kit de Mídia & Materiais Promocionais</h3>
-              <p className="text-xs text-slate-500">Recursos visuais autorizados para promoção de pacotes turísticos do Parque Jaime Lerner</p>
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs p-5 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-3.5">
+                <div className="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl shrink-0">
+                  <img
+                    src="/assets/logo-vale-color-h.png"
+                    alt="Logo Oficial Vale da Música"
+                    className="h-7 w-auto object-contain"
+                  />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900">
+                    Kit de Mídia Oficial & Identidade Visual — Vale da Música
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    Logotipos oficiais, manual da marca e fotografias em alta resolução autorizados para agências B2B
+                  </p>
+                </div>
+              </div>
+              <a
+                href="/assets/MANUAL_MARCA_valedamusica.pdf"
+                download="MANUAL_MARCA_valedamusica.pdf"
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold flex items-center gap-2 shrink-0 self-start sm:self-auto shadow-xs"
+              >
+                <FileText className="w-4 h-4" />
+                <span>Baixar Manual da Marca (PDF)</span>
+              </a>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 auto-rows-fr">
-              <div className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between">
-                <div className="h-32 bg-slate-100 overflow-hidden relative shrink-0">
-                  <img
-                    src="/assets/parque-banner.jpg"
-                    alt="Fotos HD"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <div className="p-3 text-xs flex-1 flex flex-col justify-between">
-                  <div>
-                    <span className="font-bold text-slate-800 block">Fotos Oficiais em Alta Definição (4K)</span>
-                    <span className="text-slate-400 text-[11px]">28 imagens • 45 MB</span>
+            {/* Bloco 1: Logotipos Oficiais e Elementos Gráficos */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                1. Logotipos Oficiais & Elementos Gráficos (PNG Transparente)
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
+                {[
+                  {
+                    title: 'Logo Horizontal Colorida',
+                    sub: '700×181px • PNG Transparente',
+                    file: '/assets/logo-vale-color-h.png',
+                    downloadName: 'LOGO-vale-da-musica-horizontal-cor.png',
+                    bg: 'bg-slate-50'
+                  },
+                  {
+                    title: 'Logo Vertical (2 Linhas) Colorida',
+                    sub: '700×222px • PNG Transparente',
+                    file: '/assets/logo-vale-color-v.png',
+                    downloadName: 'LOGO-vale-da-musica-vertical-cor.png',
+                    bg: 'bg-slate-50'
+                  },
+                  {
+                    title: 'Logo Horizontal Monocromática',
+                    sub: '700×181px • PNG Transparente',
+                    file: '/assets/logo-vale-preto-h.png',
+                    downloadName: 'LOGO-vale-da-musica-monocromatica.png',
+                    bg: 'bg-slate-100'
+                  },
+                  {
+                    title: 'Vetor Ondas Sonoras Oficial',
+                    sub: '1940×366px • PNG Transparente',
+                    file: '/assets/logo-vale-ondas.png',
+                    downloadName: 'VETOR-ondas-vale-da-musica.png',
+                    bg: 'bg-slate-900'
+                  }
+                ].map((logo, idx) => (
+                  <div
+                    key={idx}
+                    className="border border-slate-200 rounded-xl overflow-hidden flex flex-col justify-between bg-white"
+                  >
+                    <div className={`h-24 ${logo.bg} p-4 flex items-center justify-center border-b border-slate-100`}>
+                      <img
+                        src={logo.file}
+                        alt={logo.title}
+                        className="max-h-14 max-w-full object-contain"
+                      />
+                    </div>
+                    <div className="p-3 text-xs flex-1 flex flex-col justify-between">
+                      <div>
+                        <span className="font-bold text-slate-800 block">{logo.title}</span>
+                        <span className="text-slate-400 text-[11px]">{logo.sub}</span>
+                      </div>
+                      <a
+                        href={logo.file}
+                        download={logo.downloadName}
+                        className="mt-2.5 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded-lg hover:bg-blue-100 flex items-center justify-center gap-1.5"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Baixar PNG</span>
+                      </a>
+                    </div>
                   </div>
-                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5 cursor-pointer">
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Baixar Pacote</span>
-                  </button>
-                </div>
+                ))}
               </div>
+            </div>
 
-              <div className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between">
-                <div className="h-32 bg-slate-100 overflow-hidden relative shrink-0">
-                  <img
-                    src="/assets/parque-sunset.jpg"
-                    alt="Folders"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                  />
-                </div>
-                <div className="p-3 text-xs flex-1 flex flex-col justify-between">
-                  <div>
-                    <span className="font-bold text-slate-800 block">Folders & Folhetos Digitais Editáveis</span>
-                    <span className="text-slate-400 text-[11px]">Formatos PDF, PSD e Canva</span>
+            {/* Bloco 2: Banco de Fotografias Oficiais para Pacotes Turísticos */}
+            <div className="space-y-2.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                2. Fotografias Oficiais para Divulgação de Excursões e Agências
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
+                {[
+                  {
+                    title: 'Palco Flutuante #VALEDAMÚSICA',
+                    sub: 'Lago da Ópera de Arame • 1178×786px',
+                    file: '/assets/vale-palco-flutuante.jpg',
+                    downloadName: 'vale-da-musica-palco-flutuante.jpg'
+                  },
+                  {
+                    title: 'Música Instrumental ao Vivo',
+                    sub: 'Apresentação no Lago • 960×540px',
+                    file: '/assets/vale-musica-ao-vivo.jpg',
+                    downloadName: 'vale-da-musica-instrumental.jpg'
+                  },
+                  {
+                    title: 'Interior da Ópera de Arame',
+                    sub: 'Arquitetura & Público • 736×492px',
+                    file: '/assets/vale-opera-interior.jpg',
+                    downloadName: 'vale-da-musica-opera-interior.jpg'
+                  },
+                  {
+                    title: 'Passeio pelo Bosque & Natureza',
+                    sub: 'Acesso Turístico • 768×432px',
+                    file: '/assets/vale-bosque-passeio.jpg',
+                    downloadName: 'vale-da-musica-bosque-passeio.jpg'
+                  },
+                  {
+                    title: 'Instalação "Natureza" na Mata',
+                    sub: 'Experiência Imersiva • 672×378px',
+                    file: '/assets/vale-natureza-neon.jpg',
+                    downloadName: 'vale-da-musica-instalacao-natureza.jpg'
+                  },
+                  {
+                    title: 'Espetáculos Culturais no Palco',
+                    sub: 'Auditório Principal • 1174×783px',
+                    file: '/assets/vale-espetaculo-palco.jpg',
+                    downloadName: 'vale-da-musica-espetaculo.jpg'
+                  },
+                  {
+                    title: 'Oficinas Educativas & Escolas',
+                    sub: 'Turismo Pedagógico • 1024×683px',
+                    file: '/assets/vale-oficina-educativa.jpg',
+                    downloadName: 'vale-da-musica-oficina-educativa.jpg'
+                  },
+                  {
+                    title: 'Vista Aérea Histórica (P&B)',
+                    sub: 'Ópera de Arame & Lago • 1600×900px',
+                    file: '/assets/vale-aerea-pb.jpg',
+                    downloadName: 'vale-da-musica-vista-aerea.jpg'
+                  }
+                ].map((photo, idx) => (
+                  <div
+                    key={idx}
+                    className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between bg-white"
+                  >
+                    <div className="h-36 bg-slate-100 overflow-hidden relative shrink-0">
+                      <img
+                        src={photo.file}
+                        alt={photo.title}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-3 text-xs flex-1 flex flex-col justify-between">
+                      <div>
+                        <span className="font-bold text-slate-800 block">{photo.title}</span>
+                        <span className="text-slate-400 text-[11px]">{photo.sub}</span>
+                      </div>
+                      <a
+                        href={photo.file}
+                        download={photo.downloadName}
+                        className="mt-2.5 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded-lg hover:bg-blue-100 flex items-center justify-center gap-1.5"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        <span>Baixar Foto HD</span>
+                      </a>
+                    </div>
                   </div>
-                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5 cursor-pointer">
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Baixar Pacote</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between">
-                <div className="h-32 bg-slate-800 flex items-center justify-center text-white text-center p-3 shrink-0">
-                  <div>
-                    <Music className="w-8 h-8 text-blue-400 mx-auto mb-1" />
-                    <span className="text-xs font-bold block">Vídeos Promocionais (Reels/Stories)</span>
-                  </div>
-                </div>
-                <div className="p-3 text-xs flex-1 flex flex-col justify-between">
-                  <div>
-                    <span className="font-bold text-slate-800 block">Vídeos Curtos para Redes Sociais</span>
-                    <span className="text-slate-400 text-[11px]">Formato 9:16 vertical com áudio</span>
-                  </div>
-                  <button className="mt-2 w-full py-1.5 bg-blue-50 text-blue-600 font-bold rounded hover:bg-blue-100 flex items-center justify-center gap-1.5 cursor-pointer">
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Baixar Pacote</span>
-                  </button>
-                </div>
+                ))}
               </div>
             </div>
           </div>

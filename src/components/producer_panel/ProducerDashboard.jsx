@@ -222,23 +222,35 @@ export const ProducerDashboard = ({
         <div className="space-y-4">
           {/* Event Card */}
           <div
-            className={`rounded-xl p-3 border flex items-center gap-3 ${
+            className={`rounded-xl p-3 border space-y-2.5 ${
               darkMode ? 'bg-slate-800/70 border-slate-700' : 'bg-slate-50 border-slate-200'
             }`}
           >
-            <img
-              src="/assets/parque-sunset.jpg"
-              alt="Evento 3822"
-              className="w-12 h-12 rounded-lg object-cover shrink-0"
-            />
-            <div className="min-w-0">
-              <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500 text-[10px] font-bold">
-                ● Ativo
+            <div className="flex items-center gap-3">
+              <img
+                src="/assets/vale-palco-flutuante.jpg"
+                alt="Evento 3822 - Vale da Música"
+                className="w-14 h-14 rounded-lg object-cover object-center shrink-0 border border-slate-200/60"
+              />
+              <div className="min-w-0">
+                <span className="inline-block px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500 text-[10px] font-bold">
+                  ● Ativo
+                </span>
+                <h2 className="text-xs font-bold truncate mt-0.5">
+                  Experiência Música e Natureza - Setembro
+                </h2>
+                <span className={`text-[10px] ${mutedText}`}>ID: 3822 • Vale da Música</span>
+              </div>
+            </div>
+            <div className="bg-white/95 px-2.5 py-1.5 rounded-lg border border-slate-200/80 flex items-center justify-between">
+              <img
+                src="/assets/logo-vale-color-h.png"
+                alt="Vale da Música"
+                className="h-4 w-auto object-contain"
+              />
+              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">
+                Ópera de Arame
               </span>
-              <h2 className="text-xs font-bold truncate mt-0.5">
-                Experiência Música e Natureza - Setembro
-              </h2>
-              <span className={`text-[10px] ${mutedText}`}>ID: 3822</span>
             </div>
           </div>
 

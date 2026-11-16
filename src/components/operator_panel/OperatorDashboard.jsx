@@ -241,19 +241,27 @@ export const OperatorDashboard = ({
       <aside className="w-full xl:w-64 bg-white border-b xl:border-b-0 xl:border-r border-slate-200 p-4 flex flex-col justify-between shrink-0">
         <div className="space-y-4">
           <div className="rounded-xl overflow-hidden border border-slate-200 bg-white shadow-xs">
-            <div className="h-24 relative">
+            <div className="h-28 relative">
               <img
-                src="/assets/parque-thumb.jpg"
-                alt="Parque Jaime Lerner"
-                className="w-full h-full object-cover"
+                src="/assets/vale-palco-flutuante.jpg"
+                alt="Parque Jaime Lerner - Vale da Música"
+                className="w-full h-full object-cover object-center"
               />
-              <span className="absolute bottom-2 left-2.5 px-2 py-0.5 rounded bg-slate-900/80 text-white text-[9px] font-bold uppercase tracking-wider">
+              <div className="absolute inset-0 bg-linear-to-t from-slate-950/65 via-transparent to-transparent" />
+              <div className="absolute top-2 left-2.5 bg-white/95 backdrop-blur-xs px-2 py-1 rounded-md shadow-xs">
+                <img
+                  src="/assets/logo-vale-color-h.png"
+                  alt="Vale da Música"
+                  className="h-4 w-auto object-contain"
+                />
+              </div>
+              <span className="absolute bottom-2 left-2.5 px-2 py-0.5 rounded bg-slate-900/85 text-white text-[9px] font-bold uppercase tracking-wider">
                 PARQUE CULTURAL
               </span>
             </div>
             <div className="p-3">
               <h2 className="font-bold text-sm text-slate-900">Parque Jaime Lerner</h2>
-              <p className="text-[11px] text-slate-500">Rua da Música • Curitiba - PR</p>
+              <p className="text-[11px] text-slate-500">Vale da Música • Curitiba - PR</p>
             </div>
           </div>
 
@@ -287,12 +295,19 @@ export const OperatorDashboard = ({
           </p>
           <div className="flex items-center gap-2.5 pt-1">
             <img
-              src="/assets/sidebar-bottom-promo.jpg"
-              alt="Parque Jaime Lerner"
-              className="w-16 h-20 rounded-lg object-cover shrink-0 border border-slate-200"
+              src="/assets/vale-natureza-neon.jpg"
+              alt="Vale da Música - Natureza"
+              className="w-16 h-20 rounded-lg object-cover object-center shrink-0 border border-slate-200"
             />
-            <div className="text-[10px] font-bold text-blue-800 tracking-wider uppercase leading-relaxed">
-              MÚSICA<br />ARTE<br />NATUREZA<br />CURITIBA
+            <div className="space-y-1.5 min-w-0">
+              <div className="text-[10px] font-bold text-blue-800 tracking-wider uppercase leading-relaxed">
+                MÚSICA<br />ARTE<br />NATUREZA<br />CURITIBA
+              </div>
+              <img
+                src="/assets/logo-vale-ondas.png"
+                alt="Ondas Vale da Música"
+                className="h-3 w-24 object-contain object-left"
+              />
             </div>
           </div>
         </div>
