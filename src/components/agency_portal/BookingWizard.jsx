@@ -68,7 +68,7 @@ const TICKET_THUMBNAILS = {
   'TKT-CORPORATIVO': '/assets/vale-opera-interior.jpg'
 };
 
-export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNavigateTab }) => {
+export const BookingWizard = ({ agency, onBookingCreated, availableCredit = 31238, onNavigateTab }) => {
   const [step, setStep] = useState(1);
   const [selectedDay, setSelectedDay] = useState(18);
   const [selectedTime, setSelectedTime] = useState('09:00');
@@ -124,8 +124,8 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
     const code = `RES-B2B-${Math.floor(1050 + Math.random() * 900)}`;
     const newBooking = {
       id: code,
-      agencyId: 'AG-006',
-      agencyName: 'Agência Turismo Brasil',
+      agencyId: agency?.id,
+      agencyName: agency?.name,
       groupName: groupDetails.groupName || 'Grupo B2B Parque Jaime Lerner',
       coordinator: `${groupDetails.coordinatorName} (Cadastrado hoje)`,
       visitDate: isoDate,

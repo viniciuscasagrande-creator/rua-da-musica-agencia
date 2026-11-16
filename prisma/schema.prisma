@@ -98,25 +98,12 @@ model Agency {
   updatedAt     DateTime           @updatedAt
   events        AgencyEvent[]
   links         SalesLink[]
+  portalUsers   PortalUser[]
   reservations  GroupReservation[]
   rules         CommissionRule[]
-  users         AgencyUser[]
 
   @@unique([producerId, document])
   @@index([producerId, status])
-}
-
-model AgencyUser {
-  id        String   @id @default(cuid())
-  agencyId  String
-  name      String
-  email     String   @unique
-  roleTitle String   @default("Emissor B2B")
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  agency    Agency   @relation(fields: [agencyId], references: [id])
-
-  @@index([agencyId, active])
 }
 
 model AgencyEvent {
@@ -238,4 +225,19 @@ model CommissionEntry {
 
   @@index([attributionId, createdAt])
   // Append-only: proibido atualizar ou excluir lançamentos financeiros.
+}
+
+// Contas de acesso segregadas por agência (não confundir com vendedores SalesAgent).
+model PortalUser {
+  id           String   @id
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String
+  agencyId     String?
+  agency       Agency?  @relation(fields: [agencyId], references: [id])
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([agencyId])
 }

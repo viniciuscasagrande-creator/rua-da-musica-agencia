@@ -1,0 +1,16 @@
+import { readFileSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
+import { neon } from '@neondatabase/serverless';
+import { hashPassword } from '../lib/auth.js';
+const { DATABASE_URL, BOOTSTRAP_ADMIN_EMAIL, BOOTSTRAP_ADMIN_PASSWORD, BOOTSTRAP_ADMIN_NAME } = process.env;
+if (!DATABASE_URL || !BOOTSTRAP_ADMIN_EMAIL || !BOOTSTRAP_ADMIN_PASSWORD) throw new Error('Defina DATABASE_URL, BOOTSTRAP_ADMIN_EMAIL e BOOTSTRAP_ADMIN_PASSWORD');
+const sql = neon(DATABASE_URL);
+const migration = readFileSync(new URL('../migrations/001_portal_users.sql', import.meta.url), 'utf8');
+for (const stmt of migration.replace(/^--.*$/gm, '').split(';').map(s => s.trim()).filter(Boolean)) await sql.query(stmt);
+const existing = await sql`SELECT id FROM "PortalUser" WHERE role = 'admin' LIMIT 1`;
+if (existing.length) throw new Error('Já existe administrador. Nenhuma conta foi modificada.');
+const id = randomUUID();
+const email = BOOTSTRAP_ADMIN_EMAIL.trim().toLowerCase();
+const passwordHash = hashPassword(BOOTSTRAP_ADMIN_PASSWORD);
+await sql`INSERT INTO "PortalUser" (id, name, email, "passwordHash", role) VALUES (${id}, ${BOOTSTRAP_ADMIN_NAME || 'Administrador'}, ${email}, ${passwordHash}, 'admin')`;
+console.log('Migração aplicada e primeiro administrador cadastrado:', email);

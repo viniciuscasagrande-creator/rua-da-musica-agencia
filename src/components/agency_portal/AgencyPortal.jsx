@@ -20,12 +20,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import {
-  OPERATOR_INFO,
-  BOOKINGS_LIST,
-  AGENCIES_LIST,
-  AGENCY_USERS_LIST
-} from '../../data/mockData';
+import { OPERATOR_INFO, BOOKINGS_LIST } from '../../data/mockData';
 
 const HERO_SLIDES = [
   {
@@ -90,22 +85,9 @@ const HERO_SLIDES = [
   }
 ];
 
-export const AgencyPortal = ({
-  bookings: allBookings,
-  agencies: allAgencies = AGENCIES_LIST,
-  agencyUsers: allAgencyUsers = AGENCY_USERS_LIST,
-  session,
-  onCreateBooking,
-  onCreateAgencyUser,
-  onOpenVoucher
-}) => {
+export const AgencyPortal = ({ agency, bookings: allBookings, onCreateBooking, onOpenVoucher }) => {
   const [activeTab, setActiveTab] = useState('comprar');
   const [heroIndex, setHeroIndex] = useState(0);
-  const [newUserForm, setNewUserForm] = useState({
-    name: '',
-    email: '',
-    roleTitle: 'Operador de Reservas e Excursões'
-  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -113,24 +95,13 @@ export const AgencyPortal = ({
     }, 10000);
     return () => clearInterval(timer);
   }, []);
-
-  const currentAgencyId = session?.agencyId || 'AG-006';
-  const currentAgency =
-    allAgencies.find((a) => a.id === currentAgencyId) ||
-    AGENCIES_LIST.find((a) => a.id === 'AG-006') ||
-    AGENCIES_LIST[0];
-
   const [localBookings, setLocalBookings] = useState(
-    BOOKINGS_LIST.filter((b) => b.agencyId === currentAgencyId)
+    []
   );
 
   const bookings = allBookings
-    ? allBookings.filter(
-        (b) => b.agencyId === currentAgencyId || b.agencyName === currentAgency.name
-      )
+    ? allBookings.filter(b => agency && b.agencyId === agency.id)
     : localBookings;
-
-  const myAgencyUsers = allAgencyUsers.filter((u) => u.agencyId === currentAgencyId);
 
   const brl = (n) => Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const brNum = (n) => Number(n || 0).toLocaleString('pt-BR');
@@ -138,45 +109,22 @@ export const AgencyPortal = ({
   const activeBookings = bookings.filter((b) => b.status !== 'Cancelado');
   const totalTicketsIssued = activeBookings.reduce((acc, b) => acc + Number(b.ticketsCount || 0), 0);
   const totalB2BAmount = activeBookings.reduce((acc, b) => acc + Number(b.totalAmount || 0), 0);
-  const quotaLimit = Number(currentAgency.quotaLimit || 1200);
-  const usedQuota = Math.min(quotaLimit, 560 + totalTicketsIssued);
+  const totalDiskFee = activeBookings.reduce(
+    (acc, b) => acc + Number(b.diskFeeAmount || Number(b.totalAmount || 0) * 0.06),
+    0
+  );
+  const quotaLimit = Number(agency?.quotaLimit || 1200);
+  const usedQuota = Math.min(quotaLimit, Number(agency?.ticketsSold || 0));
   const usedQuotaPct = Math.round((usedQuota / quotaLimit) * 100);
   const creditLimit = 50000;
-  const availableCredit = Math.max(0, creditLimit - (18000 + totalB2BAmount));
+  const availableCredit = Math.max(0, creditLimit - totalB2BAmount);
 
   const handleBookingCreated = (newBooking) => {
-    const bookingWithTenant = {
-      ...newBooking,
-      agencyId: currentAgencyId,
-      agencyName: currentAgency.name
-    };
     if (onCreateBooking) {
-      onCreateBooking(bookingWithTenant);
+      onCreateBooking(newBooking);
     } else {
-      setLocalBookings((prev) => [bookingWithTenant, ...prev]);
+      setLocalBookings(prev => [newBooking, ...prev]);
     }
-  };
-
-  const handleAddAgencyUser = (e) => {
-    e.preventDefault();
-    if (!newUserForm.name || !newUserForm.email) return;
-    const created = {
-      id: `USR-AG-${Date.now().toString().slice(-4)}`,
-      agencyId: currentAgencyId,
-      agencyName: currentAgency.name,
-      name: newUserForm.name,
-      email: newUserForm.email,
-      roleTitle: newUserForm.roleTitle,
-      active: true
-    };
-    if (onCreateAgencyUser) {
-      onCreateAgencyUser(created);
-    }
-    setNewUserForm({
-      name: '',
-      email: '',
-      roleTitle: 'Operador de Reservas e Excursões'
-    });
   };
 
   return (
@@ -468,6 +416,7 @@ export const AgencyPortal = ({
         </p>
         {activeTab === 'comprar' && (
           <BookingWizard
+            agency={agency}
             onBookingCreated={handleBookingCreated}
             availableCredit={availableCredit}
             onNavigateTab={setActiveTab}
@@ -504,126 +453,36 @@ export const AgencyPortal = ({
         )}
 
         {activeTab === 'dados' && (
-          <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-6">
+          <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
             <div>
               <h3 className="font-bold text-base text-slate-900">Dados Cadastrais da Agência Parceira</h3>
-              <p className="text-xs text-slate-500">
-                Credenciamento B2B ativo junto ao Parque Jaime Lerner — Escopo isolado por <code>agencyId</code> ({currentAgencyId})
-              </p>
+              <p className="text-xs text-slate-500">Credenciamento B2B ativo junto ao Parque Jaime Lerner (PDT DiskIngressos)</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-slate-500 block">Razão Social</span>
-                <span className="font-bold text-slate-900 mt-0.5 block">{currentAgency.name}</span>
+                <span className="font-bold text-slate-900 mt-0.5 block">{agency?.name || "Agência não selecionada"}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-slate-500 block">CNPJ Normalizado</span>
-                <span className="font-mono font-bold text-slate-900 mt-0.5 block">{currentAgency.cnpj}</span>
+                <span className="font-mono font-bold text-slate-900 mt-0.5 block">{agency?.cnpj || "—"}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-slate-500 block">Código Credenciamento / Status</span>
-                <span className="font-mono font-bold text-emerald-700 mt-0.5 block">
-                  {currentAgency.id} • {currentAgency.status}
-                </span>
+                <span className="font-mono font-bold text-emerald-700 mt-0.5 block">{agency?.id || "—"} • {agency?.status || "—"}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                <span className="text-slate-500 block">Usuário Logado na Sessão</span>
-                <span className="font-bold text-slate-900 mt-0.5 block">
-                  {session?.name || currentAgency.contactName || 'Roberto Almeida'}
-                </span>
+                <span className="text-slate-500 block">Responsável Operacional</span>
+                <span className="font-bold text-slate-900 mt-0.5 block">{agency?.contactName || "—"}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-slate-500 block">E-mail B2B</span>
-                <span className="font-bold text-slate-900 mt-0.5 block">
-                  {session?.email || currentAgency.email || 'b2b@turismobrasil.com.br'}
-                </span>
+                <span className="font-bold text-slate-900 mt-0.5 block">{agency?.email || "—"}</span>
               </div>
               <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                 <span className="text-slate-500 block">Modalidade de Faturamento</span>
                 <span className="font-mono font-bold text-blue-700 mt-0.5 block">Faturamento B2B (15d) / PIX</span>
               </div>
-            </div>
-
-            {/* Gestão Multi-Usuário da Própria Agência (Isolamento Tenant por Agência) */}
-            <div className="pt-4 border-t border-slate-200 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900">
-                    Usuários Próprios da Agência ({currentAgency.name})
-                  </h4>
-                  <p className="text-xs text-slate-500">
-                    Múltiplos operadores vinculados exclusivamente ao código <strong>{currentAgencyId}</strong> (nenhum usuário visualiza informações de outra agência)
-                  </p>
-                </div>
-                <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200 self-start">
-                  {myAgencyUsers.length} usuário(s) ativo(s)
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                {myAgencyUsers.map((u) => (
-                  <div
-                    key={u.id}
-                    className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex flex-col justify-between gap-1.5"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-900">{u.name}</span>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        Ativo
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-blue-700 font-semibold">{u.roleTitle}</span>
-                    <span className="font-mono text-[11px] text-slate-500 truncate">{u.email}</span>
-                  </div>
-                ))}
-              </div>
-
-              <form
-                onSubmit={handleAddAgencyUser}
-                className="bg-slate-50 rounded-xl p-4 border border-slate-200 grid grid-cols-1 sm:grid-cols-4 gap-3 items-end text-xs"
-              >
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Nome do Operador *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Ex: Juliana Mendes"
-                    value={newUserForm.name}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, name: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">E-mail Corporativo *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="Ex: juliana@agencia.com.br"
-                    value={newUserForm.email}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900"
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-slate-700 block mb-1">Função na Agência</label>
-                  <select
-                    value={newUserForm.roleTitle}
-                    onChange={(e) => setNewUserForm({ ...newUserForm, roleTitle: e.target.value })}
-                    className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900"
-                  >
-                    <option>Operador de Reservas e Excursões</option>
-                    <option>Coordenador de Check-in / Guia</option>
-                    <option>Financeiro B2B da Agência</option>
-                    <option>Gestor da Agência (Master)</option>
-                  </select>
-                </div>
-                <button
-                  type="submit"
-                  className="py-2 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold cursor-pointer"
-                >
-                  + Adicionar Usuário
-                </button>
-              </form>
             </div>
           </section>
         )}
@@ -642,7 +501,7 @@ export const AgencyPortal = ({
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="font-bold text-base text-slate-900">Minhas Reservas B2B</h3>
-                <p className="text-xs text-slate-500">Histórico de reservas emitidas pela Agência Turismo Brasil</p>
+                <p className="text-xs text-slate-500">Histórico de reservas da agência autenticada</p>
               </div>
               <button
                 onClick={() => setActiveTab('comprar')}
