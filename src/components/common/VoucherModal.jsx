@@ -147,16 +147,18 @@ export const VoucherModal = ({ booking, hideDiskFee = false, onCheckin, onClose 
                 </span>
               </div>
             </div>
-            <button
-              onClick={handleToggleCheckin}
-              className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer ${
-                checkedIn
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-              }`}
-            >
-              {checkedIn ? 'Validado ✓' : 'Simular Check-in'}
-            </button>
+            {onCheckin && (
+              <button
+                onClick={handleToggleCheckin}
+                className={`px-3 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer ${
+                  checkedIn
+                    ? 'bg-emerald-600 text-white'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+              >
+                {checkedIn ? 'Validado ✓' : 'Simular Check-in'}
+              </button>
+            )}
           </div>
 
           {/* Footer Buttons */}

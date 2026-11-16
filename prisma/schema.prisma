@@ -100,9 +100,23 @@ model Agency {
   links         SalesLink[]
   reservations  GroupReservation[]
   rules         CommissionRule[]
+  users         AgencyUser[]
 
   @@unique([producerId, document])
   @@index([producerId, status])
+}
+
+model AgencyUser {
+  id        String   @id @default(cuid())
+  agencyId  String
+  name      String
+  email     String   @unique
+  roleTitle String   @default("Emissor B2B")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  agency    Agency   @relation(fields: [agencyId], references: [id])
+
+  @@index([agencyId, active])
 }
 
 model AgencyEvent {

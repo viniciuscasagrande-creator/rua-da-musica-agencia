@@ -473,3 +473,51 @@ export const COMMISSION_LEDGER_ENTRIES = [
     createdAt: '18/09/2026 17:00'
   }
 ];
+
+export const AGENCY_USERS_LIST = [
+  {
+    id: 'USR-AG-01',
+    agencyId: 'AG-006',
+    agencyName: 'Agência Turismo Brasil',
+    name: 'Roberto Almeida',
+    email: 'b2b@turismobrasil.com.br',
+    roleTitle: 'Gestor da Agência (Master)',
+    active: true
+  },
+  {
+    id: 'USR-AG-02',
+    agencyId: 'AG-006',
+    agencyName: 'Agência Turismo Brasil',
+    name: 'Carla Mendes',
+    email: 'carla.grupos@turismobrasil.com.br',
+    roleTitle: 'Operadora de Excursões',
+    active: true
+  },
+  {
+    id: 'USR-AG-03',
+    agencyId: 'AG-006',
+    agencyName: 'Agência Turismo Brasil',
+    name: 'Marcos Viana',
+    email: 'marcos.guia@turismobrasil.com.br',
+    roleTitle: 'Coordenador de Check-in',
+    active: true
+  },
+  {
+    id: 'USR-AG-04',
+    agencyId: 'AG-001',
+    agencyName: 'Mundo Brasil Turismo',
+    name: 'Carlos Eduardo',
+    email: 'operacoes@mundobrasilturismo.com.br',
+    roleTitle: 'Gestor da Agência (Master)',
+    active: true
+  },
+  {
+    id: 'USR-AG-05',
+    agencyId: 'AG-002',
+    agencyName: 'Viva Viagens',
+    name: 'Fernanda Lima',
+    email: 'b2b@vivaviagens.com.br',
+    roleTitle: 'Gestora da Agência (Master)',
+    active: true
+  }
+];
