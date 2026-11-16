@@ -273,6 +273,7 @@ export default function App() {
           agencies={agencies}
           bookings={bookings}
           onCreateAgency={handleCreateAgency}
+          onCheckinVoucher={handleCheckinVoucher}
           onOpenVoucher={(booking) => setSelectedVoucherBooking(booking)}
         />
       )}

@@ -629,7 +629,7 @@ export const ProducerDashboard = ({
             </div>
 
             {/* Operational Table or Specific Sub-tab */}
-            {activeTab !== 'financeiro' ? (
+            {(activeTab === 'promoters' || activeTab === 'divulgadores') && (
               <div className={`rounded-2xl border p-5 shadow-xs space-y-4 ${cardClass}`}>
                 <div className="flex flex-wrap items-center justify-between gap-3 text-xs">
                   <div className="flex flex-wrap items-center gap-2">
@@ -663,7 +663,7 @@ export const ProducerDashboard = ({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowAddModal(true)}
-                      className="px-3 py-1.5 rounded-xl bg-blue-600 text-white font-semibold"
+                      className="px-3 py-1.5 rounded-xl bg-blue-600 text-white font-semibold cursor-pointer"
                     >
                       + Novo Membro
                     </button>
@@ -756,7 +756,198 @@ export const ProducerDashboard = ({
                   </table>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {/* SUB-TAB: LINKS DE VENDA RASTREÁVEIS */}
+            {activeTab === 'links' && (
+              <div className={`rounded-2xl border p-5 shadow-xs space-y-4 ${cardClass}`}>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-bold">Links de Venda Rastreáveis (UTM / Ref)</h3>
+                    <p className={`text-xs ${mutedText}`}>
+                      Cada membro possui um link único parametrizado para atribuição automática de comissão no checkout
+                    </p>
+                  </div>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className={`border-b border-slate-500/20 uppercase text-[11px] ${mutedText}`}>
+                        <th className="py-3 px-3">Membro</th>
+                        <th className="py-3 px-3">URL Rastreável</th>
+                        <th className="py-3 px-3 text-right">Cliques</th>
+                        <th className="py-3 px-3 text-right">Sessões</th>
+                        <th className="py-3 px-3 text-right">Pedidos</th>
+                        <th className="py-3 px-3 text-right">Conversão</th>
+                        <th className="py-3 px-3 text-center">Ação</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-500/15">
+                      {members.map((m) => (
+                        <tr key={m.id} className="hover:bg-slate-500/5">
+                          <td className="py-3 px-3 font-bold">{m.name}</td>
+                          <td className="py-3 px-3 font-mono text-[11px] text-blue-500">
+                            https://rua-da-musica-agencia.vercel.app/?ref={m.linkCode}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono">{brNum(m.clicks || m.salesCount * 14)}</td>
+                          <td className="py-3 px-3 text-right font-mono">{brNum(m.sessions || m.salesCount * 11)}</td>
+                          <td className="py-3 px-3 text-right font-bold">{m.salesCount}</td>
+                          <td className="py-3 px-3 text-right font-semibold text-emerald-500">{m.conversion}%</td>
+                          <td className="py-3 px-3 text-center">
+                            <button
+                              onClick={() => handleCopyLink(m.linkCode)}
+                              className="px-3 py-1 rounded-lg bg-blue-600 text-white text-[11px] font-bold inline-flex items-center gap-1.5 cursor-pointer"
+                            >
+                              <Copy className="w-3 h-3" />
+                              <span>{copiedCode === m.linkCode ? 'Copiado!' : 'Copiar URL'}</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB: CUPONS DE DESCONTO */}
+            {activeTab === 'cupons' && (
+              <div className={`rounded-2xl border p-5 shadow-xs space-y-4 ${cardClass}`}>
+                <div>
+                  <h3 className="text-base font-bold">Cupons Promocionais Vinculados à Equipe</h3>
+                  <p className={`text-xs ${mutedText}`}>
+                    Cupons nominais que concedem benefício ao comprador e vinculam a venda ao promoter mesmo sem link
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                  {members.map((m) => (
+                    <div
+                      key={m.id}
+                      className={`p-4 rounded-xl border flex flex-col justify-between gap-3 ${
+                        darkMode ? 'bg-slate-800/70 border-slate-700' : 'bg-slate-50 border-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-sm font-black text-blue-500 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20">
+                          {m.couponCode}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-500">
+                          10% OFF • Ativo
+                        </span>
+                      </div>
+                      <div>
+                        <div className="font-bold text-sm">{m.name}</div>
+                        <div className={`text-[11px] ${mutedText}`}>
+                          {m.salesCount} pedidos realizados • {brl(m.revenue)} gerados
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleCopyLink(m.couponCode)}
+                        className="w-full py-1.5 rounded-lg border border-blue-500/30 text-blue-500 hover:bg-blue-500/10 font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        <span>{copiedCode === m.couponCode ? 'Código Copiado!' : 'Copiar Código do Cupom'}</span>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB: METAS & GAMIFICAÇÃO */}
+            {activeTab === 'metas' && (
+              <div className={`rounded-2xl border p-5 shadow-xs space-y-4 ${cardClass}`}>
+                <div>
+                  <h3 className="text-base font-bold">Acompanhamento de Metas & Gamificação</h3>
+                  <p className={`text-xs ${mutedText}`}>
+                    Progresso individual de ingressos vendidos em relação à meta estipulada para o evento ID 3822
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {members.map((m) => (
+                    <div
+                      key={m.id}
+                      className={`p-4 rounded-xl border space-y-2.5 ${
+                        darkMode ? 'bg-slate-800/70 border-slate-700' : 'bg-slate-50 border-slate-200'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5">
+                          <div className={`w-8 h-8 rounded-full ${m.avatarBg} text-white font-bold flex items-center justify-center`}>
+                            {m.initials}
+                          </div>
+                          <div>
+                            <div className="font-bold">{m.name}</div>
+                            <div className={`text-[11px] ${mutedText}`}>{m.role}</div>
+                          </div>
+                        </div>
+                        <span className="font-mono font-extrabold text-sm text-blue-500">
+                          {m.ticketsCount} / {m.goalTarget} ing. ({m.goalPct}%)
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-500/20 h-2.5 rounded-full overflow-hidden">
+                        <div
+                          className={`${m.goalColor} h-full rounded-full`}
+                          style={{ width: `${Math.min(100, m.goalPct)}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-[11px]">
+                        <span className={mutedText}>Regra: {m.commissionModel}</span>
+                        <span className="font-bold text-emerald-500">
+                          {m.goalPct >= 80 ? '🏆 Elegível a Bônus VIP' : 'Em evolução'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* SUB-TAB: COMISSÕES POR MEMBRO */}
+            {activeTab === 'comissoes' && (
+              <div className={`rounded-2xl border p-5 shadow-xs space-y-4 ${cardClass}`}>
+                <div>
+                  <h3 className="text-base font-bold">Apuração de Comissões da Equipe</h3>
+                  <p className={`text-xs ${mutedText}`}>
+                    Demonstrativo consolidado de comissões geradas, valores já liquidados e saldo pendente por promoter
+                  </p>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse text-xs">
+                    <thead>
+                      <tr className={`border-b border-slate-500/20 uppercase text-[11px] ${mutedText}`}>
+                        <th className="py-3 px-3">Membro</th>
+                        <th className="py-3 px-3">Regra Aplicada</th>
+                        <th className="py-3 px-3 text-right">Receita Vendida</th>
+                        <th className="py-3 px-3 text-right">Comissão Total</th>
+                        <th className="py-3 px-3 text-right">Já Liquidado</th>
+                        <th className="py-3 px-3 text-right">Saldo Pendente</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-500/15">
+                      {members.map((m) => (
+                        <tr key={m.id} className="hover:bg-slate-500/5">
+                          <td className="py-3 px-3 font-bold">{m.name}</td>
+                          <td className="py-3 px-3">{m.commissionModel}</td>
+                          <td className="py-3 px-3 text-right font-mono">{brl(m.revenue)}</td>
+                          <td className="py-3 px-3 text-right font-mono font-bold text-emerald-500">
+                            {brl(m.commission)}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono">
+                            {brl(m.commissionPaid || m.commission * 0.7)}
+                          </td>
+                          <td className="py-3 px-3 text-right font-mono font-bold text-amber-500">
+                            {brl(m.commissionPending || m.commission * 0.3)}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'financeiro' && (
               /* TAB FINANCEIRO & LEDGER APPEND-ONLY */
               <div className={`rounded-2xl border p-6 shadow-xs space-y-4 ${cardClass}`}>
                 <div>

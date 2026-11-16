@@ -64,10 +64,12 @@ export const TopNavbar = ({
   onMarkAllRead,
   onNotificationClick
 }) => {
+  const [openMenu, setOpenMenu] = useState(false);
   const [openNotif, setOpenNotif] = useState(false);
   const [openHelp, setOpenHelp] = useState(false);
   const [openProfile, setOpenProfile] = useState(false);
   const [localNotifications, setLocalNotifications] = useState(DEFAULT_NOTIFICATIONS);
+  const menuRef = useRef(null);
   const notifRef = useRef(null);
   const helpRef = useRef(null);
   const profileRef = useRef(null);
@@ -77,6 +79,9 @@ export const TopNavbar = ({
 
   useEffect(() => {
     const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setOpenMenu(false);
+      }
       if (notifRef.current && !notifRef.current.contains(e.target)) {
         setOpenNotif(false);
       }
@@ -89,6 +94,7 @@ export const TopNavbar = ({
     };
     const handleEsc = (e) => {
       if (e.key === 'Escape') {
+        setOpenMenu(false);
         setOpenNotif(false);
         setOpenHelp(false);
         setOpenProfile(false);
@@ -163,17 +169,70 @@ export const TopNavbar = ({
       <div className="bg-white border-b border-slate-200 px-4 py-2.5 flex items-center justify-between gap-4">
         {/* Left: Brand & Search */}
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2.5">
-            <button className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500">
+          <div className="flex items-center gap-2.5 relative" ref={menuRef}>
+            <button
+              type="button"
+              onClick={() => setOpenMenu((v) => !v)}
+              title="Menu Rápido de Módulos"
+              className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
+                openMenu ? 'bg-blue-50 text-blue-600' : 'hover:bg-slate-100 text-slate-500'
+              }`}
+            >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="leading-none">
+            <button
+              type="button"
+              onClick={() => onSurfaceChange('agency')}
+              className="leading-none text-left cursor-pointer"
+            >
               <span className="text-xl font-black tracking-tight text-amber-500">Disk</span>
               <span className="text-xl font-black tracking-tight text-blue-700 italic">Ingressos</span>
               <span className="block text-[9px] text-slate-400 font-medium tracking-tight">
                 Conectando pessoas a grandes experiências
               </span>
-            </div>
+            </button>
+
+            {openMenu && (
+              <div className="absolute left-0 top-full mt-2 w-64 bg-white rounded-2xl border border-slate-200 shadow-xl z-50 p-2 text-xs">
+                <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Navegação entre Módulos PDT
+                </div>
+                {[
+                  {
+                    id: 'operator',
+                    label: '1. Painel do Operador (Parque)',
+                    sub: 'Estoque, Agências, Catraca e Split'
+                  },
+                  {
+                    id: 'agency',
+                    label: '2. Portal da Agência B2B',
+                    sub: 'Compra de Lotes, Vouchers e Kit Mídia'
+                  },
+                  {
+                    id: 'producer',
+                    label: '3. Painel do Produtor (Vendas)',
+                    sub: 'Promoters, Links, Cupons e Ledger'
+                  }
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => {
+                      onSurfaceChange(m.id);
+                      setOpenMenu(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-xl transition-colors cursor-pointer ${
+                      activeSurface === m.id
+                        ? 'bg-blue-50 text-blue-700 font-bold'
+                        : 'hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="font-bold">{m.label}</div>
+                    <div className="text-[10px] text-slate-500">{m.sub}</div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="hidden md:flex items-center bg-slate-100 border border-slate-200 rounded-xl px-3 py-1.5 w-72 lg:w-80 text-xs">
