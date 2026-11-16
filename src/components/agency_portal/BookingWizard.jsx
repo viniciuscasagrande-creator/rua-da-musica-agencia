@@ -788,33 +788,35 @@ export const BookingWizard = ({ onBookingCreated, availableCredit = 31238, onNav
             </ul>
           </div>
 
-          {/* Promotional Media Download Banner */}
-          <div className="rounded-2xl overflow-hidden relative border border-slate-200 shadow-xs bg-slate-900 text-white">
-            <img
-              src="/assets/vale-musica-ao-vivo.jpg"
-              alt="Parque Jaime Lerner • Vale da Música"
-              className="w-full h-40 object-cover object-center opacity-85"
-            />
-            <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/65 to-transparent p-3.5 flex flex-col justify-between">
-              <div>
-                <div className="bg-white/95 backdrop-blur-xs px-2 py-0.5 rounded inline-flex items-center mb-1.5">
-                  <img
-                    src="/assets/logo-vale-color-h.png"
-                    alt="Vale da Música"
-                    className="h-3.5 w-auto object-contain"
-                  />
-                </div>
-                <h4 className="text-xs font-bold leading-snug">
+          {/* Promotional Media Download Banner (Sem Corte na Imagem) */}
+          <div className="rounded-2xl overflow-hidden border border-slate-200 shadow-xs bg-slate-950 text-white">
+            <div className="aspect-video w-full bg-slate-900 relative overflow-hidden">
+              <img
+                src="/assets/vale-musica-ao-vivo.jpg"
+                alt="Parque Jaime Lerner • Vale da Música"
+                className="w-full h-full object-contain"
+              />
+              <div className="absolute top-2.5 left-2.5 bg-white/95 backdrop-blur-xs px-2 py-1 rounded-md shadow-xs inline-flex items-center">
+                <img
+                  src="/assets/logo-vale-color-h.png"
+                  alt="Vale da Música"
+                  className="h-3.5 w-auto object-contain"
+                />
+              </div>
+            </div>
+            <div className="p-3.5 flex items-center justify-between gap-3 border-t border-white/10">
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold leading-snug text-white">
                   Leve seus clientes para viver essa experiência!
                 </h4>
-                <p className="text-[10px] text-slate-300 mt-0.5">
+                <p className="text-[10px] text-slate-300 mt-0.5 truncate">
                   Parque Jaime Lerner • Vale da Música — Curitiba - PR
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => onNavigateTab && onNavigateTab('materiais')}
-                className="self-start px-3 py-1.5 rounded-lg bg-white text-blue-700 font-bold text-[11px] flex items-center gap-1.5 hover:bg-blue-50 shadow-xs cursor-pointer"
+                className="shrink-0 px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-[11px] flex items-center gap-1.5 shadow-xs cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Baixar Materiais</span>

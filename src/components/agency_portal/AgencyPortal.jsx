@@ -16,34 +16,72 @@ import {
   MessageCircle,
   Phone,
   Mail,
-  FileText
+  FileText,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { OPERATOR_INFO, BOOKINGS_LIST } from '../../data/mockData';
 
 const HERO_SLIDES = [
   {
+    src: '/assets/vale-aerea-dourada.png',
+    title: 'Vista Aérea Oficial — Ópera de Arame & Lago',
+    caption: 'Arquitetura icônica em meio à mata nativa com o Palco Flutuante ao centro'
+  },
+  {
     src: '/assets/vale-palco-flutuante.jpg',
-    caption: 'Palco Flutuante #VALEDAMÚSICA no lago da Ópera de Arame'
+    title: 'Palco Flutuante #VALEDAMÚSICA',
+    caption: 'Espetáculos musicais sobre o lago da Ópera de Arame durante toda a programação'
   },
   {
     src: '/assets/vale-musica-ao-vivo.jpg',
-    caption: 'Apresentações instrumentais ao vivo todos os dias'
+    title: 'Música Instrumental ao Vivo',
+    caption: 'Apresentações ao vivo no Palco Flutuante para grupos e visitantes'
   },
   {
     src: '/assets/vale-opera-interior.jpg',
-    caption: 'Arquitetura tubular icônica da Ópera de Arame'
+    title: 'Interior da Ópera de Arame',
+    caption: 'Estrutura tubular histórica e experiência cultural imersiva em Curitiba'
   },
   {
     src: '/assets/vale-bosque-passeio.jpg',
-    caption: 'Passeio imersivo pela mata nativa e Rua da Música'
+    title: 'Passeio pelo Bosque & Rua da Música',
+    caption: 'Caminhada ecológica integrada à arquitetura de vidro e ferro'
   },
   {
     src: '/assets/vale-espetaculo-palco.jpg',
-    caption: 'Espetáculos culturais e experiências para grupos e excursões'
+    title: 'Grandes Espetáculos Culturais',
+    caption: 'Dança, música e artes cênicas no palco principal da Ópera de Arame'
   },
   {
     src: '/assets/vale-natureza-neon.jpg',
-    caption: 'Instalações artísticas integradas à natureza de Curitiba'
+    title: 'Instalação Artística "Natureza"',
+    caption: 'Arte contemporânea e cenografia luminosa integradas à floresta nativa'
+  },
+  {
+    src: '/assets/vale-arte-fitas.jpg',
+    title: 'Intervenções Artísticas & Cores',
+    caption: 'Experiências visuais e apresentações vibrantes para todas as idades'
+  },
+  {
+    src: '/assets/vale-oficina-educativa.jpg',
+    title: 'Oficinas Criativas & Turismo Pedagógico',
+    caption: 'Roteiros educativos ideais para excursões escolares e grupos culturais'
+  },
+  {
+    src: '/assets/vale-familia-cultura.jpg',
+    title: 'Lazer Completo para Famílias e Grupos',
+    caption: 'Programação interativa com conforto, segurança e infraestrutura dedicada'
+  },
+  {
+    src: '/assets/vale-oficina-arte.jpg',
+    title: 'Arte & Identidade Curitibana',
+    caption: 'Oficinas temáticas celebrando o ícone arquitetônico da Ópera de Arame'
+  },
+  {
+    src: '/assets/vale-circo-cultura.jpg',
+    title: 'Cultura Viva em Todos os Espaços',
+    caption: 'Atrações artísticas distribuídas pelos jardins do Parque Jaime Lerner'
   }
 ];
 
@@ -98,84 +136,204 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
       {/* Main Agency Content Area */}
       <main className="flex-1 min-w-0 p-4 md:p-5 space-y-4 max-w-[1700px] mx-auto w-full">
         
-        {/* Top Attraction Panoramic Banner (Carrossel Automático a cada 10s - Vale da Música) */}
-        <div className="relative rounded-2xl overflow-hidden shadow-xs border border-slate-200 bg-slate-950 h-44 sm:h-48">
-          {HERO_SLIDES.map((slide, idx) => (
-            <img
-              key={slide.src}
-              src={slide.src}
-              alt={slide.caption}
-              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ${
-                idx === heroIndex ? 'opacity-90' : 'opacity-0 pointer-events-none'
-              }`}
-            />
-          ))}
-          <div className="absolute inset-0 bg-linear-to-r from-slate-950/90 via-slate-950/60 to-slate-950/20" />
+        {/* Card Principal Ampliado — Vitrine Multi-Imagens Sem Corte (Troca a cada 10s) */}
+        <div className="relative rounded-2xl overflow-hidden shadow-sm border border-slate-200 bg-slate-950 text-white">
+          {/* Ambient Blurred Background */}
+          <img
+            src={HERO_SLIDES[heroIndex].src}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-30 pointer-events-none transition-all duration-700"
+          />
+          <div className="absolute inset-0 bg-linear-to-r from-slate-950/95 via-slate-950/85 to-slate-900/75" />
 
-          {/* Banner Contents */}
-          <div className="relative z-10 h-full p-4 sm:p-5 flex flex-col justify-between text-white">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div>
-                <div className="flex flex-wrap items-center gap-2.5 mb-1">
-                  <div className="bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-lg shadow-xs inline-flex items-center">
+          <div className="relative z-10 p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+            {/* Coluna Esquerda (Identidade Oficial Vale da Música + Destaques + Controles) */}
+            <div className="lg:col-span-5 flex flex-col justify-between gap-4">
+              <div className="space-y-2.5">
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <div className="bg-white px-3 py-1.5 rounded-xl shadow-xs inline-flex items-center">
                     <img
                       src="/assets/logo-vale-color-h.png"
                       alt="Vale da Música"
-                      className="h-5 sm:h-6 w-auto object-contain"
+                      className="h-6 sm:h-7 w-auto object-contain"
                     />
                   </div>
-                  <span className="text-[11px] font-bold tracking-widest text-blue-300 uppercase">
+                  <span className="text-[11px] font-bold tracking-widest text-blue-300 uppercase px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-400/30">
                     ATRAÇÃO CULTURAL & PARQUE
                   </span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                  Parque Jaime Lerner • Vale da Música
-                </h1>
-                <p className="text-xs sm:text-sm text-slate-200 mt-0.5">
-                  Ópera de Arame & Rua da Música — Curitiba - PR
-                </p>
-                <div className="mt-2 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900/80 border border-white/20 text-slate-100">
-                  <span>{HERO_SLIDES[heroIndex].caption}</span>
+
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+                    Parque Jaime Lerner • Vale da Música
+                  </h1>
+                  <p className="text-xs sm:text-sm text-slate-300 mt-1">
+                    Ópera de Arame & Rua da Música — Curitiba - PR
+                  </p>
+                </div>
+
+                <img
+                  src="/assets/logo-vale-ondas.png"
+                  alt="Ondas sonoras Vale da Música"
+                  className="h-4 w-56 object-contain object-left opacity-95"
+                />
+
+                {/* Legenda ativa da foto em destaque */}
+                <div className="bg-slate-900/90 border border-white/15 rounded-xl p-3 space-y-1">
+                  <div className="flex items-center justify-between text-[11px] text-blue-300 font-bold uppercase tracking-wider">
+                    <span>{HERO_SLIDES[heroIndex].title}</span>
+                    <span className="font-mono text-slate-400">
+                      {String(heroIndex + 1).padStart(2, '0')} / {String(HERO_SLIDES.length).padStart(2, '0')}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-200 leading-relaxed">
+                    {HERO_SLIDES[heroIndex].caption}
+                  </p>
                 </div>
               </div>
 
-              {/* Tag Highlights on Top Right */}
-              <div className="hidden lg:flex flex-col items-end justify-between self-stretch">
-                <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs bg-slate-900/80 backdrop-blur-xs p-3.5 rounded-xl border border-white/15">
+              {/* 4 Destaques + Controles de Navegação */}
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-2.5 text-xs bg-slate-900/80 backdrop-blur-xs p-3 rounded-xl border border-white/15">
                   <div className="flex items-center gap-2">
-                    <Leaf className="w-4 h-4 text-emerald-400" />
+                    <Leaf className="w-4 h-4 text-emerald-400 shrink-0" />
                     <span className="text-slate-200">Natureza e lazer</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Music className="w-4 h-4 text-blue-400" />
+                    <Music className="w-4 h-4 text-blue-400 shrink-0" />
                     <span className="text-slate-200">Palco Flutuante & Música</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Camera className="w-4 h-4 text-amber-400" />
+                    <Camera className="w-4 h-4 text-amber-400 shrink-0" />
                     <span className="text-slate-200">Arquitetura icônica</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-purple-400" />
+                    <Users className="w-4 h-4 text-purple-400 shrink-0" />
                     <span className="text-slate-200">Ideal para grupos e excursões</span>
                   </div>
                 </div>
 
-                {/* Slide Indicators (10s rotation) */}
-                <div className="flex items-center gap-1.5 bg-slate-950/70 backdrop-blur-xs px-2.5 py-1 rounded-full border border-white/15">
-                  {HERO_SLIDES.map((s, idx) => (
+                {/* Barra de Troca Automática (10s) e Setas */}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {HERO_SLIDES.map((s, idx) => (
+                      <button
+                        key={s.src}
+                        type="button"
+                        onClick={() => setHeroIndex(idx)}
+                        title={s.title}
+                        className={`h-2 rounded-full transition-all cursor-pointer ${
+                          idx === heroIndex
+                            ? 'w-6 bg-blue-400'
+                            : 'w-2 bg-white/35 hover:bg-white/70'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
-                      key={s.src}
                       type="button"
-                      onClick={() => setHeroIndex(idx)}
-                      title={s.caption}
-                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                        idx === heroIndex
-                          ? 'w-5 bg-blue-400'
-                          : 'w-1.5 bg-white/40 hover:bg-white/70'
-                      }`}
-                    />
-                  ))}
+                      onClick={() =>
+                        setHeroIndex((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length)
+                      }
+                      className="p-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-white/15 text-slate-200 cursor-pointer"
+                      title="Foto anterior"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setHeroIndex((prev) => (prev + 1) % HERO_SLIDES.length)}
+                      className="p-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-white/15 text-slate-200 cursor-pointer"
+                      title="Próxima foto"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Coluna Direita: Vitrine Multi-Imagens Sem Corte (Foto Principal Inteira + 2 Próximas + Tira de Miniaturas) */}
+            <div className="lg:col-span-7 flex flex-col justify-between gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch flex-1">
+                {/* Imagem Principal em Proporção Original (Sem Corte - object-contain com fundo ambientado) */}
+                <div className="sm:col-span-8 relative rounded-xl overflow-hidden border border-white/20 bg-slate-900 min-h-[240px] sm:min-h-[280px] flex items-center justify-center shadow-md">
+                  <img
+                    src={HERO_SLIDES[heroIndex].src}
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover blur-xl opacity-45 scale-105"
+                  />
+                  <img
+                    src={HERO_SLIDES[heroIndex].src}
+                    alt={HERO_SLIDES[heroIndex].title}
+                    className="relative z-10 w-full h-full max-h-[300px] object-contain p-1 transition-all duration-500"
+                  />
+                  <div className="absolute bottom-2.5 left-2.5 right-2.5 z-20 flex items-center justify-between gap-2 bg-slate-950/80 backdrop-blur-xs px-3 py-1.5 rounded-lg border border-white/15">
+                    <span className="text-xs font-bold text-white truncate">
+                      {HERO_SLIDES[heroIndex].title}
+                    </span>
+                    <span className="text-[10px] font-semibold text-blue-300 shrink-0">
+                      10s auto
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2 Imagens Secundárias Simultâneas (Próximas da Galeria — Sem Corte) */}
+                <div className="sm:col-span-4 grid grid-cols-2 sm:grid-cols-1 gap-3">
+                  {[1, 2].map((offset) => {
+                    const nextIdx = (heroIndex + offset) % HERO_SLIDES.length;
+                    const item = HERO_SLIDES[nextIdx];
+                    return (
+                      <button
+                        key={item.src}
+                        type="button"
+                        onClick={() => setHeroIndex(nextIdx)}
+                        className="relative rounded-xl overflow-hidden border border-white/15 hover:border-blue-400 bg-slate-900 min-h-[125px] sm:min-h-[134px] flex items-center justify-center group cursor-pointer transition-all"
+                      >
+                        <img
+                          src={item.src}
+                          alt=""
+                          aria-hidden="true"
+                          className="absolute inset-0 w-full h-full object-cover blur-md opacity-40"
+                        />
+                        <img
+                          src={item.src}
+                          alt={item.title}
+                          className="relative z-10 w-full h-full max-h-[136px] object-contain p-1 group-hover:scale-103 transition-transform"
+                        />
+                        <div className="absolute bottom-1.5 inset-x-1.5 z-20 bg-slate-950/80 backdrop-blur-xs px-2 py-0.5 rounded text-[10px] font-semibold text-slate-100 truncate text-left">
+                          {item.title}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tira de Miniaturas com Todas as 12 Imagens Adicionadas */}
+              <div className="grid grid-cols-6 sm:grid-cols-12 gap-1.5 pt-1">
+                {HERO_SLIDES.map((thumb, idx) => (
+                  <button
+                    key={thumb.src}
+                    type="button"
+                    onClick={() => setHeroIndex(idx)}
+                    title={thumb.title}
+                    className={`relative h-11 rounded-lg overflow-hidden border transition-all cursor-pointer bg-slate-900 ${
+                      idx === heroIndex
+                        ? 'border-blue-400 ring-2 ring-blue-400/60 scale-105 z-10'
+                        : 'border-white/15 opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <img
+                      src={thumb.src}
+                      alt={thumb.title}
+                      className="w-full h-full object-contain bg-slate-950"
+                    />
+                  </button>
+                ))}
               </div>
             </div>
           </div>
@@ -542,10 +700,16 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
             {/* Bloco 2: Banco de Fotografias Oficiais para Pacotes Turísticos */}
             <div className="space-y-2.5">
               <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                2. Fotografias Oficiais para Divulgação de Excursões e Agências
+                2. Fotografias Oficiais para Divulgação de Excursões e Agências (12 Fotos em Alta Resolução)
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 auto-rows-fr">
                 {[
+                  {
+                    title: 'Vista Aérea Dourada — Ópera & Lago',
+                    sub: 'Foto Oficial de Capa • 1207×681px',
+                    file: '/assets/vale-aerea-dourada.png',
+                    downloadName: 'vale-da-musica-vista-aerea-dourada.png'
+                  },
                   {
                     title: 'Palco Flutuante #VALEDAMÚSICA',
                     sub: 'Lago da Ópera de Arame • 1178×786px',
@@ -583,10 +747,28 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                     downloadName: 'vale-da-musica-espetaculo.jpg'
                   },
                   {
+                    title: 'Intervenções Artísticas & Fitas',
+                    sub: 'Espetáculo Cênico • 736×492px',
+                    file: '/assets/vale-arte-fitas.jpg',
+                    downloadName: 'vale-da-musica-arte-fitas.jpg'
+                  },
+                  {
                     title: 'Oficinas Educativas & Escolas',
                     sub: 'Turismo Pedagógico • 1024×683px',
                     file: '/assets/vale-oficina-educativa.jpg',
                     downloadName: 'vale-da-musica-oficina-educativa.jpg'
+                  },
+                  {
+                    title: 'Lazer para Famílias e Excursões',
+                    sub: 'Público & Cultura • 1472×983px',
+                    file: '/assets/vale-familia-cultura.jpg',
+                    downloadName: 'vale-da-musica-familia-cultura.jpg'
+                  },
+                  {
+                    title: 'Oficina de Arte Curitibana',
+                    sub: 'Identidade Cultural • 768×432px',
+                    file: '/assets/vale-oficina-arte.jpg',
+                    downloadName: 'vale-da-musica-oficina-arte.jpg'
                   },
                   {
                     title: 'Vista Aérea Histórica (P&B)',
@@ -599,11 +781,17 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                     key={idx}
                     className="border border-slate-200 rounded-xl overflow-hidden group flex flex-col justify-between bg-white"
                   >
-                    <div className="h-36 bg-slate-100 overflow-hidden relative shrink-0">
+                    <div className="h-44 bg-slate-950 overflow-hidden relative shrink-0 flex items-center justify-center">
+                      <img
+                        src={photo.file}
+                        alt=""
+                        aria-hidden="true"
+                        className="absolute inset-0 w-full h-full object-cover blur-md opacity-40"
+                      />
                       <img
                         src={photo.file}
                         alt={photo.title}
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                        className="relative z-10 w-full h-full object-contain p-1 group-hover:scale-103 transition-transform duration-300"
                       />
                     </div>
                     <div className="p-3 text-xs flex-1 flex flex-col justify-between">

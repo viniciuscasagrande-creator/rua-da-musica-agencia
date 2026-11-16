@@ -29,28 +29,29 @@ export const AgencySidebar = ({ activeTab, onTabChange }) => {
       <div className="space-y-4">
         {/* Top Attraction Card */}
         <div className="rounded-xl overflow-hidden bg-slate-900 text-white shadow-xs border border-slate-800">
-          <div className="h-28 overflow-hidden relative">
+          <div className="aspect-video overflow-hidden relative bg-slate-950">
             <img
-              src="/assets/vale-bosque-passeio.jpg"
+              src="/assets/vale-aerea-dourada.png"
               alt="Parque Jaime Lerner - Vale da Música"
-              className="w-full h-full object-cover object-center opacity-95"
+              className="w-full h-full object-contain"
             />
-            <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/35 to-transparent" />
-            <div className="absolute top-2 left-2.5 bg-white/95 backdrop-blur-xs px-2 py-1 rounded-md shadow-xs">
+            <span className="absolute bottom-2 left-2.5 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-600/95 text-white shadow-xs">
+              Canal Oficial B2B
+            </span>
+          </div>
+          <div className="p-3 space-y-1.5">
+            <div className="bg-white px-2 py-1 rounded-md inline-flex items-center">
               <img
                 src="/assets/logo-vale-color-h.png"
                 alt="Vale da Música"
                 className="h-4 w-auto object-contain"
               />
             </div>
-            <span className="absolute bottom-2 left-3 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-600/90 text-white">
-              Canal Oficial B2B
-            </span>
-          </div>
-          <div className="p-3">
-            <h2 className="font-bold text-sm text-white leading-tight">Parque Jaime Lerner</h2>
-            <p className="text-[11px] text-slate-300 mt-0.5">Vale da Música • Rua da Música</p>
-            <p className="text-[11px] text-slate-400">Curitiba - PR</p>
+            <div>
+              <h2 className="font-bold text-sm text-white leading-tight">Parque Jaime Lerner</h2>
+              <p className="text-[11px] text-slate-300 mt-0.5">Vale da Música • Rua da Música</p>
+              <p className="text-[11px] text-slate-400">Curitiba - PR</p>
+            </div>
           </div>
         </div>
 
@@ -77,35 +78,35 @@ export const AgencySidebar = ({ activeTab, onTabChange }) => {
         </nav>
       </div>
 
-      {/* Bottom Promotional Poster (Identidade Visual Oficial Vale da Música) */}
-      <div className="hidden xl:block mt-6 rounded-xl overflow-hidden relative border border-slate-800 bg-slate-950 text-white shadow-xs">
-        <img
-          src="/assets/vale-palco-flutuante.jpg"
-          alt="Vale da Música - Palco Flutuante"
-          className="w-full h-52 object-cover object-center opacity-85"
-        />
-        <div className="absolute inset-0 bg-linear-to-t from-slate-950 via-slate-950/65 to-slate-950/20 p-3.5 flex flex-col justify-between">
-          <div className="bg-white/95 backdrop-blur-xs px-2.5 py-1.5 rounded-lg self-start shadow-xs">
+      {/* Bottom Promotional Poster (Identidade Visual Oficial Vale da Música — Sem Corte) */}
+      <div className="hidden xl:block mt-6 rounded-xl overflow-hidden border border-slate-800 bg-slate-950 text-white shadow-xs">
+        <div className="aspect-3/2 w-full bg-slate-900 overflow-hidden">
+          <img
+            src="/assets/vale-palco-flutuante.jpg"
+            alt="Vale da Música - Palco Flutuante"
+            className="w-full h-full object-contain"
+          />
+        </div>
+        <div className="p-3.5 space-y-2">
+          <div className="bg-white px-2.5 py-1 rounded-lg inline-flex items-center">
             <img
               src="/assets/logo-vale-color-v.png"
               alt="Vale da Música"
-              className="h-6 w-auto object-contain"
+              className="h-5 w-auto object-contain"
             />
           </div>
-          <div>
-            <div className="text-[11px] font-extrabold tracking-wider text-blue-300 leading-snug uppercase">
-              MÚSICA<br />ARTE<br />NATUREZA<br />EXPERIÊNCIAS
-            </div>
-            <img
-              src="/assets/logo-vale-ondas.png"
-              alt="Ondas sonoras Vale da Música"
-              className="h-3.5 w-full object-contain object-left mt-2 opacity-95"
-            />
-            <div className="mt-1.5 pt-1.5 border-t border-white/20">
-              <span className="text-[11px] font-black tracking-tight block text-white">
-                PARQUE JAIME LERNER
-              </span>
-            </div>
+          <div className="text-[11px] font-extrabold tracking-wider text-blue-300 leading-snug uppercase">
+            MÚSICA • ARTE • NATUREZA • EXPERIÊNCIAS
+          </div>
+          <img
+            src="/assets/logo-vale-ondas.png"
+            alt="Ondas sonoras Vale da Música"
+            className="h-3.5 w-full object-contain object-left opacity-95"
+          />
+          <div className="pt-1.5 border-t border-white/15">
+            <span className="text-[11px] font-black tracking-tight block text-white">
+              PARQUE JAIME LERNER
+            </span>
           </div>
         </div>
       </div>
