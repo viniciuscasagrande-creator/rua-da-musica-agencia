@@ -41,36 +41,65 @@ enum CommissionRecipientKind {
 }
 
 model SalesAgent {
-  id         String           @id @default(cuid())
-  producerId String
-  userId     String?          // Vincular ao usuário existente, quando houver acesso ao portal
-  name       String
-  email      String?
-  phone      String?
-  status     SalesAgentStatus @default(ACTIVE)
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
-  links      SalesLink[]
-  rules      CommissionRule[]
+  id                String           @id @default(cuid())
+  producerId        String           @default("1dd467ed-af6d-401b-a0ed-4d50523ac331")
+  userId            String?          // Vincular ao usuário existente, quando houver acesso ao portal
+  name              String
+  email             String?
+  phone             String?
+  document          String?
+  pixKey            String?
+  status            SalesAgentStatus @default(ACTIVE)
+  statusLabel       String?          @default("Ativo")
+  role              String?          @default("Promoter")
+  initials          String?          @default("PR")
+  avatarBg          String?          @default("bg-blue-600")
+  salesCount        Int              @default(0)
+  ticketsCount      Int              @default(0)
+  revenue           Decimal          @default(0) @db.Decimal(12, 2)
+  goalTarget        Int              @default(200)
+  goalPct           Int              @default(0)
+  goalColor         String?          @default("bg-blue-500")
+  commission        Decimal          @default(0) @db.Decimal(12, 2)
+  commissionPaid    Decimal          @default(0) @db.Decimal(12, 2)
+  commissionPending Decimal          @default(0) @db.Decimal(12, 2)
+  commissionModel   String?          @default("Percentual (5%)")
+  conversion        Decimal          @default(0) @db.Decimal(5, 2)
+  linkCode          String?
+  couponCode        String?
+  clicks            Int              @default(0)
+  sessions          Int              @default(0)
+  permissionsJson   Json?
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  links             SalesLink[]
+  rules             CommissionRule[]
 
   @@index([producerId, status])
   @@unique([producerId, userId])
 }
 
 model Agency {
-  id           String             @id @default(cuid())
-  producerId   String
-  legalName    String
-  document     String             // CNPJ normalizado; aplicar validação e proteção no serviço
-  contactName  String?
-  email        String?
-  status       AgencyStatus       @default(PENDING)
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
-  events       AgencyEvent[]
-  links        SalesLink[]
-  reservations GroupReservation[]
-  rules        CommissionRule[]
+  id            String             @id @default(cuid())
+  producerId    String             @default("1dd467ed-af6d-401b-a0ed-4d50523ac331")
+  legalName     String
+  document      String             // CNPJ normalizado; aplicar validação e proteção no serviço
+  contactName   String?
+  email         String?
+  status        AgencyStatus       @default(PENDING)
+  cityUf        String?            @default("Curitiba - PR")
+  state         String?            @default("PR")
+  quotaLimit    Int                @default(500)
+  bookingsCount Int                @default(0)
+  ticketsSold   Int                @default(0)
+  revenue       Decimal            @default(0) @db.Decimal(12, 2)
+  packagesCount Int                @default(1)
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  events        AgencyEvent[]
+  links         SalesLink[]
+  reservations  GroupReservation[]
+  rules         CommissionRule[]
 
   @@unique([producerId, document])
   @@index([producerId, status])
@@ -79,7 +108,7 @@ model Agency {
 model AgencyEvent {
   id           String             @id @default(cuid())
   agencyId     String
-  eventId      String
+  eventId      String             @default("197bc60b-5b3a-4a29-9c63-c4a24ca9f082")
   active       Boolean            @default(true)
   feeBps       Int                @default(600) // Taxa administrativa contratada: 6% inicial
   createdAt    DateTime           @default(now())
@@ -92,7 +121,7 @@ model AgencyEvent {
 
 model SalesLink {
   id           String            @id @default(cuid())
-  eventId      String
+  eventId      String            @default("197bc60b-5b3a-4a29-9c63-c4a24ca9f082")
   code         String            @unique
   agentId      String?
   agencyId     String?
@@ -110,10 +139,23 @@ model GroupReservation {
   id             String            @id @default(cuid())
   agencyEventId  String
   agencyId       String
+  agencyName     String?
   ticketTypeId   String            // Mapear lote/tipo de ingresso existente
   quantity       Int
   status         ReservationStatus @default(HELD)
-  expiresAt      DateTime
+  statusLabel    String?           @default("Voucher emitido")
+  groupName      String?
+  coordinator    String?
+  visitDate      String?
+  visitTime      String?
+  baseAmount     Decimal           @default(0) @db.Decimal(12, 2)
+  diskFeeAmount  Decimal           @default(0) @db.Decimal(12, 2)
+  totalAmount    Decimal           @default(0) @db.Decimal(12, 2)
+  qrCode         String?
+  originCity     String?           @default("Curitiba - PR")
+  transport      String?           @default("Ônibus Executivo")
+  itemsJson      Json?
+  expiresAt      DateTime          @default(now())
   orderId        String?           @unique
   idempotencyKey String            @unique
   createdAt      DateTime          @default(now())
@@ -163,12 +205,19 @@ model CommissionEntry {
   id              String              @id @default(cuid())
   attributionId   String
   ruleId          String
+  orderId         String?
+  promoterName    String?
   kind            CommissionEntryKind
+  label           String?
+  ticketType      String?
   amountCents     Int                 // Reversão e liquidação como valores negativos
+  amount          Decimal             @default(0) @db.Decimal(12, 2)
   currency        String              @default("BRL")
+  status          String?             @default("Disponível")
   sourceEventId   String              @unique // ID único do evento de pagamento/estorno/repasse
   ledgerEntryId   String?             @unique // Referência ao Ledger existente
   reversesEntryId String?
+  createdAtText   String?
   createdAt       DateTime            @default(now())
   attribution     SaleAttribution     @relation(fields: [attributionId], references: [id])
   rule            CommissionRule      @relation(fields: [ruleId], references: [id])

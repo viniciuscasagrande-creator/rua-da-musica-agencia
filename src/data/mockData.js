@@ -82,16 +82,16 @@ export const BOOKINGS_LIST = [
     visitDate: '2026-09-20',
     visitTime: '09:00',
     ticketsCount: 45,
-    baseAmount: 540.00,
-    diskFeeAmount: 32.40,
-    totalAmount: 657.80,
+    baseAmount: 630.00,
+    diskFeeAmount: 37.80,
+    totalAmount: 667.80,
     status: 'Voucher emitido',
     qrCode: 'DISK-B2B-1049-PJL-2026',
     originCity: 'Curitiba - PR',
     transport: 'Ônibus Fretado (Placa BDF-4A21)',
     items: [
       { name: 'Educativo (Escolas)', qty: 40, unitPrice: 12.72 },
-      { name: 'Inteira (Coordenação)', qty: 5, unitPrice: 29.80 }
+      { name: 'Inteira (Coordenação)', qty: 5, unitPrice: 31.80 }
     ]
   },
   {
@@ -253,6 +253,21 @@ export const AGENCIES_LIST = [
     packagesCount: 3,
     contactName: 'Gustavo Mendes',
     email: 'contato@experienciasbr.tur.br'
+  },
+  {
+    id: 'AG-006',
+    name: 'Agência Turismo Brasil',
+    cnpj: '11.440.980/0001-33',
+    cityUf: 'Curitiba - PR',
+    state: 'PR',
+    status: 'Ativa',
+    quotaLimit: 1200,
+    bookingsCount: 165,
+    ticketsSold: 590,
+    revenue: 18762.00,
+    packagesCount: 5,
+    contactName: 'Roberto Almeida',
+    email: 'b2b@turismobrasil.com.br'
   }
 ];
 
@@ -418,6 +433,7 @@ export const COMMISSION_LEDGER_ENTRIES = [
     ticketType: '2x VIP + 1x Pista',
     amount: 24.40,
     status: 'Disponível',
+    reversesEntryId: null,
     createdAt: '20/09/2026 14:22'
   },
   {
@@ -429,6 +445,7 @@ export const COMMISSION_LEDGER_ENTRIES = [
     ticketType: '2x Camarote',
     amount: 35.00,
     status: 'Disponível',
+    reversesEntryId: null,
     createdAt: '19/09/2026 21:10'
   },
   {
@@ -440,6 +457,7 @@ export const COMMISSION_LEDGER_ENTRIES = [
     ticketType: '2x Camarote (Cancelado)',
     amount: -35.00,
     status: 'Revertido',
+    reversesEntryId: 'CE-9902',
     createdAt: '20/09/2026 09:05'
   },
   {
@@ -451,6 +469,7 @@ export const COMMISSION_LEDGER_ENTRIES = [
     ticketType: 'Lote Semanal #37',
     amount: -520.00,
     status: 'Pago',
+    reversesEntryId: null,
     createdAt: '18/09/2026 17:00'
   }
 ];

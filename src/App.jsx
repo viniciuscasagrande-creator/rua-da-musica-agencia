@@ -24,6 +24,69 @@ export default function App() {
     loading: true,
     database: 'Conectando ao Neon PostgreSQL...'
   });
+  const [notifications, setNotifications] = useState([
+    {
+      id: 'notif-1',
+      surface: 'agency',
+      bookingId: 'RES-B2B-1049',
+      title: 'Voucher B2B emitido: RES-B2B-1049',
+      description: 'Excursão Colégio Positivo (45 pax) liberada para check-in na catraca.',
+      time: 'Há 12 min',
+      unread: true,
+      type: 'voucher'
+    },
+    {
+      id: 'notif-2',
+      surface: 'operator',
+      bookingId: 'RES-B2B-1046',
+      title: 'Pré-reserva aguardando confirmação',
+      description: 'Viva Viagens (RES-B2B-1046 • 50 ingressos) expira em 24h.',
+      time: 'Há 38 min',
+      unread: true,
+      type: 'booking'
+    },
+    {
+      id: 'notif-3',
+      surface: 'producer',
+      title: 'Meta atingida na Equipe de Vendas',
+      description: 'Promoter João Silva atingiu 94% da meta (312 ingressos vendidos).',
+      time: 'Há 1 hora',
+      unread: true,
+      type: 'commission'
+    }
+  ]);
+
+  const pushNotification = useCallback((notif) => {
+    setNotifications((prev) => [
+      {
+        id: `notif-${Date.now()}`,
+        time: 'Agora mesmo',
+        unread: true,
+        ...notif
+      },
+      ...prev
+    ]);
+  }, []);
+
+  const handleMarkAllRead = useCallback(() => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, unread: false })));
+  }, []);
+
+  const handleNotificationClick = useCallback(
+    (item) => {
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === item.id ? { ...n, unread: false } : n))
+      );
+      if (item.surface) {
+        setActiveSurface(item.surface);
+      }
+      if (item.bookingId) {
+        const found = bookings.find((b) => b.id === item.bookingId);
+        if (found) setSelectedVoucherBooking(found);
+      }
+    },
+    [bookings]
+  );
 
   const syncFromDatabase = useCallback(async () => {
     setDbStatus((prev) => ({ ...prev, loading: true }));
@@ -59,6 +122,12 @@ export default function App() {
 
   const handleCreateAgency = async (newAgency) => {
     setAgencies((prev) => [newAgency, ...prev]);
+    pushNotification({
+      surface: 'operator',
+      title: `Nova Agência Credenciada: ${newAgency.name}`,
+      description: `${newAgency.cityUf} • Cota mensal: ${newAgency.quotaLimit} ingressos.`,
+      type: 'booking'
+    });
     try {
       await fetch('/api/b2b', {
         method: 'POST',
@@ -73,6 +142,13 @@ export default function App() {
 
   const handleCreateBooking = async (newBooking) => {
     setBookings((prev) => [newBooking, ...prev]);
+    pushNotification({
+      surface: 'agency',
+      bookingId: newBooking.id,
+      title: `Reserva B2B Emitida: ${newBooking.id}`,
+      description: `${newBooking.groupName} (${newBooking.ticketsCount} ingressos) para ${newBooking.visitDate}.`,
+      type: 'voucher'
+    });
     try {
       await fetch('/api/b2b', {
         method: 'POST',
@@ -93,6 +169,15 @@ export default function App() {
     setSelectedVoucherBooking((prev) =>
       prev && prev.id === bookingId ? { ...prev, status: newStatus } : prev
     );
+    pushNotification({
+      surface: 'operator',
+      bookingId,
+      title: checkedIn
+        ? `Check-in Validado na Catraca: ${bookingId}`
+        : `Check-in Reaberto: ${bookingId}`,
+      description: `Status atualizado para "${newStatus}" no estoque único do Parque.`,
+      type: 'voucher'
+    });
     try {
       await fetch('/api/b2b', {
         method: 'POST',
@@ -107,6 +192,12 @@ export default function App() {
 
   const handleCreateSalesAgent = async (member) => {
     setSalesTeam((prev) => [member, ...prev]);
+    pushNotification({
+      surface: 'producer',
+      title: `Novo ${member.role} na Equipe: ${member.name}`,
+      description: `Link #${member.linkCode} e cupom ${member.couponCode} ativos.`,
+      type: 'commission'
+    });
     try {
       await fetch('/api/b2b', {
         method: 'POST',
@@ -120,6 +211,39 @@ export default function App() {
   };
 
   const handleReverseCommission = async (originalId) => {
+    const orig = commissionLedger.find((ce) => ce.id === originalId);
+    const alreadyReversed = commissionLedger.some(
+      (ce) => ce.kind === 'REVERSAL' && (ce.reversesEntryId === originalId || ce.label?.includes(originalId))
+    );
+    if (!orig || orig.kind !== 'ACCRUAL' || alreadyReversed) return;
+
+    const optimisticReversal = {
+      id: `CE-${String(Date.now()).slice(-5)}`,
+      orderId: orig.orderId,
+      promoterName: orig.promoterName,
+      kind: 'REVERSAL',
+      label: `ESTORNO DE PEDIDO (Reversão Append-Only ref. ${orig.id})`,
+      ticketType: `${orig.ticketType} (Estornado)`,
+      amount: -Math.abs(Number(orig.amount || 0)),
+      status: 'Revertido',
+      reversesEntryId: orig.id,
+      createdAt: new Date().toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      })
+    };
+
+    setCommissionLedger((prev) => [optimisticReversal, ...prev]);
+    pushNotification({
+      surface: 'producer',
+      title: `Estorno Append-Only Registrado (${optimisticReversal.id})`,
+      description: `Reversão de R$ ${Math.abs(Number(orig.amount || 0)).toFixed(2).replace('.', ',')} ref. ${orig.id} (${orig.promoterName}).`,
+      type: 'commission'
+    });
+
     try {
       await fetch('/api/b2b', {
         method: 'POST',
@@ -128,7 +252,7 @@ export default function App() {
       });
       await syncFromDatabase();
     } catch {
-      // Ignore error if offline
+      // Keeps optimistic reversal if offline
     }
   };
 
@@ -139,6 +263,9 @@ export default function App() {
         onSurfaceChange={setActiveSurface}
         dbStatus={dbStatus}
         onRefreshDb={syncFromDatabase}
+        notifications={notifications}
+        onMarkAllRead={handleMarkAllRead}
+        onNotificationClick={handleNotificationClick}
       />
 
       {activeSurface === 'operator' && (

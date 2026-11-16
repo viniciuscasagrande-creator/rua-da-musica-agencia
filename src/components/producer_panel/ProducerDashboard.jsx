@@ -113,6 +113,28 @@ export const ProducerDashboard = ({
     commissionModel: 'Percentual (5%)'
   });
 
+  const handleTabSelect = (tabId) => {
+    setActiveTab(tabId);
+    if (tabId === 'divulgadores') {
+      setRoleFilter('Divulgador');
+    } else if (tabId === 'promoters') {
+      setRoleFilter('Todos');
+    } else {
+      setRoleFilter('Todos');
+    }
+  };
+
+  const reversedEntryIds = new Set(
+    ledgerEntries
+      .filter((ce) => ce.kind === 'REVERSAL')
+      .map((ce) => {
+        if (ce.reversesEntryId) return ce.reversesEntryId;
+        const match = String(ce.label || '').match(/ref\.\s*(CE-\d+)/i);
+        return match ? match[1] : null;
+      })
+      .filter(Boolean)
+  );
+
   const filteredMembers = members.filter((m) => {
     const matchText =
       m.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -255,7 +277,7 @@ export const ProducerDashboard = ({
                 ].map((sub) => (
                   <button
                     key={sub.id}
-                    onClick={() => setActiveTab(sub.id)}
+                    onClick={() => handleTabSelect(sub.id)}
                     className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                       activeTab === sub.id
                         ? 'text-blue-500 font-bold bg-blue-500/10'
@@ -582,7 +604,7 @@ export const ProducerDashboard = ({
               ].map((t) => (
                 <button
                   key={t.id}
-                  onClick={() => setActiveTab(t.id)}
+                  onClick={() => handleTabSelect(t.id)}
                   className={`px-3.5 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                     activeTab === t.id
                       ? 'bg-blue-600 text-white font-bold'
@@ -778,7 +800,11 @@ export const ProducerDashboard = ({
                           </td>
                           <td className={`py-3 px-3 ${mutedText}`}>{ce.createdAt}</td>
                           <td className="py-3 px-3 text-center">
-                            {ce.kind === 'ACCRUAL' && onReverseCommission ? (
+                            {ce.kind === 'ACCRUAL' && reversedEntryIds.has(ce.id) ? (
+                              <span className="px-2 py-0.5 rounded bg-slate-500/15 text-slate-500 font-semibold text-[10px]">
+                                Já Estornado
+                              </span>
+                            ) : ce.kind === 'ACCRUAL' && onReverseCommission ? (
                               <button
                                 onClick={() => onReverseCommission(ce.id)}
                                 className="px-2.5 py-1 rounded-lg bg-rose-500/15 text-rose-500 hover:bg-rose-500/25 font-bold text-[10px] cursor-pointer"

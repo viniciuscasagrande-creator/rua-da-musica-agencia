@@ -60,7 +60,7 @@ const CALENDAR_DAYS = [
   { day: 30, status: 'few' }
 ];
 
-export const BookingWizard = ({ onBookingCreated }) => {
+export const BookingWizard = ({ onBookingCreated, availableCredit = 31238 }) => {
   const [step, setStep] = useState(1);
   const [selectedDay, setSelectedDay] = useState(18);
   const [selectedTime, setSelectedTime] = useState('09:00');
@@ -85,7 +85,11 @@ export const BookingWizard = ({ onBookingCreated }) => {
 
   const [createdReservation, setCreatedReservation] = useState(null);
 
+  const brl = (n) =>
+    Number(n || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
   const updateQty = (id, delta) => {
+    if (step === 1) setStep(2);
     setQuantities((prev) => ({
       ...prev,
       [id]: Math.max(0, (prev[id] || 0) + delta)
@@ -562,7 +566,7 @@ export const BookingWizard = ({ onBookingCreated }) => {
                     {
                       id: 'FATURAMENTO_15D',
                       title: 'Faturamento Cota B2B (15 dias)',
-                      desc: 'Débito no limite aprovado (R$ 31.238 disponível)'
+                      desc: `Débito no limite aprovado (${brl(availableCredit)} disponível)`
                     },
                     {
                       id: 'PIX_IMEDIATO',
@@ -732,11 +736,11 @@ export const BookingWizard = ({ onBookingCreated }) => {
 
             {step < 4 ? (
               <button
-                onClick={() => setStep(step === 1 ? 3 : step + 1)}
+                onClick={() => setStep(step + 1)}
                 disabled={totalTickets === 0}
                 className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer"
               >
-                <span>Continuar</span>
+                <span>{step === 1 ? 'Confirmar Data e Ingressos' : 'Continuar'}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             ) : step === 4 ? (

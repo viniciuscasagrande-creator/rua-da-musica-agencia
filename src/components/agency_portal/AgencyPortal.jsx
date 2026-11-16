@@ -189,7 +189,10 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
           Ambiente de demonstração: reservas e vouchers exibidos aqui ainda não autorizam venda ou entrada no parque.
         </p>
         {activeTab === 'comprar' && (
-          <BookingWizard onBookingCreated={handleBookingCreated} />
+          <BookingWizard
+            onBookingCreated={handleBookingCreated}
+            availableCredit={availableCredit}
+          />
         )}
 
         {activeTab === 'vouchers' && (
@@ -201,7 +204,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
             ) : bookings.filter(b => b.qrCode && b.status !== 'Cancelado').map(b => (
               <div key={b.id} className="flex flex-wrap items-center justify-between gap-3 border border-slate-200 rounded-xl p-4">
                 <div><p className="font-semibold text-sm text-slate-900">{b.groupName}</p><p className="text-xs text-slate-500">{b.id} · {b.visitDate} · {b.ticketsCount} ingressos</p></div>
-                <button onClick={() => onOpenVoucher?.(b)} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold">Visualizar voucher de demonstração</button>
+                <button onClick={() => onOpenVoucher?.(b)} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold cursor-pointer">Visualizar voucher de demonstração</button>
               </div>
             ))}
           </section>
@@ -217,15 +220,42 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                 <div className="text-xs text-slate-700">{b.ticketsCount} participantes · {b.status}</div>
               </div>
             ))}
-            <button onClick={() => setActiveTab('comprar')} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold">Nova reserva de grupo</button>
+            <button onClick={() => setActiveTab('comprar')} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold cursor-pointer">Nova reserva de grupo</button>
           </section>
         )}
 
         {activeTab === 'dados' && (
-          <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-3">
-            <h3 className="font-bold text-slate-900">Dados da Agência</h3>
-            <p className="text-sm text-slate-800">Agência Turismo Brasil</p>
-            <p className="text-xs text-slate-600">Dados de demonstração. O cadastro nacional deverá carregar CNPJ, endereço, contatos e situação de credenciamento da agência autenticada pela API.</p>
+          <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4">
+            <div>
+              <h3 className="font-bold text-base text-slate-900">Dados Cadastrais da Agência Parceira</h3>
+              <p className="text-xs text-slate-500">Credenciamento B2B ativo junto ao Parque Jaime Lerner (PDT DiskIngressos)</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-slate-500 block">Razão Social</span>
+                <span className="font-bold text-slate-900 mt-0.5 block">Agência Turismo Brasil Ltda.</span>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-slate-500 block">CNPJ Normalizado</span>
+                <span className="font-mono font-bold text-slate-900 mt-0.5 block">11.440.980/0001-33</span>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-slate-500 block">Código Credenciamento / Status</span>
+                <span className="font-mono font-bold text-emerald-700 mt-0.5 block">AG-006 • Ativa</span>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-slate-500 block">Responsável Operacional</span>
+                <span className="font-bold text-slate-900 mt-0.5 block">Roberto Almeida</span>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-slate-500 block">E-mail B2B</span>
+                <span className="font-bold text-slate-900 mt-0.5 block">b2b@turismobrasil.com.br</span>
+              </div>
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                <span className="text-slate-500 block">Taxa Administrativa Contratada</span>
+                <span className="font-mono font-bold text-blue-700 mt-0.5 block">6,0% (600 bps)</span>
+              </div>
+            </div>
           </section>
         )}
 
@@ -233,7 +263,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
           <section className="bg-white rounded-2xl border border-slate-200 p-6 space-y-3">
             <h3 className="font-bold text-slate-900">Ajuda e Suporte</h3>
             <p className="text-sm text-slate-600">Para dúvidas sobre ingressos, reservas e credenciamento, acesse o canal de atendimento do Parque.</p>
-            <button onClick={() => setActiveTab('contato')} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold">Ver contatos</button>
+            <button onClick={() => setActiveTab('contato')} className="bg-blue-600 text-white rounded-lg px-4 py-2 text-xs font-semibold cursor-pointer">Ver contatos</button>
           </section>
         )}
 
@@ -247,7 +277,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
               </div>
               <button
                 onClick={() => setActiveTab('comprar')}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-semibold hover:bg-blue-700 cursor-pointer"
               >
                 + Nova Reserva
               </button>
@@ -273,7 +303,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                       <td className="py-3.5 px-4 font-semibold text-slate-800">{b.groupName}</td>
                       <td className="py-3.5 px-4 text-slate-600">{b.visitDate} às {b.visitTime}</td>
                       <td className="py-3.5 px-4 text-center font-bold text-slate-900">{b.ticketsCount} pax</td>
-                      <td className="py-3.5 px-4 text-right font-black text-slate-900">R$ {b.totalAmount.toFixed(2)}</td>
+                      <td className="py-3.5 px-4 text-right font-black text-slate-900">{brl(b.totalAmount)}</td>
                       <td className="py-3.5 px-4 text-center">
                         <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                           {b.status}
@@ -282,7 +312,7 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
                       <td className="py-3.5 px-4 text-center">
                         <button
                           onClick={() => onOpenVoucher && onOpenVoucher(b)}
-                          className="px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold border border-blue-200 flex items-center gap-1.5 mx-auto"
+                          className="px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-semibold border border-blue-200 flex items-center gap-1.5 mx-auto cursor-pointer"
                         >
                           <QrCode className="w-3.5 h-3.5" />
                           <span>Ver Voucher</span>
@@ -304,25 +334,40 @@ export const AgencyPortal = ({ bookings: allBookings, onCreateBooking, onOpenVou
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 auto-rows-fr">
               <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[128px]">
                 <span className="text-xs font-semibold text-slate-600 block">Cota de Ingressos do Mês</span>
-                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">1.200 ingressos</span>
+                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">
+                  {brNum(quotaLimit)} ingressos
+                </span>
                 <div>
                   <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '49%' }} />
+                    <div
+                      className="bg-blue-600 h-2 rounded-full"
+                      style={{ width: `${usedQuotaPct}%` }}
+                    />
                   </div>
-                  <span className="text-[11px] text-slate-500 mt-1 block">590 utilizados (49%)</span>
+                  <span className="text-[11px] text-slate-500 mt-1 block">
+                    {brNum(usedQuota)} utilizados ({usedQuotaPct}%)
+                  </span>
                 </div>
               </div>
 
               <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[128px]">
                 <span className="text-xs font-semibold text-slate-600 block">Limite de Faturamento B2B</span>
-                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">R$ 50.000,00</span>
-                <span className="text-[11px] text-emerald-600 font-semibold block">R$ 31.238,00 disponível</span>
+                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">
+                  {brl(creditLimit)}
+                </span>
+                <span className="text-[11px] text-emerald-600 font-semibold block">
+                  {brl(availableCredit)} disponível
+                </span>
               </div>
 
               <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between h-[128px]">
-                <span className="text-xs font-semibold text-slate-600 block">Próximo Vencimento</span>
-                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">10/10/2026</span>
-                <span className="text-[11px] text-slate-500 block">Fatura quinzenal automatizada</span>
+                <span className="text-xs font-semibold text-slate-600 block">Volume Faturado no Período</span>
+                <span className="text-lg font-mono font-bold tabular-nums text-slate-900">
+                  {brl(totalB2BAmount)}
+                </span>
+                <span className="text-[11px] text-slate-500 block">
+                  Inclui {brl(totalDiskFee)} de taxa adm. Disk (6%)
+                </span>
               </div>
             </div>
           </div>

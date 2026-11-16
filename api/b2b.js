@@ -100,6 +100,7 @@ export default async function handler(req, res) {
         ticketType: c.ticketType,
         amount: Number(c.amount || 0),
         status: c.status,
+        reversesEntryId: c.reversesEntryId || null,
         createdAt: c.createdAtText
       }));
 
@@ -118,11 +119,13 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body || {};
       const { action } = body;
+      const DEFAULT_PRODUCER_ID = '1dd467ed-af6d-401b-a0ed-4d50523ac331';
+      const DEFAULT_EVENT_ID = '197bc60b-5b3a-4a29-9c63-c4a24ca9f082';
 
       if (action === 'create_agency') {
-        const id = `AG-${String(Math.floor(100 + Math.random() * 899))}`;
+        const id = body.id || `AG-${String(Date.now()).slice(-4)}`;
         const legalName = body.name || 'Nova Agência Turismo';
-        const document = body.cnpj || '19.882.104/0001-55';
+        const document = body.cnpj || `19.${String(Date.now()).slice(-6, -3)}.104/0001-55`;
         const cityUf = body.cityUf || 'Curitiba - PR';
         const state = (cityUf.split('-')[1] || 'PR').trim();
         const quotaLimit = Number(body.quotaLimit) || 500;
@@ -130,13 +133,14 @@ export default async function handler(req, res) {
         const email = body.email || 'contato@agencia.tur.br';
 
         await sql`
-          INSERT INTO "Agency" ("id", "legalName", "document", "contactName", "email", "status", "cityUf", "state", "quotaLimit", "bookingsCount", "ticketsSold", "revenue", "packagesCount")
-          VALUES (${id}, ${legalName}, ${document}, ${contactName}, ${email}, 'ACTIVE', ${cityUf}, ${state}, ${quotaLimit}, 1, 0, 0, 1)
+          INSERT INTO "Agency" ("id", "producerId", "legalName", "document", "contactName", "email", "status", "cityUf", "state", "quotaLimit", "bookingsCount", "ticketsSold", "revenue", "packagesCount")
+          VALUES (${id}, ${DEFAULT_PRODUCER_ID}, ${legalName}, ${document}, ${contactName}, ${email}, 'ACTIVE', ${cityUf}, ${state}, ${quotaLimit}, 1, 0, 0, 1)
+          ON CONFLICT ("id") DO NOTHING
         `;
 
         await sql`
-          INSERT INTO "AgencyEvent" ("id", "agencyId", "active", "feeBps")
-          VALUES (${`AE-${id}`}, ${id}, true, 600)
+          INSERT INTO "AgencyEvent" ("id", "agencyId", "eventId", "active", "feeBps")
+          VALUES (${`AE-${id}`}, ${id}, ${DEFAULT_EVENT_ID}, true, 600)
           ON CONFLICT DO NOTHING
         `;
 
@@ -144,16 +148,16 @@ export default async function handler(req, res) {
       }
 
       if (action === 'create_reservation') {
-        const b = body.booking;
-        const id = b.id || `RES-B2B-${Math.floor(1050 + Math.random() * 8900)}`;
+        const b = body.booking || {};
+        const id = b.id || `RES-B2B-${String(Date.now()).slice(-4)}`;
         const agencyId = b.agencyId || 'AG-006';
         const agencyName = b.agencyName || 'Agência Turismo Brasil';
-        const quantity = Number(b.ticketsCount || 10);
+        const quantity = Math.max(1, Number(b.ticketsCount || 10));
         const baseAmount = Number(b.baseAmount || 0);
-        const diskFeeAmount = Number(b.diskFeeAmount || 0);
-        const totalAmount = Number(b.totalAmount || 0);
+        const diskFeeAmount = Number(b.diskFeeAmount || Math.round(baseAmount * 6) / 100);
+        const totalAmount = Number(b.totalAmount || baseAmount + diskFeeAmount);
         const itemsJson = JSON.stringify(b.items || []);
-        const idempotencyKey = `IDEMP-${id}-${Date.now()}`;
+        const idempotencyKey = b.idempotencyKey || `IDEMP-${id}-${Date.now()}`;
 
         await sql`
           INSERT INTO "GroupReservation" (
@@ -168,6 +172,7 @@ export default async function handler(req, res) {
             ${b.qrCode || `DISK-${id}-PJL`}, ${b.originCity || 'Curitiba - PR'}, ${b.transport || 'Ônibus Executivo'},
             ${itemsJson}::jsonb, ${idempotencyKey}
           )
+          ON CONFLICT ("id") DO NOTHING
         `;
 
         await sql`
@@ -195,33 +200,34 @@ export default async function handler(req, res) {
       }
 
       if (action === 'create_sales_agent') {
-        const m = body.member;
-        const id = m.id || `PRM-${Math.floor(10 + Math.random() * 89)}`;
+        const m = body.member || {};
+        const id = m.id || `PRM-${String(Date.now()).slice(-4)}`;
         const permissionsJson = JSON.stringify(
           m.permissions || ['Vender ingressos', 'Criar link', 'Utilizar cupom', 'Consultar comissão']
         );
 
         await sql`
           INSERT INTO "SalesAgent" (
-            "id", "name", "email", "phone", "document", "pixKey",
+            "id", "producerId", "name", "email", "phone", "document", "pixKey",
             "status", "statusLabel", "role", "initials", "avatarBg",
             "salesCount", "ticketsCount", "revenue", "goalTarget", "goalPct",
             "goalColor", "commission", "commissionPaid", "commissionPending",
             "commissionModel", "conversion", "linkCode", "couponCode",
             "clicks", "sessions", "permissionsJson"
           ) VALUES (
-            ${id}, ${m.name}, ${m.email}, ${m.phone}, '000.000.000-00', ${m.email},
+            ${id}, ${DEFAULT_PRODUCER_ID}, ${m.name}, ${m.email}, ${m.phone}, '000.000.000-00', ${m.email},
             'ACTIVE', 'Ativo', ${m.role}, ${m.initials}, ${m.avatarBg || 'bg-blue-600'},
             0, 0, 0, ${Number(m.goalTarget || 200)}, 0,
             'bg-blue-500', 0, 0, 0,
             ${m.commissionModel}, 0, ${m.linkCode}, ${m.couponCode},
             0, 0, ${permissionsJson}::jsonb
           )
+          ON CONFLICT ("id") DO NOTHING
         `;
 
         await sql`
-          INSERT INTO "SalesLink" ("id", "code", "agentId", "active")
-          VALUES (${`SL-${id}`}, ${m.linkCode}, ${id}, true)
+          INSERT INTO "SalesLink" ("id", "eventId", "code", "agentId", "active")
+          VALUES (${`SL-${id}`}, ${DEFAULT_EVENT_ID}, ${m.linkCode}, ${id}, true)
           ON CONFLICT DO NOTHING
         `;
 
@@ -235,9 +241,25 @@ export default async function handler(req, res) {
           return res.status(404).json({ error: 'Lançamento original não encontrado' });
         }
         const orig = rows[0];
-        const newId = `CE-${Math.floor(9905 + Math.random() * 900)}`;
+        if (orig.kind !== 'ACCRUAL') {
+          return res.status(400).json({ error: 'Apenas lançamentos ACCRUAL podem ser estornados' });
+        }
+
+        const existingReversal = await sql`
+          SELECT "id" FROM "CommissionEntry"
+          WHERE "reversesEntryId" = ${originalId} AND "kind" = 'REVERSAL'
+          LIMIT 1
+        `;
+        if (existingReversal.length > 0) {
+          return res.status(409).json({
+            error: 'Este lançamento já possui um estorno (REVERSAL) registrado',
+            id: existingReversal[0].id
+          });
+        }
+
+        const newId = `CE-${String(Date.now()).slice(-5)}`;
         const revAmount = -Math.abs(Number(orig.amount || 0));
-        const revCents = -Math.abs(Number(orig.amountCents || 0));
+        const revCents = -Math.abs(Number(orig.amountCents || Math.round(Math.abs(revAmount) * 100)));
         const nowStr = new Date().toLocaleString('pt-BR', {
           day: '2-digit',
           month: '2-digit',
